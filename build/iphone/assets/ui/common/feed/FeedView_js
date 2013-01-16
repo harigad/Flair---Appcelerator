@@ -1,0 +1,1 @@
+function FeedView(e,t){var n=require("ui/common/feed/FeedItem");Ti.API.debug("printing feedView"),t||(t=Ti.UI.createTableView({width:"320",top:0,backgroundColor:"#eee"})),Ti.API.debug("feed.length "+e.length);for(var r=0;r<e.length;r++){var i=n.feedItem(e[r],null,r);t.appendRow(i)}return t}module.exports=FeedView

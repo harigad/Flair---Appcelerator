@@ -1,0 +1,12 @@
+{
+	"target": "device",
+	"deployType": "test",
+	"deviceFamily": "universal",
+	"developerName": "Hari  Gadiraju (7KWCVMJ5X6)",
+	"distributionName": "Hari  Gadiraju (7KWCVMJ5X6)",
+	"iosSdkPath": "/Users/harigadiraju/Library/Application Support/Titanium/mobilesdk/osx/3.0.0.GA/iphone",
+	"appGuid": "25b8bd5f-fad5-4336-9119-e4bbf0ed080b",
+	"tiCoreHash": "6b039db50f01934ab31311c911af38db",
+	"modulesHash": "c7ce056f0f41e96687605636ad097a3a",
+	"gitHash": "a5894b3"
+}

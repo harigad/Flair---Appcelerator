@@ -1,0 +1,1 @@
+function launchPortal(){var e=require("ui/common/Portal");e.init()}exports.init=function(){Ti.Facebook.appid="201613399910723",Ti.Facebook.permissions=["publish_stream"];var e=require("ui/common/Login");e.init(launchPortal)}
