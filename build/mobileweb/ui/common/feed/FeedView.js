@@ -8,14 +8,14 @@ function FeedView(feed_data,_tableView) {
 			_tableView = Titanium.UI.createTableView(
 				{
 		  			width: '320',
-		  			top:0,backgroundColor:'#eee'
+		  			top:0,backgroundColor:'#eee',borderWidth:0
 				});	
 		}
 
 		Ti.API.debug("feed.length " + feed_data.length);
 		
 	    for (var i=0; i<feed_data.length; i++){
-	    	var _row = feed.feedItem(feed_data[0],null,0);		
+	    	var _row = feed.feedItem(feed_data[i],null,i);		
 	    	_tableView.appendRow(_row);
 		}
 	

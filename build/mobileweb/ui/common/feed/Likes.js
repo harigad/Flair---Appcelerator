@@ -5,11 +5,12 @@ exports.init = function(_data){
 	var likeView = Titanium.UI.createView({
 		layout:'horizontal',
 		width:'120',
-		height:'auto',
+		height:'50',
 		left:0,
 		top:0,
 		bottom:5
 	});
+	
 	
 	var likeImageStr;
     Ti.API.debug(_data.liked);

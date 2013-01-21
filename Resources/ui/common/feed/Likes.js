@@ -23,7 +23,7 @@ exports.init = function(_data){
 	var like_btn = Ti.UI.createImageView({
   			image: likeImageStr,
   			left:0,
-   			width:35
+   			width:35,bubbleParent:false
 	});
 	like_btn.addEventListener('click',function(){
 		if(!_data.liked){

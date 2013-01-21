@@ -1,96 +1,26 @@
 var _lat;
 var _lng;
-
+var portal = require('ui/common/Portal');
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
-		title: _data.name,    	
+	 	
     	barColor:'#333',
     	backgroundColor: '#eee' 	
 	});
 	
-	var tabBar = Titanium.UI.createView(
-		 {
-		  	height: 'auto',
-		  	width: 'auto',
-		  	backgroundColor: '#999',
-		  	bottom:0,
-		  	layout:'horizontal'
-		 }
-	);
+	loadData(_data);
 
-	var sview = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 320,
-  		top:0
-	});
-	
-	var sview2 = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 320,
-  		top:0,
-  		visible:false
-	});	
-	
-	main.add(sview);
-	main.add(sview2);
-	
-	var tab1 = Titanium.UI.createView(
-		 {
-		 	left:5,top:5,right:2.5,bottom:5,
-		  	width:152.5,
-		  	height: '40',
-		  	backgroundColor: '#cecece',
-		  	borderRadius:4
-		 }
-	);
-	tab1.addEventListener('click',function(e){
-		this.setBackgroundColor('#cecece');
-		this.otherTab.setBackgroundColor('#aaa');
-		sview2.hide();
-		sview.show();
-	});
-	tabBar.add(tab1);
-	
-	var tab2 = Titanium.UI.createView(
-		 {
-		 	left:2.5,top:5,right:5,bottom:5,
-		  	width:152.5,
-		  	height: '40',
-		  	backgroundColor: '#aaa',
-		  	borderRadius:4,
-		  	otherTab:tab1
-		 }
-	);
-	tab1.otherTab=tab2;
-	tab2.addEventListener('click',function(e){
-		this.setBackgroundColor('#cecece');
-		this.otherTab.setBackgroundColor('#aaa');
-		sview.hide();
-		sview2.show();
-	});
-	tabBar.add(tab2);
-	
-	main.add(tabBar);
-	
-	loadData(_data,sview,sview2);
-	
 	return main;
 }
 
-function print(_place,sview){
+function print(_place){
 	var view = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
+		  	height: '500',
 		  	layout: 'vertical'
 		 }
 	);	
-	sview.add(view);
+	main.add(view);
 	
 	var addrView = Titanium.UI.createView(
 		 {
@@ -145,14 +75,14 @@ function print(_place,sview){
 	
 }
 
-function print_cast(_place,sview){
+function print_cast(_place){
 	var view = Titanium.UI.createView(
 		 {
 		  	height: 'auto',
 		  	layout: 'vertical'
 		 }
 	);	
-	sview.add(view);
+	main.add(view);
 	
 	for(var i=0;i<_place.cast.length;i++){	
 		var row = Titanium.UI.createView(
@@ -213,7 +143,7 @@ function print_cast(_place,sview){
 	}
 }
 
-function loadData(_data,sview,sview2){
+function loadData(_data){
 		var that = this;
 		if(_data.lat && _data.lng){
 			print(_data,sview);
@@ -231,8 +161,8 @@ function loadData(_data,sview,sview2){
      onload : function(e) {
      	 Ti.API.debug('loaded data for Place -> ' + _data.pid);
      	 var _feed = JSON.parse(this.responseText);  
-     	 print(_feed,sview);
-     	 print_cast(_feed,sview2);   	 
+     	 print(_feed);
+     	 //print_cast(_feed,sview2);   	 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for Place -> ' + _data.pid);

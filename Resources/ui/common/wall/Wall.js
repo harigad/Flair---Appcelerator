@@ -10,21 +10,10 @@ exports.init = function(_type){
 	var main = Titanium.UI.createWindow({
     	title: name,    	
     	barColor:'#333',
-    	backgroundColor: '#eee'
+    	backgroundColor: '#eeeeee'
 	});
 
-	var view = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 320,
-  		top:0
-	});
-	
-	main.add(view);
-	
-	loadData(_type,view);
+	loadData(_type,main);
 	
 	return main;
 }

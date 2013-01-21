@@ -3,27 +3,28 @@ exports.init = function(_data) {
 	Ti.API.debug("printing feedProfile");
 
 	var main = Ti.UI.createWindow({			
-    	hideNavBar:true,
-    	backgroundColor:'#42698d'
+    	hideNavBar:true,modal:true,
+    	backgroundColor:'#fff'
 	});
 
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: '100%',
 		  	height: 'auto',
-		  	top:170,
+		  	top:110,
 		  	left:0,
 		  	layout:'vertical'
 		 }
 	);
 	
-	outer.add(_create(main,_data,0,_data.recipientname,'#42698d','#6388aa',false));	
-	outer.add(_create(main,_data,1,_data.food,'#99452b','#c26447',true));	
+	
+	outer.add(_create(main,_data,1,_data.food,'#99452b','#c26447',false));	
 	outer.add(_create(main,_data,2,_data.placename,'#54733e','#84ab68',true));
+	outer.add(_create(main,_data,0,_data.recipientname,'#42698d','#6388aa',true));	
 	
 	main.add(outer);
 
-	main.open();
+	main.open({modal:true,modalTransitionStyle:Titanium.UI.iPhone.MODAL_TRANSITION_STYLE_PARTIAL_CURL});
 	
 }
 
@@ -34,8 +35,7 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
 		  	width: '100%',
 		  	height: 100,
 		  	left:0,
-		  	layout: 'horizontal',
-		  	backgroundColor:_bgColor
+		  	layout: 'horizontal'
 		 }
 	);
 	
@@ -50,15 +50,15 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
 	);
 	
 	var name_txt = Ti.UI.createLabel({
-		height:'auto',
+		height:'40',
 		left:20,
 		width:'230',
   		text:_name,
   		wordWrap:false,
-  		color:_color,
+  		color:_bgColor,
   		top:16,
   		font: {
-         fontSize: 42,
+         fontSize: 30,
          fontWeight: 'bold'
     	}		
 	});
@@ -120,7 +120,6 @@ function _hr(){
 	return  Titanium.UI.createView(
 		 {
 		  	backgroundImage: 'images/feed/like_hr.png',
-		  	backgroundRepeat: true,
 		  	height:9,
 		  	top:0,bottom:0,
 		  	width:'100%'

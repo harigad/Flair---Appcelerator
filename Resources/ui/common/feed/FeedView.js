@@ -8,7 +8,7 @@ function FeedView(feed_data,_tableView) {
 			_tableView = Titanium.UI.createTableView(
 				{
 		  			width: '320',
-		  			top:0,backgroundColor:'#eee'
+		  			separatorStyle:"NONE",backgroundColor:'#eeeeee'
 				});	
 		}
 
@@ -16,10 +16,26 @@ function FeedView(feed_data,_tableView) {
 		
 	    for (var i=0; i<feed_data.length; i++){
 	    	var _row = feed.feedItem(feed_data[i],null,i);		
-	    	_tableView.appendRow(_row);
+	    	if(i<feed_data.length-1){
+	    		_row.add(_hr());
+			}
+		    _tableView.appendRow(_row);
 		}
 	
 	return _tableView;
 }
+
+
+function _hr(){
+	return  Titanium.UI.createView(
+		 {
+		  	backgroundImage: 'images/feed/like_hr.png',
+		  	height:2,
+		  	bottom:0,
+		  	width:'320'
+		 }
+	);
+}
+
 
 module.exports = FeedView;

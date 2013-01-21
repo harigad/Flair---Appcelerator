@@ -16,17 +16,25 @@ exports.init = function(callBack) {
 	_callBack = callBack;
 	var outer =  Titanium.UI.createView(
 		 {
-		  	width: '290',
+		  	width: '320',
 		  	height: 'auto',
 		  	top:0,
-		  	left:17.5,
+		  	left:0,
 		  	layout:'horizontal'
+		 }
+	);	
+	
+	var _grayView =  Titanium.UI.createView(
+		 {
+		  	width: '100%',
+		  	height: '50',
+		  	layout:'horizontal',backgroundColor:'#eee'
 		 }
 	);	
 	
 	var reload_btn = Ti.UI.createImageView({
   				image: 'images/reload.png',
-  				left:5
+  				left:17.5
   	});
 	var reload_label = Ti.UI.createLabel({
 			height:'60',
@@ -38,8 +46,8 @@ exports.init = function(callBack) {
     		}  				
 	});	
 	
-	outer.add(reload_btn);
-	outer.add(reload_label);
+	_grayView.add(reload_btn);
+	_grayView.add(reload_label);
 	
 	reload_btn.addEventListener('click',function(e){
 		_reloadPlaces();
@@ -54,7 +62,7 @@ exports.init = function(callBack) {
   	});
 	var cancel_label = Ti.UI.createLabel({
 			height:'60',
-		    left:125,
+		    left:135,
   			text:"cancel",
   			color:"#999",  			
   			font: {
@@ -62,7 +70,8 @@ exports.init = function(callBack) {
     		}  				
 	});	
 	
-	outer.add(cancel_label);outer.add(cancel_btn);
+	_grayView.add(cancel_label);_grayView.add(cancel_btn);
+	outer.add(_grayView);
 	
 	cancel_btn.addEventListener('click',function(e){
 		var flairWin = require('ui/common/flair/Flair');
@@ -77,8 +86,8 @@ exports.init = function(callBack) {
 		 {
 		  	width: '290',
 		  	height: 'auto',
-		  	top:0,
-		  	left:0,
+		  	top:8,
+		  	left:17.5,
 		  	layout:'horizontal'
 		 }
 	);		
@@ -99,9 +108,17 @@ function printPlaces(places){
 		len = places.length;
 	}
 	
+	var bgColor;
 	
 	for(var i=0;i<len;i++){
-		_placesView.add(_createFlairThumb(places[i],'#ddd'));	
+		
+		if(i % 2){
+		  bgColor = "#dddddd";
+	    }else{
+		  bgColor = "#eeeeee";
+	    }	
+	
+		_placesView.add(_createFlairThumb(places[i],bgColor));	
 	}	
 }
 
@@ -125,7 +142,7 @@ function _createThumb(_data,bgColor){
 		  	bottom:-2.5,
 		  	left:-2.5,
 		  	right:-2.5,
-		  	backgroundImage:'images/feed/feed_flair_shadow.png',		  	
+		  	  	
 		  	borderRadius: 4,
 		   	_data: _data	
 		 }

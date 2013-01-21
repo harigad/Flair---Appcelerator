@@ -1,7 +1,14 @@
 var portal = require('ui/common/Portal');
 exports.feedItem = function(_data, detailed, _showHR){
+	var bgColor;
+	if(_showHR % 2){
+		bgColor = "#f4f4f4";
+	}else{
+		bgColor = "#eeeeee";
+	}	
 	
-		var _tableRow = Ti.UI.createTableViewRow({height:'auto',borderColor:'#990000'});	
+	
+		var _tableRow = Ti.UI.createTableViewRow({height:Ti.UI.SIZE,backgroundColor:bgColor});	
 		_tableRow.add(addShareView(_data,detailed,_showHR));
 	
 		return _tableRow;
@@ -11,9 +18,9 @@ function _createThumb(_data,index){
 	var bgColor;
 	
 	if(index % 2){
-		bgColor = "#fff";
+		bgColor = "#f4f4f4";
 	}else{
-		bgColor = "#fff";
+		bgColor = "#eeeeee";
 	}	
 	
 	var outer =  Titanium.UI.createView(
@@ -64,7 +71,7 @@ function _createThumb(_data,index){
 	container.add(Ti.UI.createLabel({
      	left:10,
      	width:100,
-		height:'auto',
+		height:Ti.UI.SIZE,
 		color:'#aaa',
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   		text:"near " + _data.city,
@@ -87,8 +94,8 @@ function addShareView(_data,detailed,_showHR){
 		  	left:5,
 		  	top:5,
 		  	width:210,
-		  	height:'auto',
-		  	layout: 'vertical'
+            height:Ti.UI.SIZE,
+		  	layout: 'vertical',
 		 }
 	);	
 	
@@ -108,7 +115,7 @@ function addShareView(_data,detailed,_showHR){
 		  	top:7,
 		  	width:'30',height: '30',
 		  	backgroundImage:_data.photo,
-		  	borderRadius: 2, backgroundColor:'#ccc'
+		  	borderRadius: 2, backgroundColor:'#ccc',_dontUseParentEventListener:true
 		 }
 	);	
 	
@@ -120,10 +127,7 @@ function addShareView(_data,detailed,_showHR){
   			top:3 			
 	});*/
 		
-	user_photo.addEventListener('click',function(){		
-			var win = require('ui/common/userProfile/UserProfile');
-			portal.open(win.init(_data.uid,_data.name,_data.photo_big));		
-	});	
+
 	top_line.add(user_photo);	
 	
 	var name_txt = Ti.UI.createLabel({
@@ -136,14 +140,12 @@ function addShareView(_data,detailed,_showHR){
   		color:'#ccc',
   		font: {
          fontSize: 42
-    	}		
+    	},
+    	_dontUseParentEventListener:true		
 	});
 	top_line.add(name_txt);
 	
-	name_txt.addEventListener('click',function(){		
-		var win = require('ui/common/userProfile/UserProfile');
-		portal.open(win.init(_data.uid,_data.name,_data.photo_big));
-	});
+
 		
 	var flair_details = Titanium.UI.createView(
 		 {
@@ -197,7 +199,7 @@ function addShareView(_data,detailed,_showHR){
 		 {
 		  	left:0,
 		  	right:0,
-		
+		    height:Ti.UI.SIZE,
 		  	layout: 'horizontal',
 		  	_data:_data,
 		  	_title: 'container',
@@ -208,15 +210,26 @@ function addShareView(_data,detailed,_showHR){
 	
 	if(!detailed){
 		cContainer.addEventListener('click',function(e){
+		Ti.API.debug("clicked");
 			//this._cancelClick = true;
 			//this.setBackgroundColor('#fff');
-			if(e.source.toString() == "[object TiUIView]"  || e.source._userParentEventListener === true ){
+			if(!e.source._dontUseParentEventListener === true ){
 				var win = require('ui/common/userProfile/UserProfile');
+				  		var placeView = require('ui/common/place/Place');
+		         //portal.open(placeView.init(place));
 				if(_data.recipient){
-					portal.open(win.init(_data.recipient,_data.recipientname,_data.recipientphoto));
+					//
+					//portal.open(win.init(_data.recipient,_data.recipientname,_data.recipientphoto));
 				}else{
-					portal.open(win.init("pid:" + _data.pid + "|placename:" + _data.placename + "|photo:images/flairs/300/" + _data.flair + ".png",_data.recipientname,"images/flairs/300/" + _data.flair + ".png"));
+					  		var placeView = require('ui/common/place/Place');
+		                    portal.open(placeView.init({pid:_data.pid,name:_data.placename,launchRecepient:null,launchEName:_data.recepientname}));
+				//	portal.open(win.init("pid:" + _data.pid + "|placename:" + _data.placename + "|photo:images/flairs/300/" + _data.flair + ".png",_data.recipientname,"images/flairs/300/" + _data.flair + ".png"));
 				}
+			}else{
+				
+				
+			var win = require('ui/common/userProfile/UserProfile');
+			portal.open(win.init(_data.uid,_data.name,_data.photo_big));	
 			}
 		});
 
@@ -225,19 +238,6 @@ function addShareView(_data,detailed,_showHR){
 	cContainer.add(thumb);
 	cContainer.add(cRight);
 	
-	//cContainer.add(_hr());
-	
 	return cContainer;	
 }
 
-function _hr(){
-	return  Titanium.UI.createView(
-		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
-		  	backgroundRepeat: true,
-		  	height:9,
-		  	top:0,bottom:0,
-		  	width:'100%'
-		 }
-	);
-}

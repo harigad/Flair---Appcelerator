@@ -120,7 +120,6 @@ function _hr(){
 	return  Titanium.UI.createView(
 		 {
 		  	backgroundImage: 'images/feed/like_hr.png',
-		  	backgroundRepeat: true,
 		  	height:9,
 		  	top:0,bottom:0,
 		  	width:'100%'

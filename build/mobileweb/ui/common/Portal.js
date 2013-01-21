@@ -84,7 +84,7 @@ exports.init = function(){
 	var Home = require('ui/common/home/Home');
 	var home = Home.init();
 	
-	nav = Titanium.UI.iPhone.createNavigationGroup({
+	nav = Titanium.UI.mobileWeb.createNavigationGroup({
    		window: home
 	});
 

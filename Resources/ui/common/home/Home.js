@@ -3,12 +3,13 @@ var login = require('ui/common/Login');
 var wall = require('ui/common/wall/Wall');
 var flairWin = require('ui/common/flair/Flair');
 var profile = require('ui/common/userProfile/UserProfile');
+var activeThumb;
 
 exports.init = function() {
 Ti.API.debug("home init");
 
   var user = login.getUser();
-  
+  activeThumb = null;
    var main = Titanium.UI.createWindow({
     	title: 'home',    	
     	titleImage: 'images/home/logo_small.png',
@@ -17,7 +18,8 @@ Ti.API.debug("home init");
     	barImage: 'images/headerBg.jpg',
     	borderWidth:0
 	});	
-		
+	
+
 	var home = Ti.UI.createScrollView({
   		contentWidth: 'auto',
   		contentHeight: 'auto',
@@ -230,8 +232,54 @@ function _tabBar(wall,home,profile){
 	
 }
 
+function _createPlaceBg(bgColor){
+	var inner_bg =  Titanium.UI.createView(
+		 {
+		  	width: '85',
+		  	height: '85',
+		  	backgroundColor:bgColor,
+		  	borderRadius:4,
+		  	_bgColor:bgColor,bubbleParent:true
+		 }
+	);
+	
+	return inner_bg;
+	
+}
+
+function _createInnerBg(_data,bgColor){
+	
+	
+	var inner =  Titanium.UI.createView(
+		 {
+		  	width: 70,
+		  	height: 70,
+		  	backgroundImage:'images/flairs/100/' + _data.id + '.png'
+		 }
+	);
+	
+	var inner_bg =  Titanium.UI.createView(
+		 {
+		  	width: '85',
+		  	height: '85',
+		  	backgroundColor:bgColor,
+		  	borderRadius:4,
+		  	_bgColor:bgColor,
+		  	_inner:inner
+		 }
+	);
+	
+	inner_bg.add(inner);
+	
+	return inner_bg;
+	
+}
+
 
 function _createThumb(_data,bgColor){
+	
+	var _inner_bg = _createInnerBg(_data,bgColor);
+	
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: 100,
@@ -242,54 +290,32 @@ function _createThumb(_data,bgColor){
 		  	right:-2.5,
 		  	backgroundImage:'images/feed/feed_flair_shadow.png',		  	
 		  	borderRadius: 4,
-		   	_data: _data	
+		   	_data: _data,
+		   	_bgColor:bgColor,
+		   	_inner_bg:_inner_bg
 		 }
 	);	
 	
-	var inner_bg =  Titanium.UI.createView(
-		 {
-		  	width: '85',
-		  	height: '85',
-		  	backgroundColor:bgColor,
-		  	borderRadius:4
-		 }
-	);
-	
-	var inner =  Titanium.UI.createView(
-		 {
-		  	width: 70,
-		  	height: 70,
-		  	backgroundImage:'images/flairs/100/' + _data.id + '.png'
-		 }
-	);
-	
-	inner_bg.add(inner);
-	outer.add(inner_bg);
-	
-	   outer.addEventListener('touchstart',function(e){
-			this._cancelClick = false;
-			this.setOpacity(0.3);						
-		});
+	outer.add(_inner_bg);
 		
-		outer.addEventListener('touchend',function(e){
-				this.setOpacity(1);
-		});
-		
-		outer.addEventListener('touchmove',function(e){
-			this._cancelClick = true;
-			this.setOpacity(1);
-		});
-		
-	
 	return outer;
 }
+
 
 function _createFlairThumb(_data,bgColor){
 	var thumb = _createThumb(_data,bgColor);
 	
 	thumb.addEventListener('click',function(){
-		Ti.API.debug("Flair Icon Clicked " + _data.id);
-		flairWin.init(_data);
+		Ti.API.debug("Flair Icon Clicked " + _data.id);	
+		activeThumb = thumb;
+		
+		//thumb._inner_bg._inner.animate({duration:500,opacity:0},function(){
+		 flairWin.init(_data,thumb);
+		// thumb.add(newBg);
+		// newBg.animate({duration:500,view:_createInnerBg(thumb._data,thumb._bgColor),transition:Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
+		//});
+		
+		
 	});	
 	
 	return thumb;

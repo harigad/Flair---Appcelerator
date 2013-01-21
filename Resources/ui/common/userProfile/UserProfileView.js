@@ -12,7 +12,7 @@ exports.init = function(id,name,photo){
 	main = Titanium.UI.createTableView(
 				{
 		  			width: '320',
-		  			top:-2,backgroundColor:'#fff'
+		  			backgroundColor:'#eee',separatorStyle:"NONE"
 				});	
 	
 	main.userId = id;
@@ -21,7 +21,7 @@ exports.init = function(id,name,photo){
 	view = Titanium.UI.createView(
 		 {
 		  	width: '100%',
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	top:0,
 		  	layout: 'vertical'
 		 }
@@ -41,7 +41,7 @@ exports.init = function(id,name,photo){
 	});
 	view.add(photoView);
 
-	var viewRow = Titanium.UI.createTableViewRow({height:'auto'});
+	var viewRow = Titanium.UI.createTableViewRow({height:Ti.UI.SIZE});
         viewRow.add(view);
 	main.appendRow(viewRow);
 	
@@ -134,7 +134,7 @@ function printPlace(user){
 	var grayView = Titanium.UI.createView(
 		{ backgroundColor:'#333',
 		  width:'100%',
-		  height:'auto',
+		  height:Ti.UI.SIZE,
 		  layout: 'horizontal'
 		}
 	);	
@@ -144,13 +144,13 @@ function printPlace(user){
   		left: 10,
   		right:10,
   		top:10,
-  		bottom:10,width:50,height:50  		
+  		bottom:10,width:30,height:50  		
 	});	
 	grayView.add(oscar);	
 	
 	var fRow_container = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	width:250,
 		  	left:0,	
 		  	top:10,
@@ -184,7 +184,7 @@ function printPlace(user){
   	var settingsView = Titanium.UI.createView(
 		{ 
 		  width:'auto',
-		  height:'auto',
+		  height:Ti.UI.SIZE,
 		  layout: 'horizontal',
 		  left:0
 		}
@@ -258,7 +258,7 @@ function printPlace(user){
 	
 	var tip_container = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	width:250,
 		  	left:0,	
 		  	top:0,

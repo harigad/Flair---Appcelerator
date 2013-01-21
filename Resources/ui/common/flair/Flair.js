@@ -17,7 +17,11 @@ var main;
 var placesView;
 
 exports.close = function(){
-	main.close();
+	var slide_it_bottom = Titanium.UI.createAnimation();
+    slide_it_bottom.opacity = 0; // to put it back to the left side of the window
+    slide_it_bottom.duration = 300;
+
+	main.close(slide_it_bottom);
 }
 
 exports.init = function(_data) {	
@@ -25,7 +29,8 @@ exports.init = function(_data) {
 	
 	main = Ti.UI.createWindow({			
     	hideNavBar:true,
-    	backgroundColor:'#eee'
+    	backgroundColor:'transparent',
+        opacity:0
 	});
 	
 	printPlaces();	
@@ -34,7 +39,10 @@ exports.init = function(_data) {
 function printPlaces(){
 	placesView = places.init(_startFlair);
 	main.add(placesView);
-	main.open();
+	var slide_it_top = Titanium.UI.createAnimation();
+    slide_it_top.opacity = 1; // to put it back to the left side of the window
+    slide_it_top.duration = 300;
+	main.open(slide_it_top);
 }
 
 function _startFlair(_data){
