@@ -30,8 +30,7 @@ function _createThumb(_data,index){
 		  	top:8,
 		  	bottom:0,
 		  	left:5,
-		  	right:0,		  
-		   	backgroundImage:'images/feed/feed_flair_shadow.png',
+		  	right:0,
 		   	_data: _data
 		   	
 		 }
@@ -210,26 +209,14 @@ function addShareView(_data,detailed,_showHR){
 	
 	if(!detailed){
 		cContainer.addEventListener('click',function(e){
-		Ti.API.debug("clicked");
-			//this._cancelClick = true;
-			//this.setBackgroundColor('#fff');
-			if(!e.source._dontUseParentEventListener === true ){
+			
+		    if(!e.source._dontUseParentEventListener === true ){
 				var win = require('ui/common/userProfile/UserProfile');
-				  		var placeView = require('ui/common/place/Place');
-		         //portal.open(placeView.init(place));
-				if(_data.recipient){
-					//
-					//portal.open(win.init(_data.recipient,_data.recipientname,_data.recipientphoto));
+				  		  var placeView = require('ui/common/place/Place');
+		                  portal.open(placeView.init({vicinity:_data.vicinity,lat:_data.lat,lng:_data.lng,pid:_data.pid,name:_data.placename,launchRecepient:_data.recipient,launchEName:_data.recepientname}));
 				}else{
-					  		var placeView = require('ui/common/place/Place');
-		                    portal.open(placeView.init({pid:_data.pid,name:_data.placename,launchRecepient:null,launchEName:_data.recepientname}));
-				//	portal.open(win.init("pid:" + _data.pid + "|placename:" + _data.placename + "|photo:images/flairs/300/" + _data.flair + ".png",_data.recipientname,"images/flairs/300/" + _data.flair + ".png"));
-				}
-			}else{
-				
-				
-			var win = require('ui/common/userProfile/UserProfile');
-			portal.open(win.init(_data.uid,_data.name,_data.photo_big));	
+				var win = require('ui/common/userProfile/UserProfile');
+			              portal.open(win.init(_data.uid,_data.name,_data.photo_big));	
 			}
 		});
 

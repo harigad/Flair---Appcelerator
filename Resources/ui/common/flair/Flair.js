@@ -16,6 +16,7 @@ var _search = require('ui/common/flair/Search');
 var main;
 var placesView;
 
+
 exports.close = function(){
 	var slide_it_bottom = Titanium.UI.createAnimation();
     slide_it_bottom.opacity = 0; // to put it back to the left side of the window

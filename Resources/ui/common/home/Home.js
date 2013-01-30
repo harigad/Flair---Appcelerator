@@ -57,7 +57,7 @@ Ti.API.debug("home init");
 		});
 	var friends = _createThumb({"id":"friends","photo":""},'#ddd');
 		friends.addEventListener('click',function(e){
-			portal.open(friendsWin);
+			portal.open(nearbyWin);
 		});
 	var me = _createThumb({"id":"me","photo":""},'#eee');
 		me.addEventListener('click',function(e){

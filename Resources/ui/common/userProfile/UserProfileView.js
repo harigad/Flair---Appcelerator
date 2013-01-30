@@ -3,8 +3,20 @@ var user;
 var grayV;
 var photoView;
 var main;
+var placeViewTopLayer;
 var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
+
+function _hr(){
+	return  Titanium.UI.createView(
+		 {
+		  	backgroundImage: 'images/feed/like_hr.png',
+		  	height:2,
+		  	bottom:0,
+		  	width:'320'
+		 }
+	);
+}
 
 exports.init = function(id,name,photo){
 	var t = {x:0,y:60};
@@ -17,7 +29,7 @@ exports.init = function(id,name,photo){
 	
 	main.userId = id;
 	main.userName = name;
-		
+	
 	view = Titanium.UI.createView(
 		 {
 		  	width: '100%',
@@ -38,11 +50,42 @@ exports.init = function(id,name,photo){
   		image: photo,
   		width:320,height:200,
   		top:0,backgroundColor:'#000'
-	});
+	});	
+	
+    
+    var descLayer = Titanium.UI.createView({
+    	top:0,height:Ti.UI.FILL,width:'320',
+    	backgroundImage:'images/map_shade.png'
+    });
+    
+    placeViewTopLayer = Titanium.UI.createView(
+		 {
+		 	bottom:'10',
+		  	height: Ti.UI.SIZE,width:'320',bubbleParent:true,
+		  	layout:'vertical'
+		 }
+	);	
+	var nameLabel = Ti.UI.createLabel({
+  		left:10,
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,shadowColor:'#333333',
+  		color: '#fff',
+  		text: name,
+  			font: {
+         		fontSize:26,fontWeight:'bold'
+    		}
+  		});  
+  		
+	placeViewTopLayer.add(nameLabel);
+    descLayer.add(placeViewTopLayer);
+    photoView.add(descLayer);
+    
 	view.add(photoView);
-
+	    
 	var viewRow = Titanium.UI.createTableViewRow({height:Ti.UI.SIZE});
+
         viewRow.add(view);
+        viewRow.add(_hr());
 	main.appendRow(viewRow);
 	
 	main.contentScreen = view;
@@ -101,7 +144,7 @@ function printDetails(_refresh){
 		
 	if(user.getPlace() || user.isAdmin()){
 		grayV = printPlace(user);	
-		view.add(grayV);
+		placeViewTopLayer.add(grayV);
 	}
 	
 	if(user.getId()){
@@ -132,7 +175,7 @@ function printPlace(user){
 	var place = user.getPlace();
 	
 	var grayView = Titanium.UI.createView(
-		{ backgroundColor:'#333',
+		{
 		  width:'100%',
 		  height:Ti.UI.SIZE,
 		  layout: 'horizontal'
@@ -146,15 +189,15 @@ function printPlace(user){
   		top:10,
   		bottom:10,width:30,height:50  		
 	});	
-	grayView.add(oscar);	
+	//grayView.add(oscar);	
 	
 	var fRow_container = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
 		  	width:250,
-		  	left:0,	
-		  	top:10,
-		  	bottom:10,
+		  	left:10,	
+		  	top:0,
+		  	bottom:0,
 		  	layout:'vertical'
 		 }
 	);
@@ -166,7 +209,7 @@ function printPlace(user){
   		color: '#eee',  	
   		text: place.role,
   			font: {
-         		fontSize: 16
+         		fontSize: 14
     		}
   	});  
   	var roleName = Ti.UI.createLabel({
@@ -177,7 +220,7 @@ function printPlace(user){
   		shadowOffset: {x:1, y:1},
   		text: place.name,
   			font: {
-         		fontSize: 25
+         		fontSize: 18
     		}
   	}); 
   	
@@ -390,10 +433,10 @@ function printPlace(user){
 	var addName = Ti.UI.createLabel({
   		left:0,
   		width:'auto',
-  		color: '#eee',
-  		text: "ADD NEW",
+  		color: '#aaa',
+  		text: "(add new)",
   			font: {
-         		fontSize: 16
+         		fontSize: 14
     		}
   	});  
   	var roleName = Ti.UI.createLabel({
@@ -402,11 +445,11 @@ function printPlace(user){
   		color: '#2179ca',
   		text: "Restaurant/Cafe",
   			font: {
-         		fontSize: 25
+         		fontSize: 18
     		}
   	});    	
-  	fRow_container.add(addName);
-  	fRow_container.add(roleName);
+  	
+  	fRow_container.add(roleName);fRow_container.add(addName);
 		
 		fRow_container.addEventListener("click",function(){
 			var searchPlace= require('ui/common/userProfile/SearchPlace');

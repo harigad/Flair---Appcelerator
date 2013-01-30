@@ -4,7 +4,7 @@ exports.init = function(_data) {
 
 	var main = Ti.UI.createWindow({			
     	hideNavBar:true,modal:true,
-    	backgroundColor:'#fff'
+    	backgroundColor:'#eee'
 	});
 
 	var outer =  Titanium.UI.createView(
@@ -56,7 +56,7 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
   		text:_name,
   		wordWrap:false,
   		color:_bgColor,
-  		top:16,
+  		top:25,
   		font: {
          fontSize: 30,
          fontWeight: 'bold'
@@ -120,12 +120,9 @@ function _hr(){
 	return  Titanium.UI.createView(
 		 {
 		  	backgroundImage: 'images/feed/like_hr.png',
-		  	height:9,
-		  	top:0,bottom:0,
-		  	width:'100%'
+		  	height:2,
+		  	bottom:0,
+		  	width:'320'
 		 }
 	);
 }
-
-
-

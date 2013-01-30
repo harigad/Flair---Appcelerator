@@ -1,134 +1,167 @@
 var _lat;
 var _lng;
 var portal = require('ui/common/Portal');
+var view;
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
-	 	
-    	barColor:'#333',
+	   	barColor:'#333',
     	backgroundColor: '#eee' 	
 	});
 	
 	loadData(_data);
-
-	return main;
-}
-
-function print(_place){
-	var view = Titanium.UI.createView(
+	
+	var scrollView = Ti.UI.createScrollView({
+  		contentWidth: 'auto',
+  		contentHeight: 'auto',
+  		showVerticalScrollIndicator: false,
+  		showHorizontalScrollIndicator: false,
+  		width: 320,
+  		top:0
+	});
+	
+	view = Titanium.UI.createView(
 		 {
-		  	height: '500',
+		 	top:'0',
+		 	height:Ti.UI.SIZE,
 		  	layout: 'vertical'
 		 }
 	);	
-	main.add(view);
 	
-	var addrView = Titanium.UI.createView(
+	
+	var mapView = Titanium.Map.createView({
+    mapType: Titanium.Map.STANDARD_TYPE,
+    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.005, longitudeDelta:0.005},
+    animate:true,
+    regionFit:true,
+    userLocation:true
+    
+   });
+	
+   var mapViewCont = Titanium.UI.createView(
 		 {
-		  	height: '25',
-		  	width:'100%',
-		  	left:0,	
-		  	top:0,
-		  	backgroundColor:'#666'
+		 	top:'0',
+		  	height: '120'
 		 }
-	);
+	);	
+	
+   var mapDesc = Titanium.UI.createView(
+		 {
+		 	top:'0',
+		  	height: '120',width:'320',bubbleParent:true,
+		  	backgroundImage:'images/map_shade.png',layout:'vertical'
+		 }
+	);	
+	var nameLabel = Ti.UI.createLabel({
+  		left:10,
+        top:'55',
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,shadowColor:'#333333',
+  		color: '#fff',
+  		text: _data.name,
+  			font: {
+         		fontSize: 16,fontWeight:'bold'
+    		}
+  		});  
+	mapDesc.add(nameLabel);
 	
 	var addrLabel = Ti.UI.createLabel({
   		left:10,
-  		top:5,
-  		bottom:5,
-  		width:'auto',
-  		height:'auto',
+    	width:'150',
+  		height:Ti.UI.SIZE,
   		color: '#fff',
-  		text: _place.city,
+  		text: _data.vicinity,
   			font: {
-         		fontSize: 11
+         		fontSize: 14
     		}
   		});  
-  		
-  	addrView.add(addrLabel);  	
-	view.add(addrView);  	
+	mapDesc.add(addrLabel);
 	
-	_lat = parseFloat(_place.lat);
-	_lng = parseFloat(_place.lng);
-	if(_lat && _lng){
-		//do nothing
-	}else{
-		_lat = 0.02;
-		_lng = 0.08;
-	}	
+	mapViewCont.add(mapView);
+	mapView.add(mapDesc);
+    view.add(mapViewCont);
+    
+    var bar = Titanium.UI.createView(
+		 {
+		  	height:'40',width:'320',
+		  	backgroundColor:'#999'
+		  	
+		 }
+	);
+    var bb1 = Titanium.UI.iOS.createTabbedBar({
+    labels:[{enabled:true,title:'cast'}, {enabled:true,title:'menu'}],
+    backgroundColor:'#999',
+    top:5,
+    style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
+    height:30,
+    width:280,
+    _view:view
+    });
+    bar.add(bb1);
+
+	view.add(bar);
+    
+    scrollView.add(view);
+    main.add(scrollView);
+        
+	return main;
+}
+
+function print_food(_place){
 	
-	/*mapView = Titanium.Map.createView({
-    	mapType: Titanium.Map.STANDARD_TYPE,
-    	width:320,
-    	height:100,
-    	top:0,
-    	region:{latitude:_lat, longitude:_lng, latitudeDelta:0.001, longitudeDelta:0.001},
-    	animate:true
-	});
-	//view.add(mapView);*/
-	
-	if(_place.feed){
-		var FeedView = require('ui/common/feed/FeedView');
-		var feed = new FeedView(_place.feed);
-		view.add(feed);
-	}
 	
 }
 
 function print_cast(_place){
-	var view = Titanium.UI.createView(
+	var leftView = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	layout: 'vertical'
 		 }
 	);	
-	main.add(view);
 	
-	for(var i=0;i<_place.cast.length;i++){	
+	view.add(leftView);
+
+    Ti.API.debug("places.cast length " + _place.cast.length);
+
+    for(var i=0;i<_place.cast.length;i++){	
 		var row = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	width:'100%',
 		  	left:0,	
 		  	top:0,
-		  	layout:'vertical'
+		  	layout:'horizontal'
 		 }
 		);
 		
-		var thumb = Ti.UI.createImageView({
-  			image: _place.cast[i].photo_big,
-  			width: '100%'		
-		});	
+		var thumb = _createThumb({},"#dedede");
 		
 		var titleView = Titanium.UI.createView(
 		 {
-		  	height: 'auto',
-		  	width:'100%',
+		  	height: Ti.UI.SIZE,
+		  	width:'180',
 		  	left:0,	
 		  	top:0,
-		  	backgroundColor:'#eee',
 		  	layout:'vertical'
 		 }
 		);
 		
 		var placeName = Ti.UI.createLabel({
-  		left:10,top:10,
-  		width:'auto',
-  		color: '#999',
+  		left:0,top:10,
+  		width:Ti.UI.FILL,
+  		color: '#aaa',
   		text: _place.cast[i].name,
   			font: {
-         		fontSize: 16
+         		fontSize: 42
     		}
   		});  
   		var roleName = Ti.UI.createLabel({
-  		left:10,bottom:10,
-  		width:'auto',
+  		left:0,bottom:10,
+  		width:Ti.UI.FILL,
   		color: '#2179ca',
-  		shadowColor: '#aaa',
-  		shadowOffset: {x:1, y:1},
   		text: _place.cast[i].role_name,
   			font: {
-         		fontSize: 25
+         		fontSize: 20
     		}
   		});
 		
@@ -136,19 +169,36 @@ function print_cast(_place){
   		titleView.add(placeName);
   		titleView.add(roleName);
   			  
-  	row.add(thumb);	
-  	row.add(titleView);  	
-  	view.add(row);
+  	row.add(thumb);
+  	row.add(titleView);  
+  		
+  	leftView.add(row);
+  	leftView.add(_hr());
   	
 	}
+	
+	var remainder = (3 - _place.cast.length);
+	for(var i=0;i<remainder;i++){
+		var row = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width:'100%',
+		  	left:0,	
+		  	top:0,
+		  	layout:'horizontal'
+		 }
+		);
+		
+		row.add(_createThumb({},''));
+		leftView.add(row);
+		leftView.add(_hr());
+	}
+	
+	
 }
 
 function loadData(_data){
 		var that = this;
-		if(_data.lat && _data.lng){
-			print(_data,sview);
-			return;
-		}		
 
 		var url = "http://flair.me/search.php";
 		var _dataStr = {};
@@ -159,10 +209,10 @@ function loadData(_data){
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	 Ti.API.debug('loaded data for Place -> ' + _data.pid);
-     	 var _feed = JSON.parse(this.responseText);  
-     	 print(_feed);
-     	 //print_cast(_feed,sview2);   	 
+     	 Ti.API.debug(JSON.stringify(this.responseText));
+     	 var _place = JSON.parse(this.responseText);  
+     	 print_food(_place);
+     	 print_cast(_place);   	 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for Place -> ' + _data.pid);
@@ -176,3 +226,41 @@ function loadData(_data){
  	// Send the request.
  		client.send(_dataStr);	
 }
+
+function _createThumb(_data,_bgColor){
+	
+	
+	var outer =  Titanium.UI.createView(
+		 {
+		  	width: 120,
+		  	height: 120,
+		   	_data: _data
+		   	
+		 }
+	);
+	
+	var inner_bg =  Titanium.UI.createView(
+		 {
+		  	width: '100',
+		  	height: '100',
+		  	borderRadius:4,backgroundColor:_bgColor
+		 }
+	);
+	
+	outer.add(inner_bg);	
+	
+	return outer;
+
+}
+
+function _hr(){
+	return  Titanium.UI.createView(
+		 {
+		  	backgroundImage: 'images/feed/like_hr.png',
+		  	height:2,
+		  	bottom:0,
+		  	width:'320'
+		 }
+	);
+}
+
