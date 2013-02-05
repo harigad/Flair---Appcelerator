@@ -7,12 +7,12 @@
 #define _QUOTEME(x) #x
 #define STRING(x) _QUOTEME(x)
 
-NSString * const TI_APPLICATION_DEPLOYTYPE = @"development";
+NSString * const TI_APPLICATION_DEPLOYTYPE = @"test";
 NSString * const TI_APPLICATION_ID = @"2V8VB59376.com.flair.flair11";
 NSString * const TI_APPLICATION_PUBLISHER = @"HGadiraju";
 NSString * const TI_APPLICATION_URL = @"http://flair.me";
 NSString * const TI_APPLICATION_NAME = @"Flair";
-NSString * const TI_APPLICATION_VERSION = @"1.0";
+NSString * const TI_APPLICATION_VERSION = @"1.0.1360040460912";
 NSString * const TI_APPLICATION_DESCRIPTION = @"not specified";
 NSString * const TI_APPLICATION_COPYRIGHT = @"2012 by ivc1215adm";
 NSString * const TI_APPLICATION_GUID = @"25b8bd5f-fad5-4336-9119-e4bbf0ed080b";

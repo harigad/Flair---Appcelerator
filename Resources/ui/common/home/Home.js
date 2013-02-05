@@ -39,7 +39,7 @@ Ti.API.debug("home init");
 	var homeMenu = Titanium.UI.createView(
 		 {
 		  	width: '290',
-		  	height: 'auto',
+		  	height: Ti.UI.SIZE,
 		  	top:15,
 		  	layout: 'horizontal'
 		 }
@@ -69,88 +69,26 @@ Ti.API.debug("home init");
 	homeMenu.add(me);
 //Print Icons
 	
-	var row_2 = home_row(_createFlairThumb({"id":1,"photo":""},'#ddd'),
-	_createFlairThumb({"id":2,"photo":""},'#eee'),
-	_createFlairThumb({"id":3,"photo":""},'#ddd'),
-	homeMenu,
-	290
-	);
 	
-	var row_3 = home_row(_createFlairThumb({"id":7,"photo":""},'#eee'),
-	_createFlairThumb({"id":8,"photo":""},'#ddd'),
-	_createFlairThumb({"id":9,"photo":""},'#eee'),
-	row_2._container,
-	192
-	);
+	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#ddd'));
+	homeMenu.add(_createFlairThumb({"id":2,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":3,"photo":""},'#ddd'));
 	
-	var row_4 = home_row(_createFlairThumb({"id":4,"photo":""},'#ddd'),
-	_createFlairThumb({"id":5,"photo":""},'#eee'),
-	_createFlairThumb({"id":6,"photo":""},'#ddd'),
-	row_3._container,
-	94
-	);
-	
-	row_3._container.add(Titanium.UI.createView(
-		 {
-		  	width: '290',
-		  	height: '2',
-		 }
-	));
-
-/*	homeMenu.add(_createFlairThumb({"id":7,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":7,"photo":""},'#eee'));
 	homeMenu.add(_createFlairThumb({"id":8,"photo":""},'#ddd'));
 	homeMenu.add(_createFlairThumb({"id":9,"photo":""},'#eee'));
 	
 	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#ddd'));
 	homeMenu.add(_createFlairThumb({"id":5,"photo":""},'#eee'));
-	homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#ddd'));
-*/	
+    homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#ddd'));
+
+	
 	home.add(homeMenu);	
 	
 	main.add(home);
 		
 	return main;
 }
-
-function home_row(item1,item2,item3,parentScroll,_height){
-	var homeMenu_one = Titanium.UI.createView(
-		 {
-		  	width: '290',
-		  	height: 'auto',
-		  	top:0,
-		  	layout: 'horizontal'
-		 }
-	);	
-	
-	homeMenu_one.add(item1);
-	homeMenu_one.add(item2);
-	homeMenu_one.add(item3);
-	
-	var home_one = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 290,
-  		top:0,
-  		left:0,
-  		height:_height,
-  		_container: homeMenu_one
-	});
-	
-	
-	home_one.addEventListener("scrollEnd", function(){
-		Ti.API.debug("scrollend");
-		this.scrollTo(0,0);
-	});
-	
-	home_one.add(homeMenu_one);
-	
-	parentScroll.add(home_one);
-	
-	return home_one;
-}
-
 
 
 

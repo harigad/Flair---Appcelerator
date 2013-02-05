@@ -31,6 +31,11 @@ function init(){
     	hideNavBar: true 	
 	});
 	
+	main.addEventListener("focus",function(e){
+		Ti.API.debug("main opened");
+		_txtField.focus();
+	});
+	
 	var main_view = Titanium.UI.createView(
 	{
 		  	width: '100%',
@@ -41,9 +46,7 @@ function init(){
 	main.add(main_view);
 		
 	main_view.add(_form());	
-	
-	
-	
+		
 	var scrollView = Ti.UI.createScrollView({
   		contentWidth: 'auto',
   		contentHeight: 'auto',
@@ -64,8 +67,9 @@ function init(){
 	_show_tip();
 
 	initialize();	
+	
+	
 }	
-
 
 function initialize(){
 	if(user.getPlace().code){
@@ -75,9 +79,6 @@ function initialize(){
 		main.open();	
 	}
 }
-
-
-
 
 function _show_tip(){
 	clear(results_view);	
@@ -92,8 +93,6 @@ function _show_tip(){
 	
 	results_view.add(tip);	
 }
-
-
 
 function _form(){
 		var _container = Titanium.UI.createView(
@@ -153,7 +152,7 @@ function _form(){
   		width:280,
   		top:0,bottom:0,height:40,
   		backgroundColor:'#fff',
-  		hintText:'zipcode',
+  		hintText:'city, state',
   		returnKeyType:Titanium.UI.RETURNKEY_NEXT,
   		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_NONE,
   		font: {
@@ -185,8 +184,8 @@ function _search(){
     				ok: 'Okay',
     				title: 'Oops!'
   		});
-  		dialog.show();  	
-		return;
+  		//dialog.show();  	
+		//return;
 	}
 	
 	var that = this;
@@ -194,16 +193,16 @@ function _search(){
 	var url = "http://flair.me/search.php";	
 	var _data = {type:"search",searchMode:"place",search:_txt,city:_zipcode,accessToken:Ti.Facebook.getAccessToken()};
 		
-	Ti.API.debug("User.load sending data " + _data);
-	
- 	 	clear(results_view);
+	clear(results_view);
+ 	
+ 	Ti.API.debug("User.load sending data " + JSON.stringify(_data)); 	
  	 	
- 	var client = Ti.Network.createHTTPClient({ 		
+ 	 var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
- 	 	
+ 	 Ti.API.debug("places search returned " + this.responseText);
  	 var _response = JSON.parse(this.responseText);
  	 var _tableData = [];
- 	  
+ 	 	  
      for(var x =0;x<_response.length;x++){
         	
        var _cRow = Titanium.UI.createTableViewRow();
@@ -213,14 +212,14 @@ function _search(){
 		  	right:0,
 		  	top:0,bottom:0,
 		  	width:'100%',
-		  	height:'50',
+		  	height:Ti.UI.SIZE,
 		  	layout:'vertical',
 		  	_data: _response[x]
 		 }
 	);	
 	
   	var _txt = Ti.UI.createLabel({
-  		left:20,
+  		left:20,top:5,
      	height:'auto',
      	width: 'auto',
 		color:'#2179ca',
@@ -232,13 +231,13 @@ function _search(){
   	_c.add(_txt);
 	
 	var _vicinity = Ti.UI.createLabel({
-  		left:20,
+  		left:20,bottom:5,
      	height:'auto',
      	width: 'auto',
 		color:'#666',
   		text:_response[x].vicinity,
   		font: {
-         fontSize: 12
+         fontSize: 11
     	}
 	});
   	_c.add(_vicinity);

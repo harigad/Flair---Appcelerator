@@ -84,7 +84,7 @@ function _startFlair(_data){
 	
 	main.add(outer);
 	
-
+    	_textField.focus();
 }
 
 function _update(_textField){
@@ -445,6 +445,8 @@ function _top(_data){
 		Ti.API.debug("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
 		_textField.focus();	
 	});
+	
+
 	
 	return cContainer;	
 }

@@ -69,7 +69,7 @@ function _build(_data){
 	
 	var _code_label = Ti.UI.createLabel({
 		top:10,
-  		width:'auto',
+  		width:Ti.UI.SIZE,
   		color: '#2179ca',
   		text: " " + _place.code,
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,	
@@ -83,7 +83,7 @@ function _build(_data){
 	var _tip_label = Ti.UI.createLabel({
 		top:10,
 		left:10,
-		right:10,
+		right:10,width:300,
   		color: '#333',  		
   		text: "Dial 1-866-291-9993 from the landline @ the " + _place.name + "</b> and enter the above verification code.",
   			font: {
@@ -95,8 +95,8 @@ function _build(_data){
 	
 	var _save_btn = Titanium.UI.createView(
 		 {
-		  	width: 'auto',
-		  	height: 'auto',
+		  	width: 300,
+		  	height: 60 ,
 		  	top:20,left:10,
 		  	layout: 'horizontal',
 		  	borderRadius:4,
@@ -123,8 +123,8 @@ function _build(_data){
 	
 	var _delete_btn = Titanium.UI.createView(
 		 {
-		  	width: 'auto',
-		  	height: 'auto',
+		  	width: 300,
+		  	height: 60,
 		  	top:10,
 		  	left:10,
 		  	layout: 'horizontal',

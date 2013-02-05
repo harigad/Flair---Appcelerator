@@ -10,7 +10,7 @@ exports.init = function(_type){
 	var main = Titanium.UI.createWindow({
     	title: name,    	
     	barColor:'#333',
-    	backgroundColor: '#eeeeee'
+    	backgroundColor: '#eee'
 	});
 
 	loadData(_type,main);

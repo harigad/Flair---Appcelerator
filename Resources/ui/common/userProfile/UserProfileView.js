@@ -30,6 +30,15 @@ exports.init = function(id,name,photo){
 	main.userId = id;
 	main.userName = name;
 	
+	var upperView = Titanium.UI.createView(
+		 {
+		  	width: '100%',
+		  	height: Ti.UI.SIZE,
+		  	top:0,
+		  	layout: 'vertical'
+		 }
+	);
+	
 	view = Titanium.UI.createView(
 		 {
 		  	width: '100%',
@@ -80,12 +89,14 @@ exports.init = function(id,name,photo){
     descLayer.add(placeViewTopLayer);
     photoView.add(descLayer);
     
-	view.add(photoView);
+	upperView.add(photoView);
+	//Will activate tabs for the user at a later time
+	//view.add(tabbedBar());
 	    
 	var viewRow = Titanium.UI.createTableViewRow({height:Ti.UI.SIZE});
-
-        viewRow.add(view);
-        viewRow.add(_hr());
+        viewRow.add(upperView);
+        upperView.add(_hr());
+        upperView.add(view);
 	main.appendRow(viewRow);
 	
 	main.contentScreen = view;
@@ -95,6 +106,46 @@ exports.init = function(id,name,photo){
 	return main;
 }
 
+function tabbedBar(){
+	  
+    var bar_container = Titanium.UI.createView(
+		 {
+		  	height:'40',width:'320',
+		  	backgroundColor:'#999'
+		  	
+		 }
+	);
+	
+	var _tabViews = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width: Ti.UI.FILL
+		 }
+	);	
+	
+    var bar = Titanium.UI.iOS.createTabbedBar({
+    labels:[{enabled:true,title:'cast'}, {enabled:true,title:'menu'}],
+    backgroundColor:'#999',
+    style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
+    height:30,
+    width:280,
+    _tabViews:_tabViews,
+    index:0
+    });
+    bar_container.add(bar);
+    
+    bar.addEventListener("click",function(e){
+    	if(e.index === 0){
+    		this._tabViews._foodView.hide();
+    		this._tabViews._castView.show();
+     	}else{
+    		this._tabViews._castView.hide();
+    		this._tabViews._foodView.show();
+    	}
+    });
+
+   return bar_container;
+}
 
 
 function loadUser(id,main){
@@ -137,6 +188,7 @@ exports.refresh = function(){
 }
 
 function printDetails(_refresh){
+	clearView(true);
 	Ti.API.debug("UserProfile.printDetails");	
 	photoView.setImage(user.getPhotoBig());
 	
@@ -169,6 +221,61 @@ function userHasNotClaimed(){
 	
   	return container;
 }
+
+
+function activation_code(user){
+
+	var place = user.getPlace();
+		
+	var fRow_container = Ti.UI.createView({
+		height:Ti.UI.SIZE,left:10,right:10,top:10,
+		backgroundColor:'#fff',borderRadius:4,borderWidth:0.5,borderColor:'#ddd',
+		layout:'vertical'
+	});
+	
+	
+  	var roleName = Ti.UI.createLabel({
+  		left:10,right:10,top:10,
+  		color: '#666',
+  		text: "Verification Code : " + place.code,
+  			font: {
+         		fontSize: 20
+    		}
+  	});
+  	
+  	fRow_container.add(roleName);
+	
+	var tip_container = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	left:0,	
+		  	top:0,
+		  	layout:'horizontal'
+		 }
+	);
+	fRow_container.add(tip_container);
+	
+  	var tip_text = Ti.UI.createLabel({
+  		left:10,right:10,bottom:10,
+  		color: '#2179ca',
+  		text: "Please call 1-866-291-9993 from this " + place.name + " and enter your verification code.",
+  			font: {
+         		fontSize: 14
+    		}
+  	}); 	
+  	tip_container.add(tip_text);
+  	
+  	
+		fRow_container.addEventListener("click",function(){
+			var searchPlace= require('ui/common/userProfile/SearchPlace');
+  			searchPlace.launch();
+		});	
+		
+		return fRow_container;
+		
+}
+
+
 
 
 function printPlace(user){
@@ -276,157 +383,8 @@ function printPlace(user){
   	fRow_container.add(settingsView);
   	
 	}else if(place && place.code){
-	var addName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#eee',
-  		wordWrap: false,
-  		text: place.name + " - " + place.vicinity,
-  			font: {
-         		fontSize: 14
-    		}
-  	});  
-  	var roleName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#2179ca',
-  		text: "Activation Code : " + place.code,
-  			font: {
-         		fontSize: 18
-    		}
-  	});
-  	fRow_container.add(roleName);
-	fRow_container.add(addName);
-	
-	
-	var tip_container = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	width:250,
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
-		 }
-	);
-	fRow_container.add(tip_container);
-	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "Dial ",
-  			font: {
-         		fontSize: 14
-    		}
-  	}); 	
-  	tip_container.add(tip_text);
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "1-866-291-9993",
-  			font: {
-         		fontSize: 14,
-         		fontWeight: 'bold'
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "from the",
-  			font: {
-         		fontSize: 14
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "landline",
-  			font: {
-         		fontSize: 14,
-         		fontWeight: 'bold'
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "@ the",
-  			font: {
-         		fontSize: 14,
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: place.name,
-  			font: {
-         		fontSize: 14,
-         		fontWeight: 'bold'
-       	}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "and enter",
-  			font: {
-         		fontSize: 14,
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		right:5,
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "the above",
-  			font: {
-         		fontSize: 14,
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-  	var tip_text = Ti.UI.createLabel({
-  		top:3,
-  		width:'auto',
-  		color: '#eee',
-  		text: "verification code.",
-  			font: {
-         		fontSize: 14,
-    		}
-  	});
-  	tip_container.add(tip_text);
-  	
-		fRow_container.addEventListener("click",function(){
-			var searchPlace= require('ui/common/userProfile/SearchPlace');
-  			searchPlace.launch();
-		});	
 		
-		
+	view.add(activation_code(user));
 		
 	}else if(!place && user.isAdmin()){
 	

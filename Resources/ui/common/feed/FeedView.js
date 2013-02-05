@@ -8,7 +8,7 @@ function FeedView(feed_data,_tableView) {
 			_tableView = Titanium.UI.createTableView(
 				{
 		  			width: '320',
-		  			separatorStyle:"NONE",backgroundColor:'#eeeeee'
+		  			separatorStyle:"NONE",backgroundColor:'#eee'
 				});	
 		}
 
@@ -16,9 +16,6 @@ function FeedView(feed_data,_tableView) {
 		
 	    for (var i=0; i<feed_data.length; i++){
 	    	var _row = feed.feedItem(feed_data[i],null,i);		
-	    	if(i<feed_data.length-1){
-	    		_row.add(_hr());
-			}
 		    _tableView.appendRow(_row);
 		}
 	

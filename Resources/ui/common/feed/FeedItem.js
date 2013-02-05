@@ -8,45 +8,17 @@ exports.feedItem = function(_data, detailed, _showHR){
 	}	
 	
 	
-		var _tableRow = Ti.UI.createTableViewRow({height:Ti.UI.SIZE,backgroundColor:bgColor});	
+		var _tableRow = Ti.UI.createTableViewRow({height:Ti.UI.SIZE});	
 		_tableRow.add(addShareView(_data,detailed,_showHR));
 	
 		return _tableRow;
 }
 
 function _createThumb(_data,index){
-	var bgColor;
-	
-	if(index % 2){
-		bgColor = "#f4f4f4";
-	}else{
-		bgColor = "#eeeeee";
-	}	
-	
-	var outer =  Titanium.UI.createView(
-		 {
-		  	width: 100,
-		  	height: 100,
-		  	top:8,
-		  	bottom:0,
-		  	left:5,
-		  	right:0,
-		   	_data: _data
-		   	
-		 }
-	);
-	
-	var inner_bg =  Titanium.UI.createView(
-		 {
-		  	width: '85',
-		  	height: '85',
-		  	backgroundColor: bgColor,
-		  	borderRadius:4
-		 }
-	);
 	
 	var inner =  Titanium.UI.createView(
 		 {
+		 	left:10,right:10,top:10,
 		  	width: 70,
 		  	height: 70,
 		  	backgroundImage:'images/flairs/100/' + _data.flair + '.png'  	
@@ -54,22 +26,19 @@ function _createThumb(_data,index){
 		 }
 	);	
 	
-	inner_bg.add(inner);	
-	outer.add(inner_bg);	
-	
 	var container = Titanium.UI.createView(
 		 {
 		 	top:0,
-			width:105,
-		  	height:'135',
+			width:80,
+		  	height:Ti.UI.SIZE,
 		  	layout: 'vertical'
 		 }
 	);
 	
-	container.add(outer);
+	container.add(inner);
 	container.add(Ti.UI.createLabel({
      	left:10,
-     	width:100,
+     	width:70,
 		height:Ti.UI.SIZE,
 		color:'#aaa',
 		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
@@ -196,8 +165,8 @@ function addShareView(_data,detailed,_showHR){
 	
 	var cContainer = Titanium.UI.createView(
 		 {
-		  	left:0,
-		  	right:0,
+		  	left:10,
+		  	right:10,top:10,backgroundColor:'#fff',borderRadius:4,borderWidth:0.5,borderColor:'#ddd',
 		    height:Ti.UI.SIZE,
 		  	layout: 'horizontal',
 		  	_data:_data,
@@ -206,6 +175,17 @@ function addShareView(_data,detailed,_showHR){
 		  	_flair_details: flair_details
 		 }
 	);
+	
+	var foodImage = Titanium.UI.createView(
+		 {
+		  	left:10,
+		  	right:10,backgroundColor:'#dedede',borderRadius:4,top:10,
+		  	width:280,
+		    height:80
+		 }
+	);
+	
+	cContainer.add(foodImage);
 	
 	if(!detailed){
 		cContainer.addEventListener('click',function(e){
@@ -225,6 +205,6 @@ function addShareView(_data,detailed,_showHR){
 	cContainer.add(thumb);
 	cContainer.add(cRight);
 	
-	return cContainer;	
+	return cContainer;
 }
 

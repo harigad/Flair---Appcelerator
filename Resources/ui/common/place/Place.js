@@ -2,6 +2,7 @@ var _lat;
 var _lng;
 var portal = require('ui/common/Portal');
 var view;
+var _tabViews;
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
 	   	barColor:'#333',
@@ -80,25 +81,45 @@ exports.init = function(_data){
 	mapView.add(mapDesc);
     view.add(mapViewCont);
     
-    var bar = Titanium.UI.createView(
+    var bar_container = Titanium.UI.createView(
 		 {
 		  	height:'40',width:'320',
 		  	backgroundColor:'#999'
 		  	
 		 }
 	);
-    var bb1 = Titanium.UI.iOS.createTabbedBar({
+	
+	_tabViews = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width: Ti.UI.FILL
+		 }
+	);	
+	
+    var bar = Titanium.UI.iOS.createTabbedBar({
     labels:[{enabled:true,title:'cast'}, {enabled:true,title:'menu'}],
     backgroundColor:'#999',
     top:5,
     style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
     height:30,
     width:280,
-    _view:view
+    _tabViews:_tabViews,
+    index:0
     });
-    bar.add(bb1);
+    bar_container.add(bar);
+    
+    bar.addEventListener("click",function(e){
+    	if(e.index === 0){
+    		this._tabViews._foodView.hide();
+    		this._tabViews._castView.show();
+     	}else{
+    		this._tabViews._castView.hide();
+    		this._tabViews._foodView.show();
+    	}
+    });
 
-	view.add(bar);
+	view.add(bar_container);
+	view.add(_tabViews);
     
     scrollView.add(view);
     main.add(scrollView);
@@ -106,24 +127,19 @@ exports.init = function(_data){
 	return main;
 }
 
-function print_food(_place){
-	
-	
-}
-
 function print_cast(_place){
-	var leftView = Titanium.UI.createView(
+	var _localView = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	layout: 'vertical'
+		  	layout: 'vertical',top:0,left:0
 		 }
 	);	
 	
-	view.add(leftView);
+	_tabViews.add(_localView);_tabViews._castView = _localView;
 
     Ti.API.debug("places.cast length " + _place.cast.length);
 
-    for(var i=0;i<_place.cast.length;i++){	
+    for(var i=0;i<_place.foods.length;i++){	
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
@@ -172,8 +188,86 @@ function print_cast(_place){
   	row.add(thumb);
   	row.add(titleView);  
   		
-  	leftView.add(row);
-  	leftView.add(_hr());
+  	_localView.add(row);
+  	_localView.add(_hr());
+  	
+	}
+	
+	var remainder = (3 - _place.cast.length);
+	for(var i=0;i<remainder;i++){
+		var row = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width:'100%',
+		  	left:0,	
+		  	top:0,
+		  	layout:'horizontal'
+		 }
+		);
+		
+		row.add(_createThumb(_place.cast[i],''));
+		_localView.add(row);
+		_localView.add(_hr());
+	}
+	
+}
+
+
+function print_food(_place){
+	var _localView = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	layout: 'vertical',top:0,left:0,visible:false
+		 }
+	);	
+	
+	_tabViews.add(_localView);_tabViews._foodView = _localView;
+
+    Ti.API.debug("places.cast length " + _place.cast.length);
+
+    for(var i=0;i<_place.foods.length;i++){	
+		var row = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width:'100%',
+		  	left:0,	
+		  	top:0,
+		  	layout:'horizontal'
+		 }
+		);
+		
+		var thumb = _createThumb(_place.foods[i],"#dedede");
+		
+		var titleView = Titanium.UI.createView(
+		 {
+		  	height: Ti.UI.SIZE,
+		  	width:'180',
+		  	left:0,	
+		  	top:0,
+		  	layout:'vertical'
+		 }
+		);
+		
+		var placeName = Ti.UI.createLabel({
+  		left:0,top:10,
+  		width:Ti.UI.FILL,
+  		color: '#aaa',
+  		text: _place.foods[i].name,
+  			font: {
+         		fontSize: 42
+    		}
+  		});  
+  		
+		
+		
+  		titleView.add(placeName);
+  	
+  			  
+  	row.add(thumb);
+  	row.add(titleView);  
+  		
+  	_localView.add(row);
+  	_localView.add(_hr());
   	
 	}
 	
@@ -190,13 +284,11 @@ function print_cast(_place){
 		);
 		
 		row.add(_createThumb({},''));
-		leftView.add(row);
-		leftView.add(_hr());
+		_localView.add(row);
+		_localView.add(_hr());
 	}
 	
-	
 }
-
 function loadData(_data){
 		var that = this;
 
@@ -233,9 +325,7 @@ function _createThumb(_data,_bgColor){
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: 120,
-		  	height: 120,
-		   	_data: _data
-		   	
+		  	height: 120
 		 }
 	);
 	
@@ -247,6 +337,15 @@ function _createThumb(_data,_bgColor){
 		 }
 	);
 	
+	var inner =  Titanium.UI.createView(
+		 {
+		  	width: '80',
+		  	height: '80',
+		  	backgroundImage: _data.photo
+		 }
+	);
+	
+	inner_bg.add(inner);
 	outer.add(inner_bg);	
 	
 	return outer;
