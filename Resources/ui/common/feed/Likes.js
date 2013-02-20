@@ -25,7 +25,7 @@ exports.init = function(_data){
   			left:0,
    			width:35,bubbleParent:false
 	});
-	like_btn.addEventListener('click',function(){
+	like_btn.addEventListener('singletap',function(){
 		if(!_data.liked){
 			//processLike("add",_data);
 			//this.setImage('images/feed/liked.png');
@@ -66,7 +66,7 @@ if(_data.likes){
   				
   				like_container.add(like_user);
   				
-  				like_container.addEventListener('click',function(){
+  				like_container.addEventListener('singletap',function(){
   					var win = require('ui/common/userProfile/UserProfile');
 					portal.open(win.init(_data.uid,_data.name,_data.photo));
   				});

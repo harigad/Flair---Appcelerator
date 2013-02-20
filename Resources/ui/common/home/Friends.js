@@ -87,12 +87,12 @@ function homeMenu(){
 	me.addEventListener("touchstart",function(p,s){this.setOpacity(0.5);});	
 	me.addEventListener("touchend",function(p,s){this.setOpacity(1);});
 	
-	checkIn.addEventListener("click",function(p,s){
+	checkIn.addEventListener('singletap',function(p,s){
 		var win = require('ui/common/checkin/Checkin');
 		win.init();		
 	});
 	
-	me.addEventListener("click",function(p,s){
+	me.addEventListener('singletap',function(p,s){
 		var Login = require('ui/common/Login');
 			var user = Login.getUser(); 
 		var win = require('ui/common/userProfile/UserProfile');

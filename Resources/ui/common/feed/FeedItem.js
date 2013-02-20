@@ -18,9 +18,9 @@ function _createThumb(_data,index){
 	
 	var inner =  Titanium.UI.createView(
 		 {
-		 	left:10,right:10,top:10,
-		  	width: 70,
-		  	height: 70,
+		 	left:10,right:10,top:15,
+		  	width: 50,
+		  	height: 50,
 		  	backgroundImage:'images/flairs/100/' + _data.flair + '.png'  	
 		  
 		 }
@@ -28,26 +28,14 @@ function _createThumb(_data,index){
 	
 	var container = Titanium.UI.createView(
 		 {
-		 	top:0,
-			width:80,
+		 	top:0,left:0,
+		 	width: Ti.UI.SIZE,
 		  	height:Ti.UI.SIZE,
 		  	layout: 'vertical'
 		 }
 	);
 	
 	container.add(inner);
-	container.add(Ti.UI.createLabel({
-     	left:10,
-     	width:70,
-		height:Ti.UI.SIZE,
-		color:'#aaa',
-		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text:"near " + _data.city,
-  		font: {
-         fontSize: 12
-    	},
-    	_userParentEventListener:true
-	}));
 	
 	return container;
 
@@ -59,9 +47,8 @@ function addShareView(_data,detailed,_showHR){
 	
 	var cRight = Titanium.UI.createView(
 		 {
-		  	left:5,
+		  	left:10,right:10,
 		  	top:5,
-		  	width:210,
             height:Ti.UI.SIZE,
 		  	layout: 'vertical',
 		 }
@@ -71,7 +58,6 @@ function addShareView(_data,detailed,_showHR){
 		 {
 		  	left:0,
 		  	top:0,
-		  	width:'200',
 		  	height:'40',
 		  	layout: 'horizontal'
 		 }
@@ -102,7 +88,7 @@ function addShareView(_data,detailed,_showHR){
 		height:42.5,
 		left:0,
 		top:0,
-		width:'165',
+		width:'205',
   		text:_data.name,
   		wordWrap:false,
   		color:'#ccc',
@@ -112,14 +98,11 @@ function addShareView(_data,detailed,_showHR){
     	_dontUseParentEventListener:true		
 	});
 	top_line.add(name_txt);
-	
-
 		
 	var flair_details = Titanium.UI.createView(
 		 {
 		 	layout: 'horizontal',
 		 	left:0,
-		 	width:'200',
 		 	height:'80',
 		 	top:0
 		 }
@@ -128,11 +111,11 @@ function addShareView(_data,detailed,_showHR){
 	var _first_txt = _data.adjective + _data.food + " by " + _data.recipientname;
 		var _second_lbl = Ti.UI.createLabel({
      	left:0,top:0,
-		height:Ti.UI.SIZE,width:200,
+		height:Ti.UI.SIZE,
 		color:'#333',_color:'#333',
   		text:_first_txt,
   		font: {
-         fontSize: 18
+         fontSize: 24
     	},
     	_userParentEventListener:true
 		})	
@@ -184,11 +167,11 @@ function addShareView(_data,detailed,_showHR){
 		    height:80
 		 }
 	);
-	
+	foodImage.add(thumb);
 	cContainer.add(foodImage);
 	
 	if(!detailed){
-		cContainer.addEventListener('click',function(e){
+		cContainer.addEventListener('singletap',function(e){
 			
 		    if(!e.source._dontUseParentEventListener === true ){
 				var win = require('ui/common/userProfile/UserProfile');
@@ -202,7 +185,7 @@ function addShareView(_data,detailed,_showHR){
 
 	}
 	
-	cContainer.add(thumb);
+	//cContainer.add(thumb);
 	cContainer.add(cRight);
 	
 	return cContainer;

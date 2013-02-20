@@ -62,7 +62,7 @@ function _del(_object){
     	message: 'Delete Comment?'
     });
     
-    dialog.addEventListener('click', function(e){
+    dialog.addEventListener('singletap', function(e){
       	Ti.API.debug('edit share dialog button clicked with index ' + e.index);
     	if (e.index === 0){
     		process(_object._data,"delete");
@@ -215,7 +215,7 @@ function _create(_data,_showHR){
   			_title: "_like"
 	});
 	
-	like_btn.addEventListener('click',function(){
+	like_btn.addEventListener('singletap',function(){
 		if(!_data.liked){
 			this.setImage('images/feed/liked.png');
 			_data.liked = true;
@@ -254,12 +254,12 @@ function _create(_data,_showHR){
 	
 	if(_data.uid !== user.getId()) {
 		//create one event to delete the comment
-		cContainer.addEventListener('click',function(){
+		cContainer.addEventListener('singletap',function(){
 			_del(this);
 		});
 	}else{
 		
-		cContainer.addEventListener('click',function(e){
+		cContainer.addEventListener('singletap',function(e){
 			if(e.source._title != "like"){
 				this._cancelClick = true;			
 				this.setBackgroundColor('#fff');

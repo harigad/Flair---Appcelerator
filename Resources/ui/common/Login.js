@@ -52,11 +52,13 @@ function onLogin(e,_callBack){
 		
 		var login = require('ui/common/Login');	
 		login.init(_callBack);
-		main.close();		
+		main.close();
 	});
 }	
 
 function show(_callBack){	
+
+
 
 	if(Ti.Facebook.getLoggedIn()){
 		onLogin(_callBack);
@@ -74,14 +76,16 @@ function show(_callBack){
 	Ti.Facebook.addEventListener('logout', function(e) {
     	alert('Logged out');
 	});    
-    
-	var btn = Ti.Facebook.createLoginButton({
+ 
+	/*var btn = Ti.Facebook.createLoginButton({
     top : 250,
     style : Ti.Facebook.BUTTON_STYLE_NORMAL
     });
     
-    main.add(btn);
-    main.open();
+    main.add(btn);*/
+   
+   Ti.Facebook.authorize();
+  //  main.open();
 }
 
 exports.getUser = function(){

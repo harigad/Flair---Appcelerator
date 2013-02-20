@@ -70,7 +70,7 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
 	outer.add(inner);
 	outer.add(name_txt);
 	
-	outer.addEventListener("click", function(){
+	outer.addEventListener('singletap', function(){
 		processLike("add",_type,_data,main);
 	});
 	

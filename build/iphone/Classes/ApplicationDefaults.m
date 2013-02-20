@@ -17,6 +17,7 @@
 {
 	NSMutableDictionary * _property = [[NSMutableDictionary alloc] init];
 	
+	[_property setObject:[TiUtils stringValue:@"201613399910723"] forKey:@"ti.facebook.appid"];
 	[_property setObject:[TiUtils stringValue:@"I35zE886z7j41lZnk8Y1jjMi7EN0NB4r"] forKey:@"acs-oauth-secret-development"];
 	[_property setObject:[TiUtils stringValue:@"NoOvhxdG6DHMIZMixiFxNigzAJvEhPkS"] forKey:@"acs-oauth-key-development"];
 	[_property setObject:[TiUtils stringValue:@"PXoSQeWvDkJ0gUArBIhcXMggvmWwnOyL"] forKey:@"acs-api-key-development"];

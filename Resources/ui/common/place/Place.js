@@ -108,7 +108,7 @@ exports.init = function(_data){
     });
     bar_container.add(bar);
     
-    bar.addEventListener("click",function(e){
+    bar.addEventListener('singletap',function(e){
     	if(e.index === 0){
     		this._tabViews._foodView.hide();
     		this._tabViews._castView.show();
@@ -143,10 +143,10 @@ function print_cast(_place){
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:'100%',
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
+		  	left:10,right:10,borderRadius:4,borderColor:'#ddd',
+		  	borderWidth:0.5,backgroundColor:'#fff',
+		  	top:10,
+		  	layout:'vertical'
 		 }
 		);
 		
@@ -155,15 +155,14 @@ function print_cast(_place){
 		var titleView = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:'180',
-		  	left:0,	
+		  	left:20,	
 		  	top:0,
 		  	layout:'vertical'
 		 }
 		);
 		
 		var placeName = Ti.UI.createLabel({
-  		left:0,top:10,
+  		left:0,top:0,
   		width:Ti.UI.FILL,
   		color: '#aaa',
   		text: _place.cast[i].name,
@@ -189,7 +188,6 @@ function print_cast(_place){
   	row.add(titleView);  
   		
   	_localView.add(row);
-  	_localView.add(_hr());
   	
 	}
 	
@@ -198,16 +196,21 @@ function print_cast(_place){
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:'100%',
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
+		  	left:10,right:10,borderRadius:4,borderColor:'#ddd',
+		  	borderWidth:0.5,backgroundColor:'#fff',
+		  	top:10,
+		  	layout:'vertical'
 		 }
 		);
 		
-		row.add(_createThumb(_place.cast[i],''));
+		row.add(_createThumb({},''));
+		row.add(Titanium.UI.createView(
+		 {
+		  	height: 60,
+		  	width:'300'
+		 }
+		));
 		_localView.add(row);
-		_localView.add(_hr());
 	}
 	
 }
@@ -229,10 +232,10 @@ function print_food(_place){
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:'100%',
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
+		  	left:10,right:10,borderRadius:4,borderColor:'#ddd',
+		  	borderWidth:0.5,backgroundColor:'#fff',
+		  	top:10,
+		  	layout:'vertical'
 		 }
 		);
 		
@@ -241,15 +244,14 @@ function print_food(_place){
 		var titleView = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:'180',
-		  	left:0,	
+		  	left:20,	
 		  	top:0,
 		  	layout:'vertical'
 		 }
 		);
 		
 		var placeName = Ti.UI.createLabel({
-  		left:0,top:10,
+  		left:0,top:0,
   		width:Ti.UI.FILL,
   		color: '#aaa',
   		text: _place.foods[i].name,
@@ -258,16 +260,12 @@ function print_food(_place){
     		}
   		});  
   		
-		
-		
-  		titleView.add(placeName);
+ 		titleView.add(placeName);
   	
-  			  
-  	row.add(thumb);
+   	row.add(thumb);
   	row.add(titleView);  
   		
   	_localView.add(row);
-  	_localView.add(_hr());
   	
 	}
 	
@@ -275,17 +273,22 @@ function print_food(_place){
 	for(var i=0;i<remainder;i++){
 		var row = Titanium.UI.createView(
 		 {
-		  	height: Ti.UI.SIZE,
-		  	width:'100%',
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
+		    height: Ti.UI.SIZE,
+		  	left:10,right:10,borderRadius:4,borderColor:'#ddd',
+		  	borderWidth:0.5,backgroundColor:'#fff',
+		  	top:10,
+		  	layout:'vertical'
 		 }
 		);
 		
 		row.add(_createThumb({},''));
+		row.add(Titanium.UI.createView(
+		 {
+		  	height: 60,
+		  	width:'300'
+		 }
+		));
 		_localView.add(row);
-		_localView.add(_hr());
 	}
 	
 }
@@ -324,30 +327,13 @@ function _createThumb(_data,_bgColor){
 	
 	var outer =  Titanium.UI.createView(
 		 {
-		  	width: 120,
-		  	height: 120
+		  	left:10,right:10,top:10,
+		  	borderRadius:4,
+		  	backgroundColor:'#dedede',
+		  	height:80
 		 }
 	);
-	
-	var inner_bg =  Titanium.UI.createView(
-		 {
-		  	width: '100',
-		  	height: '100',
-		  	borderRadius:4,backgroundColor:_bgColor
-		 }
-	);
-	
-	var inner =  Titanium.UI.createView(
-		 {
-		  	width: '80',
-		  	height: '80',
-		  	backgroundImage: _data.photo
-		 }
-	);
-	
-	inner_bg.add(inner);
-	outer.add(inner_bg);	
-	
+		
 	return outer;
 
 }

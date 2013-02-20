@@ -58,7 +58,7 @@ exports.init = function(_callBack,_data){
     height: 40
  });
 
- btn.addEventListener('click', function(){
+ btn.addEventListener('singletap', function(){
 	process(_callBack);
  });
 

@@ -5,93 +5,62 @@ var _view;
 var main;
 var _place;
 
-exports.launch = function(_data,place){
-	if(place){
-		_place = place;
-	}else{
-		_place = null;	
-	}
-	if(!_view){
-		_init(_data);
-	}else{
-		_build(_data);
-	}	
+exports.launch = function(_place,_dontAnimate){
+	_init(_place,_dontAnimate);	
 }
 
-
-function _build(_data){
-	clear(_view);
-	if(!_place){
-		if(_data){
-			_loadCode(_data);
-		}
-		return;
-	}
+function _build(_place,_dontAnimate){
+	var mapView = Titanium.Map.createView({
+    mapType: Titanium.Map.STANDARD_TYPE,
+    region:{latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.005, longitudeDelta:0.005},
+    animate:true,
+    regionFit:true,
+    userLocation:true
+    });
 	
-	var _code_label_left = Ti.UI.createLabel({
-		top:10,
-		left:10,
-		right:10,
-		width:300,
-  		color: '#666',  		
+   var mapViewCont = Titanium.UI.createView(
+		 {
+		 	top:'0',
+		  	height: '200'
+		 }
+	);	
+	
+   var mapDesc = Titanium.UI.createView(
+		 {
+		 	top:'0',
+		  	height: '200',width:'320',bubbleParent:true,
+		  	backgroundImage:'images/map_shade.png',layout:'vertical'
+		 }
+	);	
+	var nameLabel = Ti.UI.createLabel({
+  		left:10,
+        top:'120',
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,shadowColor:'#333333',
+  		color: '#fff',
   		text: _place.name,
   			font: {
-         		fontSize: 22
+         		fontSize: 16,fontWeight:'bold'
     		}
-  	});
-  	_view.add(_code_label_left);
-  	
-  	var _code_label_left = Ti.UI.createLabel({
-		top:0,
-		left:10,
-		right:10,
-		width:300,
-  		color: '#666',  		
+  		});  
+	mapDesc.add(nameLabel);
+	
+	var addrLabel = Ti.UI.createLabel({
+  		left:10,
+    	width:'150',
+  		height:Ti.UI.SIZE,
+  		color: '#fff',
   		text: _place.vicinity,
   			font: {
          		fontSize: 14
     		}
-  	});
-  	_view.add(_code_label_left);
-  
-	var _code_label = Ti.UI.createLabel({
-		top:10,
-		left:10,
-  		width:'auto',
-  		color: '#999',
-  		text: "Access Code : ",
-  		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,	
-  			font: {
-         		fontSize: 22
-    		}
-  	});
-	_view.add(_code_label);
+  		});  
+	mapDesc.add(addrLabel);
 	
-	var _code_label = Ti.UI.createLabel({
-		top:10,
-  		width:Ti.UI.SIZE,
-  		color: '#2179ca',
-  		text: " " + _place.code,
-  		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,	
-  			font: {
-         		fontSize: 22
-    		}
-  	});
-	_view.add(_code_label);
+	mapViewCont.add(mapView);
+	mapView.add(mapDesc);
 	
-	
-	var _tip_label = Ti.UI.createLabel({
-		top:10,
-		left:10,
-		right:10,width:300,
-  		color: '#333',  		
-  		text: "Dial 1-866-291-9993 from the landline @ the " + _place.name + "</b> and enter the above verification code.",
-  			font: {
-         		fontSize: 14
-    		}
-  	});
-	_view.add(_tip_label);	
-	
+	_view.add(mapViewCont);
 	
 	var _save_btn = Titanium.UI.createView(
 		 {
@@ -113,13 +82,12 @@ function _build(_data){
   		right:10,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "SAVE",
+  		text: "I Work Here",
   			font: {
          		fontSize: 18
     		}
   	});
 	_save_btn.add(_save_txt);
-	
 	
 	var _delete_btn = Titanium.UI.createView(
 		 {
@@ -142,26 +110,29 @@ function _build(_data){
   		right:10,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "DELETE",
+  		text: "No! I dont.",
   			font: {
          		fontSize: 18
     		}
   	});
 	_delete_btn.add(_delete_txt);
 	
-	_delete_btn.addEventListener('click',function(){
+	_delete_btn.addEventListener('singletap',function(){
 		_deleteCode(user.getPlace());
 		user.setPlace(null);
-		searchPlaceNav.close(true);
-		main.close();
+		searchPlaceNav.close(true,user);
+		main.close({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
 	});
 	
-	_save_btn.addEventListener('click',function(){
-		searchPlaceNav.close(true);
-		main.close();
+	_save_btn.addEventListener('singletap',function(){
+		_loadCode(_place);
 	});
 	
-	main.open();
+	if(_dontAnimate){
+		main.open();
+	}else{
+		main.open({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT});
+	}
 	
 }
 
@@ -186,6 +157,11 @@ function _deleteCode(_data){
 
 
 function _loadCode(_data){
+	if(user.getPlace() === _data){
+		 	 searchPlaceNav.close(false);
+		     main.close({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});return;
+	}
+		
 	var url = "http://flair.me/search.php";	
 	var _data = {type:"role",pid:_data.pid,accessToken:Ti.Facebook.getAccessToken()};
  	 	
@@ -194,8 +170,8 @@ function _loadCode(_data){
  	 	 var _response = JSON.parse(this.responseText);
  	 	 if(_response.status){
  	 	 	 user.setPlace(_response.place);
- 	 	 	 _place = _response.place;
- 	 		_build(); 	
+ 	 	 	 searchPlaceNav.close(true,user);
+		     main.close();
  	 	 }
  	 },
  	 onerror: function(e){
@@ -212,7 +188,7 @@ function _loadCode(_data){
 
 
 
-function _init(_data){
+function _init(_data,_dontAnimate){
 	main = Titanium.UI.createWindow({
     	title: 'New Access Code',    	
     	barColor:'#333',
@@ -228,7 +204,7 @@ function _init(_data){
 	});
 	main.add(_view);
 	
-	_build(_data);
+	_build(_data,_dontAnimate);
 }
 
 

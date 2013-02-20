@@ -75,7 +75,7 @@ exports.init = function(_clearView,_refreshView){
   	 		top:60
 	});
 	
-	tableView.addEventListener("click",function(e){
+	tableView.addEventListener('singletap',function(e){
 		Ti.API.debug("table View clicked");
 		main.close();
 		_clearView();		

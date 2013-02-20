@@ -16,14 +16,13 @@ exports.launch = function(){
 	}
 }
 
-exports.close = function(_refresh){
+exports.close = function(_refresh,_user){
 	main.close();
 	if(_refresh){
 		var profile = require('ui/common/userProfile/UserProfileView');
-		profile.refresh();
+		profile.refresh(_user);
 	}
 }
-
 
 function init(){
 	main = Titanium.UI.createWindow({
@@ -74,14 +73,14 @@ function init(){
 function initialize(){
 	if(user.getPlace().code){
 		var accessCode = require('ui/common/userProfile/AccessCode');
-		accessCode.launch(null,user.getPlace());
+		accessCode.launch(user.getPlace());
  	}else{		
 		main.open();	
 	}
 }
 
 function _show_tip(){
-	clear(results_view);	
+	clear(results_view);
 	
 	var tip = Titanium.UI.createView(
 	{
@@ -108,7 +107,7 @@ function _form(){
 		title:"search"
 		});
 	
-	    cancel_btn.addEventListener("click",function(e){
+	    cancel_btn.addEventListener('click',function(e){
 	    	var searchPlace = require('ui/common/userProfile/SearchPlace');
 		    searchPlace.close(false);
 	    });
@@ -118,7 +117,7 @@ function _form(){
 	});
 	
 	var save_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.DONE});
-	save_btn.addEventListener("click",function(){
+	save_btn.addEventListener('click',function(){
 		_search();
 	});
 	
@@ -136,7 +135,7 @@ function _form(){
   		width:280,
   		top:0,bottom:0,height:40,
   		backgroundColor:'#fff',
-  		hintText:'restaurant/cafe',
+  		hintText:'search restaurant/cafe',
   		returnKeyType:Titanium.UI.RETURNKEY_NEXT,
   		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_NONE,
   		font: {
@@ -243,9 +242,11 @@ function _search(){
   	_c.add(_vicinity);
   	
   
-  	_c.addEventListener('click',function(e){
+  	_c.addEventListener('singletap',function(e){
+  		_txtField.blur();
+  		_zipField.blur();
   		var accessCode = require('ui/common/userProfile/AccessCode');
-  		accessCode.launch(this._data);
+  		accessCode.launch(this._data,true);
   	});  	
   	
   	_cRow.add(_c);

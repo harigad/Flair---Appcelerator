@@ -74,18 +74,7 @@ exports.init = function(id,name,photo){
 		  	layout:'vertical'
 		 }
 	);	
-	var nameLabel = Ti.UI.createLabel({
-  		left:10,
-    	width:Ti.UI.SIZE,
-  		height:Ti.UI.SIZE,shadowColor:'#333333',
-  		color: '#fff',
-  		text: name,
-  			font: {
-         		fontSize:26,fontWeight:'bold'
-    		}
-  		});  
-  		
-	placeViewTopLayer.add(nameLabel);
+	
     descLayer.add(placeViewTopLayer);
     photoView.add(descLayer);
     
@@ -134,7 +123,7 @@ function tabbedBar(){
     });
     bar_container.add(bar);
     
-    bar.addEventListener("click",function(e){
+    bar.addEventListener('singletap',function(e){
     	if(e.index === 0){
     		this._tabViews._foodView.hide();
     		this._tabViews._castView.show();
@@ -165,11 +154,10 @@ function loadUser(id,main){
    }
 }
 
-function clearView(hideLoading){
-	return;
-	for(var i=1;i<view.children.length;i++){
-		var v = view.children[i];
-		view.remove(v);
+function clearView(hideLoading,thisView){
+	var len = thisView.children.length;
+	for(var i=0;i<len;i++){
+		thisView.remove(thisView.children[i]);
 	}
 	
 	if(hideLoading!==true){
@@ -178,25 +166,40 @@ function clearView(hideLoading){
   			width: '150',
   			top: 20	
 		});	
-	view.add(loading);
+	thisView.add(loading);
 	}
 }
 
-exports.refresh = function(){
-	Ti.API.debug("in refresh");
+exports.refresh = function(_user){
+	Ti.API.debug("in refresh " + _user.getPlace());
+	user = _user;
 	printDetails(true);
 }
 
 function printDetails(_refresh){
-	clearView(true);
+	
+	clearView(true,view);
+	clearView(true,placeViewTopLayer);
+	
 	Ti.API.debug("UserProfile.printDetails");	
 	photoView.setImage(user.getPhotoBig());
 	
-	clearView(true);
+	var nameLabel = Ti.UI.createLabel({
+  		left:10,
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,shadowColor:'#333333',
+  		color: '#fff',
+  		text: user.getName(),
+  			font: {
+         		fontSize:26,fontWeight:'bold'
+    		}
+  		});  
+  		
+	placeViewTopLayer.add(nameLabel);
 		
 	if(user.getPlace() || user.isAdmin()){
 		grayV = printPlace(user);	
-		placeViewTopLayer.add(grayV);
+		view.add(grayV);
 	}
 	
 	if(user.getId()){
@@ -233,10 +236,26 @@ function activation_code(user){
 		layout:'vertical'
 	});
 	
+	var mapView = Titanium.Map.createView({
+    mapType: Titanium.Map.STANDARD_TYPE,
+    region:{latitude:place.lat, longitude:place.lng, latitudeDelta:0.005, longitudeDelta:0.005},
+    animate:true,
+    regionFit:true,
+    userLocation:true,touchEnabled:false
+    });
+    
+    var mapViewCont = Titanium.UI.createView(
+		 {
+		 	top:'0',
+		  	height: '80',borderRadius:4,left:10,right:10,top:10
+		 }
+	);
+	mapViewCont.add(mapView);
+    fRow_container.add(mapViewCont);
 	
   	var roleName = Ti.UI.createLabel({
   		left:10,right:10,top:10,
-  		color: '#666',
+  		color: '#2179ca',
   		text: "Verification Code : " + place.code,
   			font: {
          		fontSize: 20
@@ -257,16 +276,15 @@ function activation_code(user){
 	
   	var tip_text = Ti.UI.createLabel({
   		left:10,right:10,bottom:10,
-  		color: '#2179ca',
-  		text: "Please call 1-866-291-9993 from this " + place.name + " and enter your verification code.",
+  		color: '#333',
+  		text: "Please call 1-866-291-9993 from " + place.name + " and enter your verification code.",
   			font: {
          		fontSize: 14
     		}
   	}); 	
   	tip_container.add(tip_text);
   	
-  	
-		fRow_container.addEventListener("click",function(){
+  		fRow_container.addEventListener('singletap',function(){
 			var searchPlace= require('ui/common/userProfile/SearchPlace');
   			searchPlace.launch();
 		});	
@@ -275,17 +293,15 @@ function activation_code(user){
 		
 }
 
-
-
-
 function printPlace(user){
 	var place = user.getPlace();
 	
 	var grayView = Titanium.UI.createView(
 		{
-		  width:'100%',
+		  left:10,right:10,top:10,
 		  height:Ti.UI.SIZE,
-		  layout: 'horizontal'
+		  layout: 'horizontal',
+		  backgroundColor:'#fff',borderRadius:4
 		}
 	);	
 	
@@ -301,10 +317,9 @@ function printPlace(user){
 	var fRow_container = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	width:250,
-		  	left:10,	
-		  	top:0,
-		  	bottom:0,
+		  	left:10,right:10,	
+		  	top:10,
+		  	bottom:10,
 		  	layout:'vertical'
 		 }
 	);
@@ -362,18 +377,18 @@ function printPlace(user){
   	settingsView.add(settingsImage);
   	settingsView.add(settingsText);
   	
-  	settingsView.addEventListener('click',function(e){
+  	settingsView.addEventListener('singletap',function(e){
   		var editRole = require('ui/common/userProfile/EditRole');
   		portal.open(editRole.init());
   	});	
   	
   	}
   	
-  	placeName.addEventListener('click',function(){
+  	placeName.addEventListener('singletap',function(){
   		var placeView = require('ui/common/place/Place');
 		portal.open(placeView.init(place));
   	});
-  	roleName.addEventListener('click',function(){
+  	roleName.addEventListener('singletap',function(){
   		var placeView = require('ui/common/place/Place');
 		portal.open(placeView.init(place));
   	});
@@ -401,7 +416,7 @@ function printPlace(user){
   		left:0,
   		width:'auto',
   		color: '#2179ca',
-  		text: "Restaurant/Cafe",
+  		text: "My Restaurant/Cafe",
   			font: {
          		fontSize: 18
     		}
@@ -409,7 +424,7 @@ function printPlace(user){
   	
   	fRow_container.add(roleName);fRow_container.add(addName);
 		
-		fRow_container.addEventListener("click",function(){
+		fRow_container.addEventListener('singletap',function(){
 			var searchPlace= require('ui/common/userProfile/SearchPlace');
   			searchPlace.launch();
 		});	

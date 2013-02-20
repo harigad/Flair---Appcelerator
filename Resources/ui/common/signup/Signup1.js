@@ -40,7 +40,7 @@ exports.init = function(_callBack){
 	});
 	
 
-	btn.addEventListener('click', function(){
+	btn.addEventListener('singletap', function(){
 		process(_callBack);
 	});
 	plateField.addEventListener('return', function(event) {

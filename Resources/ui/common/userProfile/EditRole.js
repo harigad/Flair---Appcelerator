@@ -100,7 +100,7 @@ function _createRole(_data,_showHR){
 		role_view.add(_hr());
 	}
 	
-		role_view.addEventListener('click',function(e){
+		role_view.addEventListener('singletap',function(e){
 			this._cancelClick = true;
 			
 			if(selectedRoleView && selectedRoleView == this){

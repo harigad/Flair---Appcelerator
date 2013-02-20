@@ -49,10 +49,10 @@ exports.init = function(callBack) {
 	_grayView.add(reload_btn);
 	_grayView.add(reload_label);
 	
-	reload_btn.addEventListener('click',function(e){
+	reload_btn.addEventListener('singletap',function(e){
 		_reloadPlaces();
 	});
-	reload_label.addEventListener('click',function(e){
+	reload_label.addEventListener('singletap',function(e){
 		_reloadPlaces();
 	});	
 
@@ -73,11 +73,11 @@ exports.init = function(callBack) {
 	_grayView.add(cancel_label);_grayView.add(cancel_btn);
 	outer.add(_grayView);
 	
-	cancel_btn.addEventListener('click',function(e){
+	cancel_btn.addEventListener('singletap',function(e){
 		var flairWin = require('ui/common/flair/Flair');
 		flairWin.close();
 	});
-	cancel_label.addEventListener('click',function(e){
+	cancel_label.addEventListener('singletap',function(e){
 		var flairWin = require('ui/common/flair/Flair');
 		flairWin.close();
 	});
@@ -125,7 +125,7 @@ function printPlaces(places){
 function _createFlairThumb(_data,bgColor){
 	var thumb = _createThumb(_data,bgColor);
 	
-	thumb.addEventListener('click',function(){
+	thumb.addEventListener('singletap',function(){
 		var flairWin = require('ui/common/flair/Flair');
 		_callBack(_data);
 	});	

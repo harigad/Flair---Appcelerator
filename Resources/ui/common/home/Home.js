@@ -13,10 +13,10 @@ Ti.API.debug("home init");
    var main = Titanium.UI.createWindow({
     	title: 'home',    	
     	titleImage: 'images/home/logo_small.png',
-    	barColor:'#000',  
-    	backgroundColor: '#eee',
-    	barImage: 'images/headerBg.jpg',
-    	borderWidth:0
+    	barColor:'#333',  
+    	backgroundColor: '#fff',
+    	borderWidth:0,
+    	fullScreen: true
 	});	
 	
 
@@ -52,15 +52,15 @@ Ti.API.debug("home init");
   	var profileWin = profile.init(user.getId(),user.getName(),user.getPhoto());
   	
 	var nearby = _createThumb({"id":"nearby","photo":""},'#eee');
-		nearby.addEventListener('click',function(e){
+		nearby.addEventListener('singletap',function(e){
 			portal.open(nearbyWin);
 		});
 	var friends = _createThumb({"id":"friends","photo":""},'#ddd');
-		friends.addEventListener('click',function(e){
+		friends.addEventListener('singletap',function(e){
 			portal.open(nearbyWin);
 		});
 	var me = _createThumb({"id":"me","photo":""},'#eee');
-		me.addEventListener('click',function(e){
+		me.addEventListener('singletap',function(e){
 			portal.open(profileWin);
 		});
 		
@@ -243,7 +243,7 @@ function _createThumb(_data,bgColor){
 function _createFlairThumb(_data,bgColor){
 	var thumb = _createThumb(_data,bgColor);
 	
-	thumb.addEventListener('click',function(){
+	thumb.addEventListener('singletap',function(){
 		Ti.API.debug("Flair Icon Clicked " + _data.id);	
 		activeThumb = thumb;
 		
