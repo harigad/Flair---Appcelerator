@@ -1,27 +1,63 @@
+var _callBack;
+var _container;
 
-exports.init = function(_data) {
+
+exports.init = function(_data,_cont,_call) {
 	Ti.API.debug("printing feedProfile");
+
+    _callBack = _call;
+    _container = _cont;
 
 	var main = Ti.UI.createWindow({			
     	hideNavBar:true,modal:true,
-    	backgroundColor:'#eee'
+    	backgroundColor:'#fff'
 	});
 
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: '100%',
 		  	height: 'auto',
-		  	top:110,
+		  	top:0,
 		  	left:0,
 		  	layout:'vertical'
 		 }
 	);
 	
 	
-	outer.add(_create(main,_data,1,_data.food,'#99452b','#c26447',false));	
-	outer.add(_create(main,_data,2,_data.placename,'#54733e','#84ab68',true));
-	outer.add(_create(main,_data,0,_data.recipientname,'#42698d','#6388aa',true));	
+	outer._food_btn = _create(main,_data,3,_data.food,'#99452b','#c26447',false,_data.isLiked);	
+	outer._place_btn = _create(main,_data,2,_data.placename,'#54733e','#84ab68',true,_data.isLiked);
+	outer._recp_btn = _create(main,_data,1,_data.recipientname,'#2179ca','#2179ca',true,_data.isLiked);	
+	var cancel_btn = Titanium.UI.createView(
+		 {
+		  	width: Ti.UI.FILL,
+		  	height: 100,
+		  	backgroundColor:'#eee'
+		 }
+	);
 	
+	var label = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+  		text:"I'm done",
+  		wordWrap:false,
+  		color:'#999',
+  		font: {
+         fontSize: 20
+    	}		
+	});
+	
+	cancel_btn.addEventListener("singletap",function(e){
+		processLike(_data,main);
+	});
+	
+	cancel_btn.add(label);
+	outer._cancel_btn = cancel_btn;
+	outer.add(outer._cancel_btn);
+	outer.add(outer._food_btn);
+	outer.add(outer._place_btn);
+	outer.add(outer._recp_btn);
+	
+	
+	main._outer = outer;
 	main.add(outer);
 
 	main.open({modal:true,modalTransitionStyle:Titanium.UI.iPhone.MODAL_TRANSITION_STYLE_PARTIAL_CURL});
@@ -29,7 +65,7 @@ exports.init = function(_data) {
 }
 
 
-function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
+function _create(main,_data,_type,_name,_bgColor,_color,_showHr,_isLiked){
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: '100%',
@@ -39,15 +75,35 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
 		 }
 	);
 	
+	outer._type = _type;
+	
+	var likedImage;
+	
+	var thisIsLiked = getIsLiked(_type,_isLiked);
+
+	if(_type && thisIsLiked){
+		outer._isLiked = true;
+		likedImage = 'images/feed/like_' + _type + '_100.png';
+	}else if(_type){
+		outer._isLiked = false;
+		likedImage = 'images/feed/like_gray_100.png';
+	}else{
+		outer._isLiked = false;
+	    likedImage = "images/feed/like_cancel_100.png";	
+	}	
+		
 	var inner =  Titanium.UI.createView(
 		 {
 		  	width: 50,
 		  	height: 50,
 		  	borderRadius:4,
 		  	left:20,
-		  	top:16
+		  	top:16,
+		  	backgroundImage:likedImage
 		 }
 	);
+	
+	outer._image = inner;
 	
 	var name_txt = Ti.UI.createLabel({
 		height:'40',
@@ -71,33 +127,92 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr){
 	outer.add(name_txt);
 	
 	outer.addEventListener('singletap', function(){
-		processLike("add",_type,_data,main);
+		likeClicked(outer);
+		if(!outer._type){
+			processLike(_data,main);
+		}
 	});
 	
 	return outer;
 	
 }
 
-function processLike(_action,_type,_data,main){
+
+function getIsLiked(_type,isLiked){
+	if(_type == isLiked || isLiked == 7){
+		return true;
+	}else if(_type == 1 && (isLiked == 4 || isLiked == 5)){
+		return true;
+	}else if(_type == 2 && (isLiked == 4 || isLiked == 6)){
+		return true;
+	}else if(_type == 3 && (isLiked == 5 || isLiked == 6)){
+		return true;	
+	}else{
+		return false;
+	}
+	
+}
+
+
+function getLikeNumber(recp,place,food){
+	if(recp && place && food){
+		return 7;
+	}else if(place && food){
+		return 6;
+	}else if(recp && food){
+		return 5;
+	}else if(recp && place){
+		return 4;
+	}else if(food){
+		return 3;
+	}else if(place){
+		return 2;
+	}else if(recp){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+
+function likeClicked(_likeObj){
+  if(_likeObj._type){
+	if(_likeObj._isLiked){
+		_likeObj._isLiked = false;
+		_likeObj._image.setBackgroundImage("images/feed/like_gray_100.png");
+	}else{
+		_likeObj._isLiked = true;
+		_likeObj._image.setBackgroundImage("images/feed/like_" + _likeObj._type + "_100.png");
+	}
+  }
+}
+
+function processLike(_data,main){
+	   _data.isLiked = getLikeNumber(main._outer._recp_btn._isLiked,main._outer._place_btn._isLiked,main._outer._food_btn._isLiked);
+	
 		var that = this;
 
 		var url = "http://flair.me/search.php";
 		var _dataStr = {};
 		
 		_dataStr.type = "like";
-		_dataStr.likeType = _type;
-		_dataStr.action = _action;
+		_dataStr.likeType = _data.isLiked;
+		
+		_dataStr.action = "add";
 		
 		if(_data.fid){
-		_dataStr.fid = _data.fid;
-		}else if(_data.coid){
-		_dataStr.coid = _data.coid;	
+		  _dataStr.fid = _data.fid;
 		}
+		
 		_dataStr.accessToken=Ti.Facebook.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	 Ti.API.debug('loaded data from processLike');
+     	 Ti.API.debug('loaded data from processLike ' + _data.isLiked);
+     	 Ti.API.debug('loaded new likes ' + this.responseText);
+     	  var response = JSON.parse(this.responseText);
+     	  _data.likes = response;
+     	 
+     	 _callBack(_data,_container);
      },
      onerror : function(e) {
          Ti.API.error(e.error);
@@ -109,6 +224,9 @@ function processLike(_action,_type,_data,main){
  		client.open("POST", url);
  	// Send the request.
  		client.send(_dataStr);
+		
+
+		
 		
 	main.close();
 }

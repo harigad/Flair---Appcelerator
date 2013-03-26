@@ -21,14 +21,14 @@ function _build(_place,_dontAnimate){
    var mapViewCont = Titanium.UI.createView(
 		 {
 		 	top:'0',
-		  	height: '200'
+		  	height: '300'
 		 }
 	);	
 	
    var mapDesc = Titanium.UI.createView(
 		 {
 		 	top:'0',
-		  	height: '200',width:'320',bubbleParent:true,
+		  	height: '300',width:'320',bubbleParent:true,
 		  	backgroundImage:'images/map_shade.png',layout:'vertical'
 		 }
 	);	
@@ -127,6 +127,7 @@ function _build(_place,_dontAnimate){
 	_save_btn.addEventListener('singletap',function(){
 		_loadCode(_place);
 	});
+	
 	
 	if(_dontAnimate){
 		main.open();

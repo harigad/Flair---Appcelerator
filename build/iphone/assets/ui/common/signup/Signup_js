@@ -1,1 +1,0 @@
-function signup2Callback(){signup2.close(),Ti.App.fireEvent("launch_portal")}function signup2Errback(){}function signup1Callback(e){var t=require("ui/common/signup/Signup2");signup2=new t(signup2Callback,e),signup2.open(),signup1.hide()}exports.init=function(e){this._callBack=e;var t=require("ui/common/signup/Signup1");t.init(signup1Callback)}

@@ -13,7 +13,6 @@ Ti.API.debug("home init");
    var main = Titanium.UI.createWindow({
     	title: 'home',    	
     	titleImage: 'images/home/logo_small.png',
-    	barColor:'#333',  
     	backgroundColor: '#fff',
     	borderWidth:0,
     	fullScreen: true
@@ -51,15 +50,15 @@ Ti.API.debug("home init");
   	var friendsWin = wall.init("friends");  
   	var profileWin = profile.init(user.getId(),user.getName(),user.getPhoto());
   	
-	var nearby = _createThumb({"id":"nearby","photo":""},'#eee');
+	var nearby = _createThumb({"id":"nearby","photo":""},'#fff');
 		nearby.addEventListener('singletap',function(e){
 			portal.open(nearbyWin);
 		});
-	var friends = _createThumb({"id":"friends","photo":""},'#ddd');
+	var friends = _createThumb({"id":"friends","photo":""},'#eee');
 		friends.addEventListener('singletap',function(e){
 			portal.open(nearbyWin);
 		});
-	var me = _createThumb({"id":"me","photo":""},'#eee');
+	var me = _createThumb({"id":"me","photo":""},'#fff');
 		me.addEventListener('singletap',function(e){
 			portal.open(profileWin);
 		});
@@ -70,17 +69,17 @@ Ti.API.debug("home init");
 //Print Icons
 	
 	
-	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#ddd'));
-	homeMenu.add(_createFlairThumb({"id":2,"photo":""},'#eee'));
-	homeMenu.add(_createFlairThumb({"id":3,"photo":""},'#ddd'));
+	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":2,"photo":""},'#fff'));
+	homeMenu.add(_createFlairThumb({"id":3,"photo":""},'#eee'));
 	
-	homeMenu.add(_createFlairThumb({"id":7,"photo":""},'#eee'));
-	homeMenu.add(_createFlairThumb({"id":8,"photo":""},'#ddd'));
-	homeMenu.add(_createFlairThumb({"id":9,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":7,"photo":""},'#fff'));
+	homeMenu.add(_createFlairThumb({"id":8,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":9,"photo":""},'#fff'));
 	
-	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#ddd'));
-	homeMenu.add(_createFlairThumb({"id":5,"photo":""},'#eee'));
-    homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#ddd'));
+	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":5,"photo":""},'#fff'));
+    homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#eee'));
 
 	
 	home.add(homeMenu);	

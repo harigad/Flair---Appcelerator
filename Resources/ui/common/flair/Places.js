@@ -28,7 +28,7 @@ exports.init = function(callBack) {
 		 {
 		  	width: '100%',
 		  	height: '50',
-		  	layout:'horizontal',backgroundColor:'#eee'
+		  	layout:'horizontal',backgroundColor:'#fff'
 		 }
 	);	
 	
@@ -113,9 +113,9 @@ function printPlaces(places){
 	for(var i=0;i<len;i++){
 		
 		if(i % 2){
-		  bgColor = "#dddddd";
+		  bgColor = "#eee";
 	    }else{
-		  bgColor = "#eeeeee";
+		  bgColor = "#fff";
 	    }	
 	
 		_placesView.add(_createFlairThumb(places[i],bgColor));	

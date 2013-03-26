@@ -5,10 +5,10 @@ function FeedView(feed_data,_tableView) {
 	Ti.API.debug("printing feedView");
 	
 		if(!_tableView){
-			_tableView = Titanium.UI.createTableView(
+			_tableView = Titanium.UI.createView(
 				{
-		  			width: '320',
-		  			separatorStyle:"NONE",backgroundColor:'#eee'
+		  			width: '320',layout:'vertical',
+		  			backgroundColor:'#eee'
 				});	
 		}
 
@@ -16,7 +16,7 @@ function FeedView(feed_data,_tableView) {
 		
 	    for (var i=0; i<feed_data.length; i++){
 	    	var _row = feed.feedItem(feed_data[i],null,i);		
-		    _tableView.appendRow(_row);
+		    _tableView.add(_row);
 		}
 	
 	return _tableView;

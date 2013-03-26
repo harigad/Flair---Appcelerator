@@ -8,8 +8,7 @@ exports.init = function(_type){
 	}
 	
 	var main = Titanium.UI.createWindow({
-    	title: name,    	
-    	barColor:'#333',
+    	title: name,
     	backgroundColor: '#eee'
 	});
 
@@ -19,9 +18,12 @@ exports.init = function(_type){
 }
 
 function print(_feed,view){
+	var scroll = Ti.UI.createScrollView();
+	
 	var FeedView = require('ui/common/feed/FeedView');
 	var feed = new FeedView(_feed);	
-	view.add(feed);
+	scroll.add(feed);
+	view.add(scroll);
 }
 
 function loadData(_type,view){

@@ -13,6 +13,7 @@ var _place;
 var portal = require('ui/common/Portal');
 var places = require('ui/common/flair/Places');
 var _search = require('ui/common/flair/Search');
+var _db = require('ui/common/data/DB');
 var main;
 var placesView;
 
@@ -60,27 +61,11 @@ function _startFlair(_data){
 	);
 	outer.add(_top(_flair));
 	
-	var scrollView = Ti.UI.createScrollView({
-  		contentWidth: '100%',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: '100%',
-  		top:0,
-  		left:0,
-  		height:120
+	_tableView = Ti.UI.createTableView({
+  	 	    height:120,
+  	 		top:0,backgroundColor:'#990000'
 	});
-	
-	
-	_tableView = Ti.UI.createView({
-  	 		height:'auto',
-  	 		width: '100%',
-  	 		top:0,
-  	 		layout:'vertical'
-	});
-	scrollView.add(_tableView);
-	
-	outer.add(scrollView);
+	outer.add(_tableView);
 	
 	main.add(outer);
 	
@@ -247,11 +232,12 @@ function _search_person(_word){
 function _search_adv(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
 	var rs = [];
-	if(_word === "absolutely"){
-		rs.push({title:_word});
-		rs.push({title:'absenty'});
-		rs.push({title:'abbyness'});
-		rs.push({title:'absoluteness'});
+	var rows = _db.select("select _txt from _adv");
+	Ti.API.info('Row count: ' + rows.rowCount);
+	
+	while (rows.isValidRow()){
+		rs.push({"title":rows.fieldByName('_txt')});
+		rows.next();
 	}
 	
 	_updateTable(rs);
@@ -308,54 +294,8 @@ function _print_last_word(_word,_found){
 }
 
 function _updateTable(_dataArr){
-  clear(_tableView);
-
-  for(var x=0;x<_dataArr.length;x++){
-  	
-  	var _c = Titanium.UI.createView(
-		 {
-		  	left:0,
-		  	right:0,
-		  	top:0,bottom:0,
-		  	width:'100%',
-		  	height:'auto',
-		  	layout: 'horizontal'
-		 }
-	);	
-	
-	var outer =  Titanium.UI.createView(
-		 {
-		  	width: 75,
-		  	height: 30,
-		  	top:5,
-		  	bottom:5,
-		  	left:5,
-		  	right:0
-		 }
-	);
-	
-	
-  	var _txt = Ti.UI.createLabel({
-  		left:5,
-     	height:'auto',
-     	width: '200',
-		color:'#aaa',
-  		text:_dataArr[x].title,
-  		font: {
-         fontSize: 18
-    	}
-	});	
-  	
-  	_c.add(outer);
-  	_c.add(_txt);
-  	
-  	if(x < _dataArr.length-1){
-  		_c.add(_hr());
-  	}
-  	
-  	_tableView.add(_c);
-  }
-  	
+	Ti.API.info("--->" + _dataArr.length);
+	_tableView.setData(_dataArr);  	
 }
 
 function _top(_data){
@@ -367,7 +307,7 @@ function _top(_data){
 		  	top:5,
 		  	width:230,
 		  	height:'auto',
-		  	layout: 'vertical'
+		  	layout: 'vertical',backgroundColor:'#fff'
 		 }
 	);	
 		
@@ -384,7 +324,7 @@ function _top(_data){
 	
 	var cancel_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.CANCEL});
 	
-	    cancel_btn.addEventListener('singletap',function(e){
+	    cancel_btn.addEventListener('click',function(e){
 	    	var flairWin = require('ui/common/flair/Flair');
 		    flairWin.close();
 	    });
@@ -393,7 +333,7 @@ function _top(_data){
     	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 	});
 	var save_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.SAVE});
-	save_btn.addEventListener('singletap',function(){
+	save_btn.addEventListener('click',function(){
 		send_to_server();
 	});
 	var keyboardBar = Titanium.UI.createToolbar({
@@ -428,7 +368,7 @@ function _top(_data){
 	
 	var cContainer = Titanium.UI.createView(
 		 {
-		  	backgroundColor: '#eee',
+		  	backgroundColor: '#fff',
 		  	left:0,
 		  	right:0,
 		  	bottom:0,
@@ -460,7 +400,7 @@ function _createThumb(_data){
 		  	bottom:5,
 		  	left:5,
 		  	right:0,
-		  	backgroundImage:'images/feed/feed_flair_shadow.png',	  
+		    backgroundColor:'#fff',	  
 		   	_data: _data
 		 }
 	);

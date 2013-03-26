@@ -9,7 +9,7 @@ exports.feedItem = function(_data, detailed, _showHR){
 	
 	
 		var _tableRow = Ti.UI.createTableViewRow({height:Ti.UI.SIZE});	
-		_tableRow.add(addShareView(_data,detailed,_showHR));
+		return addShareView(_data,detailed,_showHR);
 	
 		return _tableRow;
 }
@@ -18,9 +18,9 @@ function _createThumb(_data,index){
 	
 	var inner =  Titanium.UI.createView(
 		 {
-		 	left:10,right:10,top:15,
-		  	width: 50,
-		  	height: 50,
+		 	left:0,top:0,
+		  	width: 100,
+		  	height: 100,
 		  	backgroundImage:'images/flairs/100/' + _data.flair + '.png'  	
 		  
 		 }
@@ -42,8 +42,7 @@ function _createThumb(_data,index){
 }
 
 function addShareView(_data,detailed,_showHR){
-	var thumb = _createThumb(_data,_showHR);
-	
+	var thumb = _createThumb(_data,_showHR);	
 	
 	var cRight = Titanium.UI.createView(
 		 {
@@ -85,15 +84,15 @@ function addShareView(_data,detailed,_showHR){
 	top_line.add(user_photo);	
 	
 	var name_txt = Ti.UI.createLabel({
-		height:42.5,
-		left:0,
-		top:0,
+		height:40,
+		left:8,
+		top:3,
 		width:'205',
   		text:_data.name,
   		wordWrap:false,
-  		color:'#ccc',
+  		color:'#2179ca',
   		font: {
-         fontSize: 42
+         fontSize: 40
     	},
     	_dontUseParentEventListener:true		
 	});
@@ -103,24 +102,33 @@ function addShareView(_data,detailed,_showHR){
 		 {
 		 	layout: 'horizontal',
 		 	left:0,
-		 	height:'80',
-		 	top:0
+		 	height:Ti.UI.SIZE,
+		 	top:5,bottom:0
 		 }
 	);	
 
+    var text_container = Titanium.UI.createView(
+		 {
+		 	layout: 'vertical',height:Ti.UI.SIZE,
+		 	width:170,left:5
+		 }
+	);	
+
+ 
 	var _first_txt = _data.adjective + _data.food + " by " + _data.recipientname;
 		var _second_lbl = Ti.UI.createLabel({
-     	left:0,top:0,
+        width:170,
 		height:Ti.UI.SIZE,
 		color:'#333',_color:'#333',
   		text:_first_txt,
   		font: {
-         fontSize: 24
+         fontSize: 18
     	},
     	_userParentEventListener:true
-		})	
-		
-	
+		});
+
+	flair_details.add(thumb);
+	text_container.add(_second_lbl);
 	var _recpColor;
 	
 	if(_data.recipient){
@@ -129,8 +137,23 @@ function addShareView(_data,detailed,_showHR){
 		_recpColor = "#aaa";
 	}
 	
+	
+	var _footer = Ti.UI.createLabel({
+     	left:0,top:0,width:170,
+		height:Ti.UI.SIZE,
+		color:'#aaa',
+  		text:_data.city,
+  		font: {
+         fontSize: 11
+    	},
+    	_userParentEventListener:true
+	});
+	
+	text_container.add(_footer);
+	flair_details.add(text_container);
 	cRight.add(top_line);
-	cRight.add(_second_lbl);
+	cRight.add(flair_details);
+	
 	
 	var likeView = Titanium.UI.createView(
 		 {
@@ -159,16 +182,7 @@ function addShareView(_data,detailed,_showHR){
 		 }
 	);
 	
-	var foodImage = Titanium.UI.createView(
-		 {
-		  	left:10,
-		  	right:10,backgroundColor:'#dedede',borderRadius:4,top:10,
-		  	width:280,
-		    height:80
-		 }
-	);
-	foodImage.add(thumb);
-	cContainer.add(foodImage);
+	
 	
 	if(!detailed){
 		cContainer.addEventListener('singletap',function(e){
