@@ -384,7 +384,7 @@ function _top(_data){
 	
 	var cancel_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.CANCEL});
 	
-	    cancel_btn.addEventListener('singletap',function(e){
+	    cancel_btn.addEventListener('click',function(e){
 	    	var flairWin = require('ui/common/flair/Flair');
 		    flairWin.close();
 	    });
@@ -393,7 +393,7 @@ function _top(_data){
     	systemButton:Titanium.UI.iPhone.SystemButton.FLEXIBLE_SPACE
 	});
 	var save_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.SAVE});
-	save_btn.addEventListener('singletap',function(){
+	save_btn.addEventListener('click',function(){
 		send_to_server();
 	});
 	var keyboardBar = Titanium.UI.createToolbar({

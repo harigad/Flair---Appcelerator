@@ -84,12 +84,20 @@ function _show_tip(){
 	
 	var tip = Titanium.UI.createView(
 	{
-		  	width: 302,
-		  	height:217,
-		  	top:20,
-		  	backgroundImage: 'images/profile/whichrest.png'
+		  top:10,left:10,right:10,height:Ti.UI.SIZE,
+		  backgroundColor:'#cecece',borderRadius:4,
 	});	
 	
+	var _txt = Ti.UI.createLabel({
+		left:10,right:10,top:10,bottom:10,height:Ti.UI.SIZE,
+		text:"Search for the resturant/cafe that you work for",
+  		color:'#fff',
+  		font: {
+         fontSize: 20
+    	},
+	});
+	
+	tip.add(_txt);
 	results_view.add(tip);	
 }
 

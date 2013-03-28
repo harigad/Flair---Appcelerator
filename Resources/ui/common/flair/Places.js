@@ -28,7 +28,7 @@ exports.init = function(callBack) {
 		 {
 		  	width: '100%',
 		  	height: '50',
-		  	layout:'horizontal',backgroundColor:'#eee'
+		  	layout:'horizontal',backgroundColor:'#fff'
 		 }
 	);	
 	
