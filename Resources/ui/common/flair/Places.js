@@ -113,9 +113,9 @@ function printPlaces(places){
 	for(var i=0;i<len;i++){
 		
 		if(i % 2){
-		  bgColor = "#dddddd";
+		  bgColor = "#eee";
 	    }else{
-		  bgColor = "#eeeeee";
+		  bgColor = "#fff";
 	    }	
 	
 		_placesView.add(_createFlairThumb(places[i],bgColor));	

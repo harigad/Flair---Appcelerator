@@ -4,6 +4,7 @@ var grayV;
 var photoView;
 var main;
 var placeViewTopLayer;
+var upperView;
 var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
 
@@ -21,21 +22,19 @@ function _hr(){
 exports.init = function(id,name,photo){
 	var t = {x:0,y:60};
 	
-	main = Titanium.UI.createTableView(
-				{
-		  			width: '320',
-		  			backgroundColor:'#eee',separatorStyle:"NONE"
-				});	
+	var scroll = Ti.UI.createScrollView({width:Ti.UI.FILL,top:0});
+	main = Titanium.UI.createView({top:0,width:Ti.UI.FILL,layout:'vertical',height:Ti.UI.SIZE});	
 	
 	main.userId = id;
 	main.userName = name;
 	
-	var upperView = Titanium.UI.createView(
+	upperView = Titanium.UI.createView(
 		 {
-		  	width: '100%',
+		  	left:10,right:10,
 		  	height: Ti.UI.SIZE,
-		  	top:0,
-		  	layout: 'vertical'
+		  	top:10,
+		  	layout: 'vertical',
+		  	backgroundColor:'#fff',borderRadius:4
 		 }
 	);
 	
@@ -57,9 +56,14 @@ exports.init = function(id,name,photo){
 	
 	photoView = Ti.UI.createImageView({
   		image: photo,
-  		width:320,height:200,
-  		top:0,backgroundColor:'#000'
+  		left:0,right:0,height:180,
+  		top:0,backgroundColor:'#ccc'
 	});	
+	
+	
+	photoView.addEventListener("load",function(e){
+		photoView.setHeight((300/photoView.toImage().width) * photoView.toImage().height);
+	});
 	
     
     var descLayer = Titanium.UI.createView({
@@ -82,17 +86,18 @@ exports.init = function(id,name,photo){
 	//Will activate tabs for the user at a later time
 	//view.add(tabbedBar());
 	    
-	var viewRow = Titanium.UI.createTableViewRow({height:Ti.UI.SIZE});
+	var viewRow = Titanium.UI.createView({layout:'vertical',height:Ti.UI.SIZE});
         viewRow.add(upperView);
-        upperView.add(_hr());
+       // upperView.add(_hr());
         upperView.add(view);
-	main.appendRow(viewRow);
+	main.add(viewRow);
 	
 	main.contentScreen = view;
 	main.userPhotoView = photoView;
 	//clearView();	
 	loadUser(id,main);
-	return main;
+	scroll.add(main);
+	return scroll;
 }
 
 function tabbedBar(){
@@ -173,6 +178,7 @@ function clearView(hideLoading,thisView){
 exports.refresh = function(_user){
 	Ti.API.debug("in refresh " + _user.getPlace());
 	user = _user;
+	upperView.remove(grayV);
 	printDetails(true);
 }
 
@@ -185,7 +191,7 @@ function printDetails(_refresh){
 	photoView.setImage(user.getPhotoBig());
 	
 	var nameLabel = Ti.UI.createLabel({
-  		left:10,
+  		left:20,
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,shadowColor:'#333333',
   		color: '#fff',
@@ -199,7 +205,7 @@ function printDetails(_refresh){
 		
 	if(user.getPlace() || user.isAdmin()){
 		grayV = printPlace(user);	
-		view.add(grayV);
+		upperView.add(grayV);
 	}
 	
 	if(user.getId()){
@@ -231,8 +237,7 @@ function activation_code(user){
 	var place = user.getPlace();
 		
 	var fRow_container = Ti.UI.createView({
-		height:Ti.UI.SIZE,left:10,right:10,top:10,
-		backgroundColor:'#fff',borderRadius:4,borderWidth:0.5,borderColor:'#ddd',
+		height:Ti.UI.SIZE,left:0,right:0,top:0,
 		layout:'vertical'
 	});
 	
@@ -275,7 +280,7 @@ function activation_code(user){
 	fRow_container.add(tip_container);
 	
   	var tip_text = Ti.UI.createLabel({
-  		left:10,right:10,bottom:10,
+  		left:10,right:10,
   		color: '#333',
   		text: "Please call 1-866-291-9993 from " + place.name + " and enter your verification code.",
   			font: {
@@ -298,10 +303,10 @@ function printPlace(user){
 	
 	var grayView = Titanium.UI.createView(
 		{
-		  left:10,right:10,top:10,
+		  left:0,right:0,top:0,
 		  height:Ti.UI.SIZE,
 		  layout: 'horizontal',
-		  backgroundColor:'#fff',borderRadius:4
+		  
 		}
 	);	
 	
@@ -338,8 +343,6 @@ function printPlace(user){
   		left:0,
   		width:'auto',
   		color: '#2179ca',
-  		shadowColor: '#aaa',
-  		shadowOffset: {x:1, y:1},
   		text: place.name,
   			font: {
          		fontSize: 18

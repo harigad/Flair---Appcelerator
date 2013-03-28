@@ -1,8 +1,7 @@
 var _db;
 
 exports.select = function(_sql){	
-	return	select_from_server(_sql);
-	//return _db.execute(sql);	
+	return _db.execute(_sql);	
 }
 
 function select_from_server(_sql){
@@ -38,20 +37,53 @@ function select_from_server(_sql){
 }
 
 exports.open = function(){
-	return;
 	_db = Ti.Database.open('flair_db');
 }
 
-exports.load = function(){
-	return;
-	_insert_data("_adj");
-	_insert_data("_adv");
-	_insert_data("food");
+function _getAdj(){
+	return {
+		"_data" : 
+					["delicious","spicy","hot","sweet","tasty"]
+				  
+		  };
 }
 
-function _insert_data(_table){
+function _getAdv(){
+	return {
+		"_data" : 
+					["absolutely","very","extremely","mean"]
+				  
+		  };
+}
+
+function _getFood(){
+	return {
+		"_data" : 
+					["chips","cookies","chai tea latte","maggie noodles","biscuits"]
+				  
+		  };
+}
+
+
+exports.load = function(){
+	_insert_data("_adj",_getAdj());
+	_insert_data("_adv",_getAdv());
+	_insert_data("food",_getFood());
+}
+
+function _insert_data(_table,_response){
 	//create table
-	_db.execute('CREATE TABLE IF NOT EXISTS ' + _table + '(_id INTEGER, _txt TEXT)');
+	Ti.API.debug("A1");
+	_db.execute('CREATE TABLE IF NOT EXISTS ' + _table + '(_txt TEXT)');
+	Ti.API.debug("A2");
+	        _db.execute("DELETE FROM " + _table);
+	        Ti.API.debug("A3");
+         	for(var i=0;i<_response._data.length;i++){
+         		Ti.API.debug("A4");
+         		_db.execute("INSERT INTO " + _table + "(_txt) VALUES (?)",_response._data[i]._txt);
+         	} 	
+	return;
+	
 	
 	//load and insert
 	var that = this;

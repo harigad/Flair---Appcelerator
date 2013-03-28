@@ -4,8 +4,6 @@ var profileView = require('ui/common/userProfile/UserProfileView');
 exports.init = function(id,name,photo){
 
 	var main = Titanium.UI.createWindow({
-    		
-    	barColor:'#333',
     	backgroundColor: '#eee'  	
 	});	
 	
