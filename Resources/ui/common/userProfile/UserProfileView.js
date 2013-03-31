@@ -252,7 +252,7 @@ function activation_code(user){
     var mapViewCont = Titanium.UI.createView(
 		 {
 		 	top:'0',
-		  	height: '80',borderRadius:4,left:10,right:10,top:10
+		  	height: '80',borderRadius:4,left:5,right:5,top:5
 		 }
 	);
 	mapViewCont.add(mapView);

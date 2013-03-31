@@ -18,15 +18,9 @@ function _createThumb(_data,index){
 	
 	var inner =  Titanium.UI.createView(
 		 {
-<<<<<<< HEAD
 		 	left:5,top:5,
 		  	width: 70,
 		  	height: 70,
-=======
-		 	left:0,top:0,
-		  	width: 100,
-		  	height: 100,
->>>>>>> e301c2d0520144c1be509b35ef318fc351c7aef9
 		  	backgroundImage:'images/flairs/100/' + _data.flair + '.png'  	
 		  
 		 }

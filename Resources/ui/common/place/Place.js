@@ -4,6 +4,7 @@ var portal = require('ui/common/Portal');
 var view;
 var _tabViews;
 var scrollView;
+var _foodView;
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
 	   	backgroundColor: '#eee' 	
@@ -23,9 +24,7 @@ exports.init = function(_data){
 		  	layout: 'vertical'
 		 }
 	);	
-	
-	
-	
+		
 	var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
     region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.005, longitudeDelta:0.005},
@@ -74,10 +73,8 @@ exports.init = function(_data){
 	mapView.add(mapDesc);
 	mapViewCont_outer.add(mapViewCont);
 	
-	
-	
 	var _title = Ti.UI.createLabel({
-  		left:10,top:10,bottom:10,right:10,
+  		left:10,top:10,bottom:0,right:10,
   		height:Ti.UI.SIZE,
   		color: '#333',
   		text: _data.name,
@@ -86,6 +83,10 @@ exports.init = function(_data){
     		}
   		});
 	mapViewCont_outer.add(_title);
+	
+	_foodView = Ti.UI.createView({width:'100%',height:Ti.UI.SIZE,left:10,right:10,bottom:10});
+	mapViewCont_outer.add(_foodView);
+	
     view.add(mapViewCont_outer);
     
     scrollView.add(view);
@@ -110,9 +111,33 @@ function separator(str){
   		return lbl;
 }
 
+function print_food(_place){
+  var str = "";
+  
+  Ti.API.debug("places.food length " + _place.foods.length);
+      
+  for(var i=0;i<_place.foods.length;i++){
+  	str = str + _place.foods[i].name + ", ";
+  }
+  
+  str = str.substring(0,str.length-2);
+  if(_place.foods.length>0){
+   var lbl = Ti.UI.createLabel({
+  		height:Ti.UI.SIZE,
+  		color: '#999',top:0,left:0,
+  		text: str,
+  			font: {
+         		fontSize: 14
+    		}
+  		});  
+  		
+  	_foodView.add(lbl);
+   }
+}
+
 
 function print_cast(_place){
-	view.add(separator("Cast"));
+	view.add(separator("Starring"));
 	
 	var _localView = Titanium.UI.createView(
 		 {
@@ -206,7 +231,8 @@ function loadData(_data){
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
      	 var _place = JSON.parse(this.responseText);  
-     	 print_cast(_place);	 
+     	 print_cast(_place);
+     	 print_food(_place); 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for Place -> ' + _data.pid);

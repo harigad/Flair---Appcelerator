@@ -12,7 +12,7 @@ var _flair;
 var _place;
 var portal = require('ui/common/Portal');
 var places = require('ui/common/flair/Places');
-var _search = require('ui/common/flair/Search');
+var _search_class = require('ui/common/flair/Search');
 var _db = require('ui/common/data/DB');
 var main;
 var placesView;
@@ -63,9 +63,18 @@ function _startFlair(_data){
 	
 	_tableView = Ti.UI.createTableView({
   	 	    height:120,
-  	 		top:0,backgroundColor:'#990000'
+  	 		top:0,backgroundColor:'#eee'
 	});
 	outer.add(_tableView);
+	
+	_tableView.addEventListener("click",function(e){
+		var _txt = _textField.getValue();
+		var lastIndex = _txt.lastIndexOf(e.rowData._word);
+		if(lastIndex>-1){
+			var new_txt = _txt.substr(0,lastIndex);
+			_textField.setValue(new_txt + e.rowData.title + " ");
+		}
+	});
 	
 	main.add(outer);
 	
@@ -138,7 +147,7 @@ function _update(_textField){
 			if(results.length>0){
 				_print_last_word(food_string,true);
 			}else{
-				_print_last_word(food_string,false);	
+				_print_last_word(food_string,true);	
 			}
 			
 			if(food_array.length>1){
@@ -218,63 +227,46 @@ function _print_place(){
 function _search_person(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
 	var rs = [];
-	if(_word === "hari"){
-		rs.push({title:_word});
-	}
 	
+	for(var i=0;i<_place.cast.length;i++){
+		if(_place.cast[i].indexof(_word)>-1){
+		  rs.push({"title":_place.cast[i]});	
+		}
+	}
 	
 	_updateTable(rs);
 	
+	return rs;
+}
+
+function _search(_table,_word){
+	var rs = [];
+	var rows = _db.select("SELECT _txt FROM " + _table + " where _txt like '" + _word + "%'");
+		
+	while (rows.isValidRow()){
+		Ti.API.info("first row " + rows.field(0));
+		rs.push({"_word":_word,"title":rows.field(0)});
+		rows.next();
+	}
+	
+	_updateTable(rs);
 	return rs;
 }
 
 
 function _search_adv(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
-	var rs = [];
-	var rows = _db.select("select _txt from _adv");
-	Ti.API.info('Row count: ' + rows.rowCount);
-	
-	while (rows.isValidRow()){
-		rs.push({"title":rows.fieldByName('_txt')});
-		rows.next();
-	}
-	
-	_updateTable(rs);
-	return rs;	
+	return _search("_adv",_word);	
 }
 
 function _search_adj(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
-	var rs = [];
-	if(_word === "delicious"){
-		rs.push({title:_word});
-	}
-	
-	_updateTable(rs);
-	
-	return rs;
+	return _search("_adj",_word);	
 }
 
 function _search_food(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
-	
-	if(_word.lastIndexOf(" by") === _word.length-3){
-				_word = _word.substring(0,_word.length-3);
-	}else if(_word.lastIndexOf(" b") === _word.length-2){
-				_word = _word.substring(0,_word.length-2);
-	}
-	
-	
-	var rs = [];
-	if(_word === "chips ahoy"){
-		rs.push({title:_word});
-	}
-	
-	
-	_updateTable(rs);
-	
-	return rs;
+	return _search("_food",_word);
 }
 
 function _print_last_word(_word,_found){
@@ -380,13 +372,6 @@ function _top(_data){
 	
 	cContainer.add(thumb);
 	cContainer.add(cRight);	
-	
-	main.addEventListener('singletap',function(){
-		Ti.API.debug("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-		_textField.focus();	
-	});
-	
-
 	
 	return cContainer;	
 }
