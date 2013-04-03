@@ -69,6 +69,15 @@ User.prototype.getPlace = function(){
 	}
 }
 
+User.prototype.getRole = function(){
+	if(this._data.place){
+		return this._data.place.role;
+	}else{
+		return false;
+	}
+}
+
+
 User.prototype.getName = function(){
 	return this._data.name;
 }

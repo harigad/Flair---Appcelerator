@@ -197,6 +197,7 @@ function send_to_server(){
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
+     	Ti.API.info(this.responseText);
      	 var _result = JSON.parse(this.responseText);  
      	 if(_result.status){     	 
 			     	 	
@@ -228,9 +229,12 @@ function _search_person(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
 	var rs = [];
 	
+	Ti.API.info("searching persons");
+	Ti.API.info("--->" + _place.cast.length);
+	
 	for(var i=0;i<_place.cast.length;i++){
-		if(_place.cast[i].indexof(_word)>-1){
-		  rs.push({"title":_place.cast[i]});	
+		if(_place.cast[i].name.indexof(_word)>-1){
+		  rs.push({"title":_place.cast[i].name});	
 		}
 	}
 	

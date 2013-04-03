@@ -191,21 +191,38 @@ function printDetails(_refresh){
 	photoView.setImage(user.getPhotoBig());
 	
 	var nameLabel = Ti.UI.createLabel({
-  		left:20,
+  		left:10,top:5,
     	width:Ti.UI.SIZE,
-  		height:Ti.UI.SIZE,shadowColor:'#333333',
-  		color: '#fff',
+  		height:Ti.UI.SIZE,
+  		color: '#333',
   		text: user.getName(),
   			font: {
-         		fontSize:26,fontWeight:'bold'
+         		fontSize:18
     		}
-  		});  
+  		});
+  	
+  	var nameView = Ti.UI.createView({height:Ti.UI.SIZE,layout:'horizontal'});
+  	nameView.add(nameLabel);
+  	
+  	if(user.getRole()){
+  	var roleLabel = Ti.UI.createLabel({
+  		left:0,top:5,
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,
+  		color: '#999',
+  		text: user.getRole(),
+  			font: {
+         		fontSize:18
+    		}
+  		});   
+  	 nameView.add(roleLabel);	
+  	}	
   		
-	placeViewTopLayer.add(nameLabel);
+	view.add(nameView);
 		
 	if(user.getPlace() || user.isAdmin()){
 		grayV = printPlace(user);	
-		upperView.add(grayV);
+		view.add(grayV);
 	}
 	
 	if(user.getId()){
@@ -237,33 +254,28 @@ function activation_code(user){
 	var place = user.getPlace();
 		
 	var fRow_container = Ti.UI.createView({
-		height:Ti.UI.SIZE,left:0,right:0,top:0,
-		layout:'vertical'
+		height:Ti.UI.SIZE,left:10,right:10,top:5,
+		layout:'vertical',backgroundColor:'#eee',borderRadius:4
 	});
 	
-	var mapView = Titanium.Map.createView({
-    mapType: Titanium.Map.STANDARD_TYPE,
-    region:{latitude:place.lat, longitude:place.lng, latitudeDelta:0.005, longitudeDelta:0.005},
-    animate:true,
-    regionFit:true,
-    userLocation:true,touchEnabled:false
-    });
-    
-    var mapViewCont = Titanium.UI.createView(
-		 {
-		 	top:'0',
-		  	height: '80',borderRadius:4,left:5,right:5,top:5
-		 }
-	);
-	mapViewCont.add(mapView);
-    fRow_container.add(mapViewCont);
+	var placeName = Ti.UI.createLabel({
+  		left:10,right:10,top:10,width:280,
+  		color: '#2179ca',
+  		text: place.name,
+  			font: {
+         		fontSize: 18
+    		}
+  	});
+  	
+  	fRow_container.add(placeName);
+	
 	
   	var roleName = Ti.UI.createLabel({
-  		left:10,right:10,top:10,
-  		color: '#2179ca',
+  		left:10,right:10,top:0,
+  		color: '#333',
   		text: "Verification Code : " + place.code,
   			font: {
-         		fontSize: 20
+         		fontSize: 14
     		}
   	});
   	
@@ -273,7 +285,7 @@ function activation_code(user){
 		 {
 		  	height: Ti.UI.SIZE,
 		  	left:0,	
-		  	top:0,
+		  	top:0,bottom:10,
 		  	layout:'horizontal'
 		 }
 	);
@@ -281,7 +293,7 @@ function activation_code(user){
 	
   	var tip_text = Ti.UI.createLabel({
   		left:10,right:10,
-  		color: '#333',
+  		color: '#666',
   		text: "Please call 1-866-291-9993 from " + place.name + " and enter your verification code.",
   			font: {
          		fontSize: 14
@@ -303,7 +315,7 @@ function printPlace(user){
 	
 	var grayView = Titanium.UI.createView(
 		{
-		  left:0,right:0,top:0,
+		  left:0,right:0,top:-10,
 		  height:Ti.UI.SIZE,
 		  layout: 'horizontal',
 		  
@@ -333,8 +345,8 @@ function printPlace(user){
 	var placeName = Ti.UI.createLabel({
   		left:0,
   		width:'auto',
-  		color: '#eee',  	
-  		text: place.role,
+  		color: '#2179ca',  	
+  		text: "@ " + place.name,
   			font: {
          		fontSize: 14
     		}
@@ -342,10 +354,10 @@ function printPlace(user){
   	var roleName = Ti.UI.createLabel({
   		left:0,
   		width:'auto',
-  		color: '#2179ca',
+  		color: '#eee',
   		text: place.name,
   			font: {
-         		fontSize: 18
+         		fontSize: 14
     		}
   	}); 
   	
@@ -397,7 +409,7 @@ function printPlace(user){
   	});
   	   	
   	fRow_container.add(placeName);
-  	fRow_container.add(roleName);
+  	//fRow_container.add(roleName);
   	fRow_container.add(settingsView);
   	
 	}else if(place && place.code){
@@ -421,7 +433,7 @@ function printPlace(user){
   		color: '#2179ca',
   		text: "My Restaurant/Cafe",
   			font: {
-         		fontSize: 18
+         		fontSize: 14
     		}
   	});    	
   	

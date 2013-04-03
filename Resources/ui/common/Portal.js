@@ -27,6 +27,7 @@ function loadPlaces(callBack) {
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
+     	Ti.API.info(this.responseText);
      	 _places = JSON.parse(this.responseText);
      	 if(callBack){
      	 	callBack(_places);

@@ -179,14 +179,14 @@ function print_cast(_place){
   		color: '#2179ca',
   		text: _place.cast[i].name,
   			font: {
-         		fontSize: 42
+         		fontSize: 36
     		}
   		});  
   		var roleName = Ti.UI.createLabel({
   		left:0,bottom:10,
   		width:Ti.UI.FILL,
-  		color: '#ccc',
-  		text: "",
+  		color: '#999',
+  		text: _place.cast[i].role,
   			font: {
          		fontSize: 18
     		}
