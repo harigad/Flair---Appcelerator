@@ -92,6 +92,10 @@ exports.getUser = function(){
 	return user;
 }
 
+exports.setFeed = function(_flairs){
+	Ti.API.info("login.setFeed");
+	user.setFeed(_flairs);
+}
 
 function launchSignup(_callBack){
 	var signup = require('ui/common/signup/Signup1');

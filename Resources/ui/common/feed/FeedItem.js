@@ -115,7 +115,7 @@ function addShareView(_data,detailed,_showHR){
 	);	
 
  
-	var _first_txt = _data.adjective + _data.food + " by " + _data.recipientname;
+	var _first_txt = _data.adjective + " " +  _data.food + " by " + _data.recipientname;
 		var _second_lbl = Ti.UI.createLabel({
         width:170,
 		height:Ti.UI.SIZE,
@@ -142,7 +142,7 @@ function addShareView(_data,detailed,_showHR){
      	left:0,top:0,width:170,
 		height:Ti.UI.SIZE,
 		color:'#aaa',
-  		text:_data.city,
+  		text:_data.placename + ", " + _data.city,
   		font: {
          fontSize: 11
     	},

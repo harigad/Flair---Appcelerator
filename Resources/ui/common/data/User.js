@@ -15,17 +15,7 @@ function User(id,_callBack,_data){
 User.prototype.load = function(_callBack){
 	Ti.API.debug("User.load " + this.id);
 	var that = this;
-	
-	var _data = getUserData(this.id);
-	if(_data){
-				if(this.id.indexOf("pid")>-1){
-					this.id = null;
-				}
-			this._data = _data;
-			_callBack(this);	
-			return; 	 	
-	}
-	
+		
 	var url = "http://flair.me/search.php";	
 	var _data = {type:"user",id:this.id,accessToken:Ti.Facebook.getAccessToken()};
 		
@@ -88,6 +78,12 @@ User.prototype.getPhoto = function(){
 
 User.prototype.getPhotoBig = function(){
 	return this._data.photo_big;
+}
+
+User.prototype.setFeed = function(_feed){
+	Ti.API.info("user.setFeed " + _feed.length);
+	this._data.feed = _feed;
+	setUserData(this.id,this._data);
 }
 
 User.prototype.feed = function(){

@@ -7,7 +7,7 @@ var scrollView;
 var _foodView;
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
-	   	backgroundColor: '#eee' 	
+	   	backgroundColor: '#eee'
 	});
 	
 	loadData(_data);
@@ -84,7 +84,7 @@ exports.init = function(_data){
   		});
 	mapViewCont_outer.add(_title);
 	
-	_foodView = Ti.UI.createView({width:'100%',height:Ti.UI.SIZE,left:10,right:10,bottom:10});
+	_foodView = Ti.UI.createView({height:Ti.UI.SIZE,left:10,right:10,bottom:10});
 	mapViewCont_outer.add(_foodView);
 	
     view.add(mapViewCont_outer);
@@ -124,7 +124,7 @@ function print_food(_place){
   if(_place.foods.length>0){
    var lbl = Ti.UI.createLabel({
   		height:Ti.UI.SIZE,
-  		color: '#999',top:0,left:0,
+  		color: '#2179ca',top:0,left:0,
   		text: str,
   			font: {
          		fontSize: 14

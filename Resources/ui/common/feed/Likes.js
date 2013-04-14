@@ -35,7 +35,8 @@ function print_individual_like(likeObj,_type){
 					width:35,
 					height:35,
 					backgroundImage:'images/feed/like_thumb_' + _type + '.png',
-					top:0					
+					top:0,
+					bubbleParent: false				
 				});			
 				
 				var like_user = Ti.UI.createImageView({
@@ -46,6 +47,11 @@ function print_individual_like(likeObj,_type){
   				});
   				
   				like_container.add(like_user);
+  				
+  				like_container.addEventListener('singletap',function(e){
+  						var win = require('ui/common/userProfile/UserProfile');
+			            portal.open(win.init(likeObj.uid,likeObj.name,likeObj.photo));	
+  				});
   				
    				return like_container;
 }

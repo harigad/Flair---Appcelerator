@@ -9,7 +9,9 @@ exports.launch = function(_place,_dontAnimate){
 	_init(_place,_dontAnimate);	
 }
 
-function _build(_place,_dontAnimate){
+function _build(){
+    var _place = user.getPlace();
+	
 	var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
     region:{latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.005, longitudeDelta:0.005},
@@ -34,7 +36,7 @@ function _build(_place,_dontAnimate){
 	);	
 	var nameLabel = Ti.UI.createLabel({
   		left:10,
-        top:'120',
+        top:'250',
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,shadowColor:'#333333',
   		color: '#fff',
@@ -87,6 +89,7 @@ function _build(_place,_dontAnimate){
          		fontSize: 18
     		}
   	});
+  	
 	_save_btn.add(_save_txt);
 	
 	var _delete_btn = Titanium.UI.createView(
@@ -115,26 +118,41 @@ function _build(_place,_dontAnimate){
          		fontSize: 18
     		}
   	});
+  	
 	_delete_btn.add(_delete_txt);
 	
 	_delete_btn.addEventListener('singletap',function(){
-		_deleteCode(user.getPlace());
-		user.setPlace(null);
-		searchPlaceNav.close(true,user);
-		main.close({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
+		_del(user,searchPlaceNav,main);
 	});
 	
 	_save_btn.addEventListener('singletap',function(){
 		_loadCode(_place);
 	});
-	
-	
-	if(_dontAnimate){
-		main.open();
-	}else{
-		main.open({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_RIGHT});
-	}
-	
+
+	main.open();	
+}
+
+function _del(user,searchPlaceNav,main){
+	var dialog = Ti.UI.createAlertDialog({
+    	cancel: -1,
+    	buttonNames: ['Cancel', 'Delete'],
+    	message: 'Are you sure?'
+    });
+    
+    dialog.addEventListener('singletap', function(e){
+      	Ti.API.debug('edit share dialog button clicked with index ' + e.index);
+    	if (e.index === 1){
+    		_deleteCode(user.getPlace());
+			user.setPlace(null);
+			searchPlaceNav.close(true,user);
+			main.close();    		
+    	}else{
+    		//do nothing
+    	}
+    	
+    });
+    
+    dialog.show();
 }
 
 function _deleteCode(_data){
@@ -160,7 +178,7 @@ function _deleteCode(_data){
 function _loadCode(_data){
 	if(user.getPlace() === _data){
 		 	 searchPlaceNav.close(false);
-		     main.close({transition:Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});return;
+		     main.close();return;
 	}
 		
 	var url = "http://flair.me/search.php";	
@@ -205,7 +223,7 @@ function _init(_data,_dontAnimate){
 	});
 	main.add(_view);
 	
-	_build(_data,_dontAnimate);
+	_build();
 }
 
 

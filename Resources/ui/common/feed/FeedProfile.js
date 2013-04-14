@@ -58,13 +58,13 @@ exports.init = function(_data) {
 function _del(_object){
 	var dialog = Ti.UI.createAlertDialog({
     	cancel: -1,
-    	buttonNames: ['Delete', 'Cancel'],
+    	buttonNames: ['Cancel', 'Delete'],
     	message: 'Delete Comment?'
     });
     
     dialog.addEventListener('singletap', function(e){
       	Ti.API.debug('edit share dialog button clicked with index ' + e.index);
-    	if (e.index === 0){
+    	if (e.index === 1){
     		process(_object._data,"delete");
       		view.remove(_object);      		
     	}else{

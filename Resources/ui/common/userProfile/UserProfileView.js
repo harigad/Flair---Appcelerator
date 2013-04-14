@@ -210,7 +210,7 @@ function printDetails(_refresh){
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,
   		color: '#999',
-  		text: user.getRole(),
+  		text: " " + user.getRole(),
   			font: {
          		fontSize:18
     		}
@@ -371,30 +371,20 @@ function printPlace(user){
 	);	
 	
 	if(user.getId() == login.getUser().getId()){
-	
-	var settingsImage = Ti.UI.createImageView({
-  		image: 'images/profile/settings2.png',
-  		left: 0,
-  		right:5,
-  		height:25
-	});
-	
 	var settingsText = Ti.UI.createLabel({
   		left:0,
   		width:'auto',
   		color: '#2179ca',
-  		text: "(edit)",
+  		text: "(change)",
   			font: {
          		fontSize: 14
     		}
   	}); 
-  	
-  	settingsView.add(settingsImage);
-  	settingsView.add(settingsText);
+ 	settingsView.add(settingsText);
   	
   	settingsView.addEventListener('singletap',function(e){
-  		var editRole = require('ui/common/userProfile/EditRole');
-  		portal.open(editRole.init());
+  		var searchPlace= require('ui/common/userProfile/SearchPlace');
+  		searchPlace.launch();
   	});	
   	
   	}

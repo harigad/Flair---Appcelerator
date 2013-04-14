@@ -48,7 +48,7 @@ Ti.API.debug("home init");
 
 	var nearbyWin = wall.init("nearby"); 
   	var friendsWin = wall.init("friends");  
-  	var profileWin = profile.init(user.getId(),user.getName(),user.getPhoto());
+  	//var profileWin = 
   	
 	var nearby = _createThumb({"id":"nearby","photo":""},'#fff');
 		nearby.addEventListener('singletap',function(e){
@@ -60,14 +60,14 @@ Ti.API.debug("home init");
 		});
 	var me = _createThumb({"id":"me","photo":""},'#fff');
 		me.addEventListener('singletap',function(e){
-			portal.open(profileWin);
+			portal.open(profile.init(user.getId(),user.getName(),user.getPhoto()));
 		});
 		
 	homeMenu.add(nearby);
 	homeMenu.add(friends);
 	homeMenu.add(me);
+
 //Print Icons
-	
 	
 	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#eee'));
 	homeMenu.add(_createFlairThumb({"id":2,"photo":""},'#fff'));

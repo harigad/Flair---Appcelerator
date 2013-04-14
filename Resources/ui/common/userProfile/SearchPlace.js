@@ -67,11 +67,10 @@ function init(){
 
 	initialize();	
 	
-	
 }	
 
 function initialize(){
-	if(user.getPlace().code){
+	if(user.getPlace()){
 		var accessCode = require('ui/common/userProfile/AccessCode');
 		accessCode.launch(user.getPlace());
  	}else{		
@@ -191,8 +190,6 @@ function _search(){
     				ok: 'Okay',
     				title: 'Oops!'
   		});
-  		//dialog.show();  	
-		//return;
 	}
 	
 	var that = this;
