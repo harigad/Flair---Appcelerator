@@ -1,4 +1,5 @@
 var _db;
+var login = require('ui/common/Login');
 
 exports.select = function(_sql){	
 	return _db.execute(_sql);	
@@ -6,6 +7,7 @@ exports.select = function(_sql){
 
 exports.open = function(){
 	_db = Ti.Database.open('flair_db');
+	var service = Ti.App.iOS.registerBackgroundService({url:'ui/common/data/DB_Background.js'});
 }
 
 exports.load = function(){
@@ -17,7 +19,7 @@ function _load_from_server(){
 	var that = this;
 	
 	var url = "http://flair.me/search.php";	
-	var _data = {type:"_data",accessToken:Ti.Facebook.getAccessToken()};
+	var _data = {type:"_data",accessToken:login.getAccessToken()};
 		
 	Ti.API.debug("_data.load");
  	var client = Ti.Network.createHTTPClient({ 		

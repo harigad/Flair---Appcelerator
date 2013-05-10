@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <property name="ti.facebook.appid">201613399910723</property>
     <property name="acs-oauth-secret-development" type="string">I35zE886z7j41lZnk8Y1jjMi7EN0NB4r</property>
     <property name="acs-oauth-key-development" type="string">NoOvhxdG6DHMIZMixiFxNigzAJvEhPkS</property>
     <property name="acs-api-key-development" type="string">PXoSQeWvDkJ0gUArBIhcXMggvmWwnOyL</property>
@@ -8,14 +7,15 @@
     <property name="acs-oauth-key-production" type="string">53CTV3WmOh0HUlNW6B0M4XgYJblsVuHa</property>
     <property name="acs-api-key-production" type="string">fZuIdM1Un78R1BORAdrfGTNbkdh1Udwb</property>
     <deployment-targets>
-        <target device="mobileweb">true</target>
+        <target device="tizen">false</target>
+        <target device="mobileweb">false</target>
         <target device="iphone">true</target>
-        <target device="ipad">true</target>
+        <target device="ipad">false</target>
         <target device="android">false</target>
         <target device="blackberry">false</target>
     </deployment-targets>
     <sdk-version>3.0.0.GA</sdk-version>
-    <id>2V8VB59376</id>
+    <id>me.flair</id>
     <name>Flair</name>
     <version>1.0</version>
     <publisher>HGadiraju</publisher>

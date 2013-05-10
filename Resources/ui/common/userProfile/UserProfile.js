@@ -4,16 +4,15 @@ var profileView = require('ui/common/userProfile/UserProfileView');
 exports.init = function(id,name,photo){
 
 	var main = Titanium.UI.createWindow({
-    	backgroundColor: '#eee'  	
-	});	
-	
+    	backgroundColor: '#eee',
+    	navBarHidden:false 	
+	});
 	
 	main.add(profileView.init(id,name,photo));
 	
 	main.addEventListener("hide",function(e){
 		cleanWindow(main);
 	});
-	
 	
 	return main;
 }

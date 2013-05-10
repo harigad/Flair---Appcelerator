@@ -2,6 +2,7 @@ var main;
 var nav;
 var _location;
 var _places;
+var login = require('ui/common/Login');
 
 exports.getLocation = function(){
 	return _location;
@@ -23,7 +24,7 @@ function loadPlaces(callBack) {
 		_dataStr.searchMode = "place";
 		_dataStr.lat = _location.latitude;
 		_dataStr.lng = _location.longitude;
-		_dataStr.accessToken=Ti.Facebook.getAccessToken();
+		_dataStr.accessToken=login.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
@@ -71,6 +72,10 @@ function initLocation(){
 		var current_altitudeAccuracy = e.coords.altitudeAccuracy;*/
 	});
 		
+	Ti.Geolocation.addEventListener("location", function(e){
+		_location = e.coords;
+	});	
+		
 }
 
 exports.remove = function(win){
@@ -80,6 +85,10 @@ exports.remove = function(win){
 
 
 exports.init = function(){	
+//		var props = Ti.App.Properties.listProperties();
+//		for (var i=0;i<props.length;i++){
+//    			Ti.App.Properties.removeProperty(props[i]);
+//		}	
 	main = Titanium.UI.createWindow();
 
 	var Home = require('ui/common/home/Home');
@@ -100,4 +109,41 @@ exports.init = function(){
 
 exports.open = function(win){
 	nav.open(win,{animated:true});
+}
+
+
+
+exports.setDirty = function(id){
+  	var _data = Ti.App.Properties.getString("userData_" + id);
+	if(_data){
+		var obj = JSON.parse(_data);
+		obj._dirty = true;
+		var portal = require("ui/common/Portal");
+		portal.setUserData(id,obj);
+	}else{
+		return false;
+	}
+}
+
+exports.setUserData = function(id,_data){
+	var login = require('ui/common/Login');
+	var user = login.getUser();
+		if(user.getId() == id){
+			user.setData(_data);
+		}
+	Ti.App.Properties.setString("userData_" + id, JSON.stringify(_data));
+}
+
+exports.getUserData = function(id){
+	var _data = Ti.App.Properties.getString("userData_" + id);
+	if(_data){
+		var obj = JSON.parse(_data);
+		if(obj._dirty || obj.invited != true){
+			return false;
+		}else{
+			return obj;
+		}
+	}else{
+		return false;
+	}
 }

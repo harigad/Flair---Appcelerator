@@ -1,13 +1,17 @@
 var _lat;
 var _lng;
 var portal = require('ui/common/Portal');
+var login = require('ui/common/Login');
 var view;
 var _tabViews;
 var scrollView;
 var _foodView;
+var pull_to_refresh = require('ui/common/components/PullToRefresh');
+
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
-	   	backgroundColor: '#eee'
+	   	backgroundColor: '#eee',
+	   	navBarHidden:false
 	});
 	
 	loadData(_data);
@@ -15,6 +19,10 @@ exports.init = function(_data){
 	scrollView = Ti.UI.createScrollView({
   		width: 320,
   		top:0
+	});
+	
+	pull_to_refresh.init(scrollView,function(){
+		loadData(_data);
 	});
 	
 	view = Titanium.UI.createView(
@@ -27,7 +35,7 @@ exports.init = function(_data){
 		
 	var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
-    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.005, longitudeDelta:0.005},
+    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.01, longitudeDelta:0.01},
     animate:true,
     regionFit:true,
     userLocation:true
@@ -115,7 +123,13 @@ function print_food(_place){
   var str = "";
   
   Ti.API.debug("places.food length " + _place.foods.length);
-      
+  
+  if(_foodView.children.length>0){
+  	_foodView.remove(_foodView.children[0]);
+  }
+  
+  var container = Ti.UI.createView({layout:'horizontal',width:Ti.UI.FILL,height:Ti.UI.SIZE});
+  
   for(var i=0;i<_place.foods.length;i++){
   	str = str + _place.foods[i].name + ", ";
   }
@@ -131,8 +145,11 @@ function print_food(_place){
     		}
   		});  
   		
-  	_foodView.add(lbl);
+  	container.add(lbl);
    }
+   
+   _foodView.add(container);
+   
 }
 
 
@@ -226,7 +243,7 @@ function loadData(_data){
 		_dataStr.type = "search";
 		_dataStr.searchMode = "place";
 		_dataStr.pid = _data.pid;
-		_dataStr.accessToken = Ti.Facebook.getAccessToken();
+		_dataStr.accessToken = login.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {

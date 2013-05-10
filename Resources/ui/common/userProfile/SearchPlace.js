@@ -195,7 +195,7 @@ function _search(){
 	var that = this;
 	
 	var url = "http://flair.me/search.php";	
-	var _data = {type:"search",searchMode:"place",search:_txt,city:_zipcode,accessToken:Ti.Facebook.getAccessToken()};
+	var _data = {type:"search",searchMode:"place",search:_txt,city:_zipcode,accessToken:login.getAccessToken()};
 		
 	clear(results_view);
  	

@@ -1,6 +1,6 @@
 var _callBack;
 var _container;
-
+var login = require('ui/common/Login');
 
 exports.init = function(_data,_cont,_call) {
 	Ti.API.debug("printing feedProfile");
@@ -203,7 +203,7 @@ function processLike(_data,main){
 		  _dataStr.fid = _data.fid;
 		}
 		
-		_dataStr.accessToken=Ti.Facebook.getAccessToken();
+		_dataStr.accessToken=login.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {

@@ -15,7 +15,8 @@ function FeedView(feed_data,_tableView) {
 		Ti.API.debug("feed.length " + feed_data.length);
 		
 	    for (var i=0; i<feed_data.length; i++){
-	    	var _row = feed.feedItem(feed_data[i],null,i);		
+	    	var _row = feed.feedItem(feed_data[i],null,i);	
+	    	_row._parentView = _tableView;	
 		    _tableView.add(_row);
 		}
 	

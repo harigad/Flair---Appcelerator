@@ -1,9 +1,9 @@
 //Application Window Component Constructor
 exports.init = function() {
 		
-	Ti.Facebook.appid = '201613399910723';
-	Ti.Facebook.permissions = ['publish_stream'];
-	
+	var db = require('ui/common/data/DB');
+	db.open();	
+
 		var login = require('ui/common/Login');	
 		login.init(launchPortal);
 		//var checkin = require('ui/common/checkin/Checkin');

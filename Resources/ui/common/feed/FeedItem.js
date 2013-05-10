@@ -1,4 +1,5 @@
 var portal = require('ui/common/Portal');
+var login = require('ui/common/Login');
 exports.feedItem = function(_data, detailed, _showHR){
 	var bgColor;
 	if(_showHR % 2){
@@ -7,11 +8,7 @@ exports.feedItem = function(_data, detailed, _showHR){
 		bgColor = "#eeeeee";
 	}	
 	
-	
-		var _tableRow = Ti.UI.createTableViewRow({height:Ti.UI.SIZE});	
-		return addShareView(_data,detailed,_showHR);
-	
-		return _tableRow;
+	return addShareView(_data,detailed,_showHR);
 }
 
 function _createThumb(_data,index){
@@ -42,6 +39,9 @@ function _createThumb(_data,index){
 }
 
 function addShareView(_data,detailed,_showHR){
+	
+	var user = login.getUser();
+	
 	var thumb = _createThumb(_data,_showHR);	
 	
 	var cRight = Titanium.UI.createView(
@@ -184,7 +184,7 @@ function addShareView(_data,detailed,_showHR){
 	
 	
 	
-	if(!detailed){
+	if(true){
 		cContainer.addEventListener('singletap',function(e){
 			
 		    if(!e.source._dontUseParentEventListener === true ){
@@ -199,9 +199,60 @@ function addShareView(_data,detailed,_showHR){
 
 	}
 	
+	if(_data.uid === user.getId()){
+		cContainer.addEventListener('longpress',function(e){	
+		  	deleteFlair(cContainer);
+		});
+	}
+	
+	
 	//cContainer.add(thumb);
 	cContainer.add(cRight);
 	
 	return cContainer;
 }
 
+function deleteFlair(cContainer){
+	
+			var dialog = Ti.UI.createAlertDialog({
+    			cancel: -1,
+    			buttonNames: ['Delete', 'Cancel'],
+    			message: 'Delete this Flair?'
+   			 });
+   			 
+   			  dialog.addEventListener('click', function(e){
+      			Ti.API.debug('edit share dialog button clicked with index ' + e.index);
+    			if (e.index === 0){
+    					delete_flair_from_server(cContainer._data.fid);
+    				    cContainer._parentView.remove(cContainer);		
+    				    portal.setDirty(cContainer._data.uid);
+    				    portal.setDirty(cContainer._data.recipient);
+    			}else{
+    		//do nothing
+    		cContainer.setBackgroundColor("#fff");
+    			}
+   			 });
+   			 
+   			 cContainer.setBackgroundColor("#990000");
+   			 dialog.show();
+	
+}
+
+function delete_flair_from_server(fid){
+var url = "http://flair.me/nominate.php";	
+	var _data = {action:"delete",fid:fid,accessToken:login.getAccessToken()};
+ 	 	
+ 	var client = Ti.Network.createHTTPClient({ 		
+ 	 onload : function(e) {
+ 	 	Ti.API.info(this.responseText);
+ 	 	//do nothing
+ 	 },
+ 	 onerror: function(e){
+ 		 	//do nothing
+ 	 }
+ 	});
+ 	// Prepare the connection.
+ 		client.open("POST", url);
+ 	// Send the request.
+ 		client.send(_data);
+}	

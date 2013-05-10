@@ -5,16 +5,17 @@ var _view;
 var main;
 var _place;
 
-exports.launch = function(_place,_dontAnimate){
-	_init(_place,_dontAnimate);	
+exports.launch = function(_place){
+	_init(_place);	
 }
 
-function _build(){
-    var _place = user.getPlace();
-	
+function _build(_place){
+	if(!_place){
+    	_place = user.getPlace();
+	}
 	var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
-    region:{latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.005, longitudeDelta:0.005},
+    region:{latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.01, longitudeDelta:0.01},
     animate:true,
     regionFit:true,
     userLocation:true
@@ -36,7 +37,7 @@ function _build(){
 	);	
 	var nameLabel = Ti.UI.createLabel({
   		left:10,
-        top:'250',
+        top:'220',
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,shadowColor:'#333333',
   		color: '#fff',
@@ -84,7 +85,7 @@ function _build(){
   		right:10,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "I Work Here",
+  		text: "I Belong Here",
   			font: {
          		fontSize: 18
     		}
@@ -135,13 +136,13 @@ function _build(){
 function _del(user,searchPlaceNav,main){
 	var dialog = Ti.UI.createAlertDialog({
     	cancel: -1,
-    	buttonNames: ['Cancel', 'Delete'],
+    	buttonNames: ['Delete', 'Cancel'],
     	message: 'Are you sure?'
     });
     
-    dialog.addEventListener('singletap', function(e){
+    dialog.addEventListener('click', function(e){
       	Ti.API.debug('edit share dialog button clicked with index ' + e.index);
-    	if (e.index === 1){
+    	if (e.index === 0){
     		_deleteCode(user.getPlace());
 			user.setPlace(null);
 			searchPlaceNav.close(true,user);
@@ -157,7 +158,7 @@ function _del(user,searchPlaceNav,main){
 
 function _deleteCode(_data){
 	var url = "http://flair.me/search.php";	
-	var _data = {type:"role",pid:_data.pid,accessToken:Ti.Facebook.getAccessToken(),action:"delete"};
+	var _data = {type:"role",pid:_data.pid,accessToken:login.getAccessToken(),action:"delete"};
  	 	
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
@@ -176,16 +177,22 @@ function _deleteCode(_data){
 
 
 function _loadCode(_data){
+	
+	Ti.API.info("1" + _data);
+	
 	if(user.getPlace() === _data){
 		 	 searchPlaceNav.close(false);
 		     main.close();return;
 	}
+	
+	Ti.API.info("2");
 		
 	var url = "http://flair.me/search.php";	
-	var _data = {type:"role",pid:_data.pid,accessToken:Ti.Facebook.getAccessToken()};
+	var _data = {type:"role",pid:_data.pid,accessToken:login.getAccessToken()};
  	 	
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
+ 	 	Ti.API.info("3");
  	 	 var _response = JSON.parse(this.responseText);
  	 	 if(_response.status){
  	 	 	 user.setPlace(_response.place);
@@ -194,6 +201,7 @@ function _loadCode(_data){
  	 	 }
  	 },
  	 onerror: function(e){
+ 	 	Ti.API.info("4");
  		 	Ti.API.error("User.load error " + e);
  	 }
  	});
@@ -207,7 +215,7 @@ function _loadCode(_data){
 
 
 
-function _init(_data,_dontAnimate){
+function _init(_data){
 	main = Titanium.UI.createWindow({
     	title: 'New Access Code',    	
     	barColor:'#333',
@@ -223,7 +231,7 @@ function _init(_data,_dontAnimate){
 	});
 	main.add(_view);
 	
-	_build();
+	_build(_data);
 }
 
 

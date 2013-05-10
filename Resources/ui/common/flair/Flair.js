@@ -1,6 +1,6 @@
 var _textField;
 var _tableView;
-
+var testTimeout;
 var _adv;
 var _adj;
 var _food;
@@ -33,7 +33,7 @@ exports.init = function(_data) {
 	
 	main = Ti.UI.createWindow({			
     	hideNavBar:true,
-    	backgroundColor:'transparent',
+    	backgroundColor:'#fff',
         opacity:0
 	});
 	
@@ -49,8 +49,9 @@ function printPlaces(){
 	main.open(slide_it_top);
 }
 
-function _startFlair(_data){
-	_place = _data;
+function _startFlair(place,adj){
+	_place = place;
+	_adj = adj;
 	clear(main);
 	var outer =  Titanium.UI.createView(
 		 {
@@ -73,6 +74,7 @@ function _startFlair(_data){
 		var _txt = _textField.getValue();
 		var lower_txt = _txt.toLowerCase();
 		var _word = e.rowData._word;
+			_word = _word.toLowerCase();
 		var lastIndex = lower_txt.lastIndexOf(_word.toLowerCase());
 		if(lastIndex>-1){
 			var new_txt = _txt.substr(0,lastIndex);
@@ -85,41 +87,26 @@ function _startFlair(_data){
 	
 	main.add(outer);
 	
+	//_textField.setValue(_adj + " ");
     _textField.focus();
+    _update(_textField);
 }
 
 function _update(_textField){
-
-	_adv = "";_adj = "";_food = "";_person = "";
+	_adv = "";_food = "";_person = "";
 	_fid = 0;_pid = 0;
 	_mode = "";
 	
 	var _txt = _textField.getValue();
-		//trim
+	
+	if(_txt.length < (_adj.length + 1)){
+		//_textField.setValue(_adj + " ");
+		//return;
+	}
 	
 	var words = _txt.split(" ");
 	
 	Ti.API.debug("words le" + words.length);
-
-	
-	if(_adj === ""){
-		Ti.API.debug("searching adverbs");
-		var results = _search_adj(words[0]);
-		if(results.length === 0){
-			Ti.API.error("adverbs invalid");
-			_print_last_word(words[0],false);
-		}else if(results.length > 1){
-			if(words.length>1){
-			_adj = words[0];
-			}
-			_print_last_word(words[0],true);
-		}else if(results.length === 1){
-			_adj = words[0];
-			_print_last_word(words[0],true);
-		}else{
-			_print_last_word(words[0],false);
-		}		
-	}
 
 	/*if(_adv !== "" && _adj === "" && words.length > 1){
 		Ti.API.debug("searching adjectives ");
@@ -140,13 +127,13 @@ function _update(_textField){
 		}
 	}*/
 	
-	if(_adj !== "" && _food === "" && words.length>1){
+	if(_food === ""){
 			Ti.API.debug("searching food");
 			
 				var food_start_location = _txt.lastIndexOf(_adj) + _adj.length;
-				var food_start_string = _txt.substring(food_start_location);
+				var food_start_string = _txt;//.substring(food_start_location);
 				var	food_array = food_start_string.split(" by ");
-				var food_string = food_array[0]; 				
+				var food_string = food_array[0];			
 			
 			var results = _search_food(food_string);
 			if(results.length>0){
@@ -186,12 +173,6 @@ function send_to_server(){
   	
   		var  url="https://flair.me/nominate.php";
 		var _dataStr = {};
-		var _placeWindow;
-		var placeView = require('ui/common/place/Place');
-		var _placeWindow = placeView.init(_place,de);
-		
-		portal.open(_placeWindow);		
-		main.close();
 			
 		_dataStr.flair = _flair.id;
 		_dataStr.place = _place.pid;
@@ -199,7 +180,7 @@ function send_to_server(){
 		_dataStr.food = _food;		
 		_dataStr.recipientName = _person;
 		
-		_dataStr.accessToken=Ti.Facebook.getAccessToken();
+		_dataStr.accessToken=login.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
@@ -208,7 +189,13 @@ function send_to_server(){
      	 Ti.API.info(this.responseText);
      	 if(_result.stickers){     	 
 			   Ti.API.debug("flair true"); 
-			   login.setFeed(_result.stickers); 	 	
+			   login.setFeed(_result.stickers); 
+			   
+			   	var userProfileWin = require('ui/common/userProfile/UserProfile');
+			   	portal.setUserData(_result.recipient.id,_result.recipient);
+				portal.open(userProfileWin.init(_result.recipient.id,_result.recipient.name,_result.recipient.photo_big));
+				main.close();		   	 	
+				
      	 }else{
      	 	    Ti.API.error("flair false"); 
      	 }
@@ -367,7 +354,13 @@ function show_error(str){
 function _updateTable(_dataArr){
 	Ti.API.info("Search Results Found " + _dataArr.length);
 	if(_dataArr.length>0){
-		_tableView.setData(_dataArr);
+		if(testTimeout){
+			clearTimeout(testTimeout);
+			testTimeout = null;
+		}
+		testTimeout = setTimeout(function(){
+					_tableView.setData(_dataArr);
+		},100);
 	}else{
 		show_error("not a valid word");
 	}  	
@@ -380,7 +373,7 @@ function _top(_data){
 		 {
 		  	left:5,
 		  	top:5,
-		  	width:230,
+		  	width:300,
 		  	height:'auto',
 		  	layout: 'vertical',backgroundColor:'#fff'
 		 }
@@ -389,7 +382,7 @@ function _top(_data){
 	var flair_details = Titanium.UI.createView(
 		 {
 		 	left:0,
-		 	width:'220',
+		 	width:'100%',
 		 	height:'auto',
 		 	top:-5
 		 }
@@ -425,13 +418,13 @@ function _top(_data){
   		top: 10, left: 0,
   		width: '100%', height: '70',
   		font: {
-         fontSize: 18
+         fontSize: 24
     	},
     	hintText: "Start Typing Here"
 	});	
 	
 	_textField.addEventListener("change",function(){
-		_update(this);
+			_update(_textField);
 	});
 
 	flair_details.add(_textField);
@@ -451,7 +444,7 @@ function _top(_data){
 		 }
 	);
 	
-	cContainer.add(thumb);
+//	cContainer.add(thumb);
 	cContainer.add(cRight);	
 	
 	return cContainer;	

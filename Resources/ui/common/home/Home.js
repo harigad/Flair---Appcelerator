@@ -1,6 +1,7 @@
 var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
 var wall = require('ui/common/wall/Wall');
+var newHires = require('ui/common/wall/NewHires');
 var flairWin = require('ui/common/flair/Flair');
 var profile = require('ui/common/userProfile/UserProfile');
 var activeThumb;
@@ -12,55 +13,57 @@ Ti.API.debug("home init");
   activeThumb = null;
    var main = Titanium.UI.createWindow({
     	title: 'home',    	
-    	titleImage: 'images/home/logo_small.png',
+		navBarHidden: true,
     	backgroundColor: '#fff',
     	borderWidth:0,
     	fullScreen: true
 	});	
-	
 
-	var home = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 290,
-  		top:0,
-  		left:17.5,
-  		height:398
-	});
-	
-	home.addEventListener("scrollEnd",function(e){
-		Ti.API.debug("scrollEnd");
-		this.scrollTo(0,0);
-	});
-	
 	var homeMenu = Titanium.UI.createView(
 		 {
 		  	width: '290',
 		  	height: Ti.UI.SIZE,
-		  	top:15,
+		  	top:0,
 		  	layout: 'horizontal'
 		 }
 	);
 
-//Print Top Menu
+	var header = Titanium.UI.createView({
+		width:182,height:32,top:13,bottom:13,left:54,right:54,
+		backgroundImage:'images/home/header.png'
+	});
 
-	var nearbyWin = wall.init("nearby"); 
-  	var friendsWin = wall.init("friends");  
+   homeMenu.add(header);
+
+//Print Top Menu
+	var nearbyWin;
+  	var friendsWin;
+	var userWin;
+  	// = wall.init("nearby"); 
   	//var profileWin = 
   	
 	var nearby = _createThumb({"id":"nearby","photo":""},'#fff');
 		nearby.addEventListener('singletap',function(e){
+			if(!nearbyWin){
+				nearbyWin = newHires.init(); 
+			}
 			portal.open(nearbyWin);
 		});
+		
 	var friends = _createThumb({"id":"friends","photo":""},'#eee');
 		friends.addEventListener('singletap',function(e){
-			portal.open(nearbyWin);
+			if(!friendsWin){
+				friendsWin = wall.init("nearby"); 
+			}
+			portal.open(friendsWin);
 		});
+		 			
 	var me = _createThumb({"id":"me","photo":""},'#fff');
 		me.addEventListener('singletap',function(e){
-			portal.open(profile.init(user.getId(),user.getName(),user.getPhoto()));
+			//if(!userWin){
+				userWin = profile.init(user.getId(),user.getName(),user.getPhotoBig());
+			//}
+			portal.open(userWin);
 		});
 		
 	homeMenu.add(nearby);
@@ -69,22 +72,22 @@ Ti.API.debug("home init");
 
 //Print Icons
 	
-	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#f1f1f1'));
 	homeMenu.add(_createFlairThumb({"id":2,"photo":""},'#fff'));
-	homeMenu.add(_createFlairThumb({"id":3,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":3,"photo":""},'#f1f1f1'));
 	
 	homeMenu.add(_createFlairThumb({"id":7,"photo":""},'#fff'));
-	homeMenu.add(_createFlairThumb({"id":8,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":8,"photo":""},'#f1f1f1'));
 	homeMenu.add(_createFlairThumb({"id":9,"photo":""},'#fff'));
 	
-	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#eee'));
+	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#f1f1f1'));
 	homeMenu.add(_createFlairThumb({"id":5,"photo":""},'#fff'));
-    homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#eee'));
+    homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#f1f1f1'));
 
 	
-	home.add(homeMenu);	
+	//home.add(homeMenu);	
 	
-	main.add(home);
+	main.add(homeMenu);
 		
 	return main;
 }

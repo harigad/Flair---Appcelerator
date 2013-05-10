@@ -1,13 +1,19 @@
 var user;
 var main;
+var fb = require('facebook');
+
 exports.init = function(_callBack){
-	
+
+	fb.appid = '201613399910723';
+	fb.permissions = ['publish_stream'];
+	fb.forceDialogAuth = true;
+	 
 	if(isLoggedIn()){
-		if(user){			
+	//	if(user){			
 			_callBack();
-		}else{
-			launchSignup(_callBack);
-		}
+		///}else{
+	//		launchSignup(_callBack);
+//		}
 	}else{
 		show(_callBack);
 	}
@@ -15,7 +21,7 @@ exports.init = function(_callBack){
 }
 
 function isLoggedIn(){
-		if(Ti.Facebook.getLoggedIn()){
+		if(fb.loggedIn){
 			if(user){
 				return true;
 			}else{
@@ -26,66 +32,76 @@ function isLoggedIn(){
 		}	
 }
 
+exports.getAccessToken = function(){
+	return fb.getAccessToken();
+}
+
 function loadUser(_callBack){
 	Ti.API.debug("login.loadUser");
 	var User = require('ui/common/data/User');
-    user = new User("me",function(){
-    	user.loadFriends();
-    	_callBack();    	
+	
+	var userid = Ti.App.Properties.getString("login.user.id");
+	
+	if(!userid){
+		var db = require("ui/common/data/DB");
+		db.load();
+		userid = "me";
+	}
+	
+       user = new User(userid,function(){
+    	 Ti.App.Properties.setString("login.user.id",user.getId());
+    	 if(user.isInvited()){
+    	 	_callBack();
+    	 }else{
+    	     var newWin = Ti.UI.createWindow({
+    	     	backgroundImage:'images/signup/notify.png'
+    	     });
+    	     newWin.open();
+    	 }
     	});
 }
 
 function onLogin(e,_callBack){
-	Ti.API.debug("login sucessful");
+	loadUser(function(){
 	
-	var props = Ti.App.Properties.listProperties();
-	for (var i=0,ilen=props.length; i<ilen; i++){
-    	Ti.App.Properties.removeProperty(props[i]);
-	}
-	
-	loadUser(function(){	
-		Ti.API.debug("user load successful");
-		
-		var db = require('ui/common/data/DB');
-		db.open();
-		db.load();
-		
 		var login = require('ui/common/Login');	
 		login.init(_callBack);
-		main.close();
+		if(main){
+			main.close();
+		}
 	});
+	
 }	
 
 function show(_callBack){	
-
-
-
-	if(Ti.Facebook.getLoggedIn()){
-		onLogin(_callBack);
+	if(fb.loggedIn){
+		onLogin(null,_callBack);
 		return;
 	}	
 	
 	main = Ti.UI.createWindow({
-		backgroundImage:'images/signup/bg.png'
+		backgroundColor:"#990000",
+		backgroundImage:'images/signup/bg1.png'
 	});
 
-	Ti.Facebook.addEventListener('login', function(e) {
+	fb.addEventListener('login', function(e) {
     	onLogin(e,_callBack);    	
 	});
-
-	Ti.Facebook.addEventListener('logout', function(e) {
-    	alert('Logged out');
-	});    
- 
-	/*var btn = Ti.Facebook.createLoginButton({
-    top : 250,
-    style : Ti.Facebook.BUTTON_STYLE_NORMAL
+     
+    var btn = Ti.UI.createView({
+    	left:20,top:170,
+    	width:200,height:45,
+    	borderRadius:4
     });
     
-    main.add(btn);*/
-   
-   Ti.Facebook.authorize();
-  //  main.open();
+    main.add(btn);
+    
+    btn.addEventListener('singletap',function(){
+    	Ti.API.debug("login btn clicked");
+        fb.authorize();
+    });
+    
+    main.open();
 }
 
 exports.getUser = function(){
