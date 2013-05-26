@@ -8,11 +8,11 @@ exports.getLocation = function(){
 	return _location;
 }
 
-exports.getPlaces = function(callBack){
-	if(callBack){
+exports.getPlaces = function(callBack,load){
+	if(load || _places.length ===0){
 		loadPlaces(callBack);
 	}else{
-		return _places;
+		callBack(_places);
 	}
 }
 
@@ -89,6 +89,7 @@ exports.init = function(){
 //		for (var i=0;i<props.length;i++){
 //    			Ti.App.Properties.removeProperty(props[i]);
 //		}	
+   _places = [];
 	main = Titanium.UI.createWindow();
 
 	var Home = require('ui/common/home/Home');

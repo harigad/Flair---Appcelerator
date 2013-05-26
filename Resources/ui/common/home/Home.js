@@ -21,7 +21,7 @@ Ti.API.debug("home init");
 
 	var homeMenu = Titanium.UI.createView(
 		 {
-		  	width: '290',
+		  	width: '290',left:17.5,
 		  	height: Ti.UI.SIZE,
 		  	top:0,
 		  	layout: 'horizontal'

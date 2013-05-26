@@ -96,6 +96,7 @@ function addShareView(_data,detailed,_showHR){
     	},
     	_dontUseParentEventListener:true		
 	});
+	
 	top_line.add(name_txt);
 		
 	var flair_details = Titanium.UI.createView(
@@ -137,7 +138,6 @@ function addShareView(_data,detailed,_showHR){
 		_recpColor = "#aaa";
 	}
 	
-	
 	var _footer = Ti.UI.createLabel({
      	left:0,top:0,width:170,
 		height:Ti.UI.SIZE,
@@ -151,6 +151,11 @@ function addShareView(_data,detailed,_showHR){
 	
 	text_container.add(_footer);
 	flair_details.add(text_container);
+	
+	if(_data.headerLikedName){
+		cRight.add(print_liked_header(_data.headerLikedName,_data.headerLikedCount));
+	}
+	
 	cRight.add(top_line);
 	cRight.add(flair_details);
 	
@@ -181,8 +186,6 @@ function addShareView(_data,detailed,_showHR){
 		  	_flair_details: flair_details
 		 }
 	);
-	
-	
 	
 	if(true){
 		cContainer.addEventListener('singletap',function(e){
@@ -236,6 +239,72 @@ function deleteFlair(cContainer){
    			 cContainer.setBackgroundColor("#990000");
    			 dialog.show();
 	
+}
+
+
+function print_liked_header(_name,_data){
+	var _bgColorX = "#990000";
+	var _bgColorY = "#009900";
+	var _bgColorZ = "#000099";
+	
+	var  container = Ti.UI.createView({
+		height:Ti.UI.SIZE,
+		width:Ti.UI.FILL,
+		layout:'horizontal'
+	});
+	
+	var liked_name = Ti.UI.createLabel({
+		height:Ti.UI.SIZE,
+		left:0,right:5,
+		top:0,
+		width:Ti.UI.SIZE,
+  		text:_name + " likes this!",
+  		color:'#aaa',
+  		font: {
+         fontSize: 11
+    	}	
+	});
+	container.add(liked_name);
+	
+	var  c = Ti.UI.createView({
+		height:Ti.UI.SIZE,top:6,
+		width:'auto',
+		layout:'horizontal'
+	});
+	container.add(c);
+	
+	var _width = 90;//290 - liked_name.width; 
+	
+	if(_data == 1){
+		c.add(print_individual_like(_bgColorX,_width));
+	}if(_data == 2){
+		c.add(print_individual_like(_bgColorY,_width));
+	}else if(_data == 3){
+		c.add(print_individual_like(_bgColorZ,_width));
+	}else if(_data == 4){
+		c.add(print_individual_like(_bgColorX,(_width/2)));
+		c.add(print_individual_like(_bgColorY,(_width/2)));
+	}else if(_data == 5){
+		c.add(print_individual_like(_bgColorX,(_width/2)));
+		c.add(print_individual_like(_bgColorZ,(_width/2)));
+	}else if(_data == 6){
+		c.add(print_individual_like(_bgColorY,(_width/2)));
+		c.add(print_individual_like(_bgColorZ,(_width/2)));
+	}else if(_data == 7){
+		c.add(print_individual_like(_bgColorX,(_width/3)));
+		c.add(print_individual_like(_bgColorY,(_width/3)));
+		c.add(print_individual_like(_bgColorZ,(_width/3)));
+	}
+	
+	return container;
+}
+
+function print_individual_like(_bgColor,_width){
+		return Ti.UI.createView({
+			height:2,left:1,top:0,
+			width:_width + "%",
+			backgroundColor:_bgColor,borderRadius:2
+		});
 }
 
 function delete_flair_from_server(fid){

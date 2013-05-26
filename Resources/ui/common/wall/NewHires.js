@@ -8,7 +8,7 @@ exports.init = function(_type){
 	var name;
 		
 	var main = Titanium.UI.createWindow({
-    	title: "starring",
+    	title: "Flaired",
     	backgroundColor: '#eee',
     	navBarHidden:false
 	});
@@ -123,6 +123,8 @@ function loadData(){
  		client.open("POST", url);
  	// Send the request.
  		client.send(_dataStr);	
+ 		Ti.API.debug(url);
+ 		Ti.API.debug(_dataStr);
 }
 
 function _createThumb(_data,_bgColor){

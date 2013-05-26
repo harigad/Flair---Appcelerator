@@ -254,7 +254,6 @@ function _search_person(_word){
 function _search(_table,_word){
 	var rs = [];
 	var rows = _db.select("SELECT _txt FROM " + _table + " where _txt like '" + _word + "%'");
-		
 	while (rows.isValidRow()){
 		rs.push({"_word":_word,"title":rows.field(0)});
 		rows.next();
@@ -413,14 +412,14 @@ function _top(_data){
 	_textField = Ti.UI.createTextArea({
   		borderStyle: Titanium.UI.INPUT_BORDERSTYLE_NONE,
   		color: '#333',
+  		hintText: 'example: chocolate chip cookies by james',
   		keyboardToolbarColor:'#999',
   		keyboardToolbar:keyboardBar,
   		top: 10, left: 0,
   		width: '100%', height: '70',
   		font: {
          fontSize: 24
-    	},
-    	hintText: "Start Typing Here"
+    	}
 	});	
 	
 	_textField.addEventListener("change",function(){
