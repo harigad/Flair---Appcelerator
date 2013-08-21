@@ -30,31 +30,40 @@ exports.init = function(_type){
 	return main;
 }
 
-function print(_feed){
-	if(feed){
+function print(_feed,_container){
+	if(feed && !_container){
 		scroll.remove(feed);
 	}
 		
 	var FeedView = require('ui/common/feed/FeedView');
-	var feed = new FeedView(_feed);	
-	
-	scroll.add(feed);
+	var feed = new FeedView(_feed,_container,function(_date){
+		loadData('nearby',feed,_date);
+	},scroll);	
 
+	if(!_container){
+		scroll.add(feed);
+	}
 }
 
-function loadData(_type){
+function loadData(_type,_container,_date){
 		var that = this;
 
 		var url = "http://flair.me/search.php";
 		var _dataStr = {};
 		_dataStr.type = _type;
 		_dataStr.accessToken = login.getAccessToken();
+		if(_date){
+			_dataStr.date = _date;
+		}
+	
+	
+	Ti.API.info(_dataStr);
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	 Ti.API.debug('loaded data for Wall -> ' + _type);
+     	 Ti.API.debug('loaded data for Wall -> ' + this.responseText);
      	 var _feed = JSON.parse(this.responseText);  
-     	 print(_feed);   	 
+     	 print(_feed,_container);   	 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for Wall -> ' + _type);

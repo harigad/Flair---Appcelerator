@@ -65,7 +65,7 @@ function _startFlair(place,adj){
 	outer.add(_top(_flair));
 	
 	_tableView = Ti.UI.createTableView({
-  	 	    height:120,
+  	 	    height:'auto',
   	 		top:0,backgroundColor:'#eee'
 	});
 	outer.add(_tableView);
@@ -76,11 +76,22 @@ function _startFlair(place,adj){
 		var _word = e.rowData._word;
 			_word = _word.toLowerCase();
 		var lastIndex = lower_txt.lastIndexOf(_word.toLowerCase());
+		
 		if(lastIndex>-1){
 			var new_txt = _txt.substr(0,lastIndex);
 			_textField.setValue(new_txt + e.rowData.title + " ");
+			
+			_textField.value = _textField.value.replace("##","#");
+			if(_textField.value.substr(0,1) !== "#"){
+				_textField.value = "#" + _textField.value;
+			}
+			
+		
+			
 			if(e.rowData._type === "person"){
 				send_to_server();
+			}else{
+				_update(_textField);
 			}
 		}
 	});
@@ -94,44 +105,47 @@ function _startFlair(place,adj){
 
 function _update(_textField){
 	_adv = "";_food = "";_person = "";
-	_fid = 0;_pid = 0;
+	_fid = 0;_pid = 0;_adj = "";
 	_mode = "";
 	
 	var _txt = _textField.getValue();
 	
-	if(_txt.length < (_adj.length + 1)){
+	//if(_txt.length < (_adj.length + 1)){
 		//_textField.setValue(_adj + " ");
 		//return;
-	}
+	//}
 	
 	var words = _txt.split(" ");
 	
 	Ti.API.debug("words le" + words.length);
 
-	/*if(_adv !== "" && _adj === "" && words.length > 1){
+	//if(_adj === ""){
 		Ti.API.debug("searching adjectives ");
-		var results = _search_adj(words[1]);
+		var results = _search_adj(words[0]);
 		if(results.length === 0){
 			Ti.API.error("adjectives invalid");
-			_print_last_word(words[1],false);
+			_print_last_word(words[0],false);
+			show_error("invalid hashtag!");
+			return;
 		}else if(results.length > 1){
 			if(words.length>2){
-			_adj = words[words.length-1];
+			_adj = words[0];
 			}
-			_print_last_word(words[1],true);
+			_print_last_word(words[0],true);
 		}else if(results.length === 1){
-			_adj = words[1];			
-			_print_last_word(words[1],true);
+			_adj = words[0];			
+			_print_last_word(words[0],true);
 		}else{
-			_print_last_word(words[1],false);
+			_print_last_word(words[0],false);
 		}
-	}*/
+	//}
 	
-	if(_food === ""){
+	
+	if(_adj !=="" && _food === "" && words.length>1){
 			Ti.API.debug("searching food");
 			
 				var food_start_location = _txt.lastIndexOf(_adj) + _adj.length;
-				var food_start_string = _txt;//.substring(food_start_location);
+				var food_start_string = _txt.substring(food_start_location);
 				var	food_array = food_start_string.split(" by ");
 				var food_string = food_array[0];			
 			
@@ -184,15 +198,15 @@ function send_to_server(){
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	Ti.API.info(this.responseText);
+     	//Ti.API.info(this.responseText);
      	 var _result = JSON.parse(this.responseText);  
-     	 Ti.API.info(this.responseText);
+     	// Ti.API.info(this.responseText);
      	 if(_result.stickers){     	 
 			   Ti.API.debug("flair true"); 
 			   login.setFeed(_result.stickers); 
 			   
 			   	var userProfileWin = require('ui/common/userProfile/UserProfile');
-			   	portal.setUserData(_result.recipient.id,_result.recipient);
+			   //	portal.setUserData(_result.recipient.id,_result.recipient);
 				portal.open(userProfileWin.init(_result.recipient.id,_result.recipient.name,_result.recipient.photo_big));
 				main.close();		   	 	
 				
@@ -251,17 +265,26 @@ function _search_person(_word){
 	return rs;
 }
 
-function _search(_table,_word){
+function _search(_table,_word,conct){
 	var rs = [];
 	var rows = _db.select("SELECT _txt FROM " + _table + " where _txt like '" + _word + "%'");
 	while (rows.isValidRow()){
-		rs.push({"_word":_word,"title":rows.field(0)});
+		
+		if(conct){
+			//do nothing
+		}else{
+			conct = "";
+		}
+		
+		rs.push({"_word":_word,"title":conct + rows.field(0)});
 		rows.next();
 	}
 	
+
+	
 	if(_table === "_food"){
 			if(rs.length === 0  && _word.length>0){
-					rs.push({"_word":_word,"title": _word});
+					rs.push({"_word":_word,"title":_word});
 			}
 	}
 	
@@ -299,7 +322,8 @@ function _search_adv(_word){
 
 function _search_adj(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
-	return _search("_adj",_word);	
+	_word = _word.replace("#",'');
+	return _search("_adj",_word,"#");	
 }
 
 function _search_food(_word){
@@ -321,6 +345,11 @@ function _print_last_word(_word,_found){
 		}
 	}
 	
+	_textField.value = _textField.value.replace("##","#");
+	if(_textField.value.substr(0,1) !== "#"){
+		_textField.value = "#" + _textField.value;
+	}
+	
 }
 
 function show_error(str){
@@ -330,7 +359,7 @@ function show_error(str){
   	});
   	
 	var error_view = Ti.UI.createView({
-		left:10,right:10,top:10,bottom:15
+		left:10,right:10,top:10,bottom:15,height:Ti.UI.SIZE
 	});
 	
 	var _lbl = Ti.UI.createLabel({

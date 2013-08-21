@@ -108,11 +108,13 @@ exports.init = function(){
 	initLocation();
 }
 
-exports.open = function(win){
-	nav.open(win,{animated:true});
+exports.open = function(win,_animated){
+	if(_animated !== false){
+		nav.open(win,{animated:true});
+	}else{
+		nav.open(win,{animated:false});
+	}
 }
-
-
 
 exports.setDirty = function(id){
   	var _data = Ti.App.Properties.getString("userData_" + id);

@@ -81,6 +81,12 @@ exports.init = function(_data){
 	mapView.add(mapDesc);
 	mapViewCont_outer.add(mapViewCont);
 	
+	mapViewCont.addEventListener('click',function(){
+		var win = require('ui/common/place/Map');
+		portal.open(win.init(_data));	
+	});
+	
+	
 	var _title = Ti.UI.createLabel({
   		left:10,top:10,bottom:0,right:10,
   		height:Ti.UI.SIZE,
@@ -231,7 +237,7 @@ function print_cast(_place){
 	view.add(separator("Flairs"));
 	
     var FeedView = require('ui/common/feed/FeedView');
-	var feed = new FeedView(_place.feed,view);
+	var feed = new FeedView(_place.feed,view,null,null,true);
 }
 
 

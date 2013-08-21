@@ -89,8 +89,8 @@ function show(_callBack){
 	});
      
     var btn = Ti.UI.createView({
-    	left:20,top:170,
-    	width:200,height:45,
+    	left:10,top:190,
+    	width:300,height:80,
     	borderRadius:4
     });
     

@@ -157,6 +157,7 @@ function _del(user,searchPlaceNav,main){
 }
 
 function _deleteCode(_data){
+	user.setDirty();
 	var url = "http://flair.me/search.php";	
 	var _data = {type:"role",pid:_data.pid,accessToken:login.getAccessToken(),action:"delete"};
  	 	
@@ -177,7 +178,7 @@ function _deleteCode(_data){
 
 
 function _loadCode(_data){
-	
+	user.setDirty();
 	Ti.API.info("1" + _data);
 	
 	if(user.getPlace() === _data){

@@ -18,9 +18,10 @@ var _db = require('ui/common/data/DB');
 function _reloadPlaces(){
 	var _placesArr = [];
 	
-	if(_place){
-		_loadWords();		
-	}else{
+	//if(_place){
+//		_loadWords();		
+//	}else{
+	if(_placesView){
 		for(var i=0;i<_placesView.children.length;i++){
 			_placesView.children[i]._label.setText("loading");
 		}
@@ -32,7 +33,8 @@ function _reloadPlaces(){
 		}else{
 			printPlaces(_places);
 		}
-	}
+	}	
+//	}
 }
 
 exports.init = function(callBack) {
@@ -176,6 +178,8 @@ function _process(_data,_addMore){
 		_word = _data;
 		_callBack(_place,_word.name);
 	}else{
+		_callBack(_data,null);return;
+		
 		_currentWords = {};
 		_placeLabel.setText("Pick a #Tag");
 		_place = _data;

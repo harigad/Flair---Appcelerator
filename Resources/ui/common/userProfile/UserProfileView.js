@@ -198,7 +198,7 @@ function printDetails(){
 	
 	if(user.getId()){
 		var FeedView = require('ui/common/feed/FeedView');
-		var feed = new FeedView(user.feed(),view);		
+		var feed = new FeedView(user.feed(),view,null,null,true);		
 	}else{
 		view.add(userHasNotClaimed());		
 	}

@@ -8,7 +8,7 @@ exports.init = function(_type){
 	var name;
 		
 	var main = Titanium.UI.createWindow({
-    	title: "Flaired",
+    	title: "stars",
     	backgroundColor: '#eee',
     	navBarHidden:false
 	});
@@ -25,19 +25,43 @@ exports.init = function(_type){
 	return main;
 }
 
-function print(cast){
-	
-	if(container){
+function print(cast,_loadMore){
+	if(container && !_loadMore){
 		scroll.remove(container);
 	}
+
+	if(container){
+		if(container._loadMoreBtn){
+			container.remove(container._loadMoreBtn);	
+		}
+		if(container._noItemsBtn){
+			container.remove(container._noItemsBtn);
+		}
+	}
 	
-	container = Ti.UI.createView({top:10,left:10,right:10,bottom:10,width:Ti.UI.FILL,height:Ti.UI.SIZE,layout:'vertical'});
-	scroll.add(container);
-	
+	if(!_loadMore){
+		container = Ti.UI.createView({top:10,left:10,right:10,bottom:10,width:Ti.UI.FILL,height:Ti.UI.SIZE,layout:'vertical'});
+		scroll.add(container);
+	}
+
+	var date;
 	for(var i=0;i<cast.length;i++){
 		container.add(print_cast_data(cast[i]));	
+		_date = cast[i].updated;
 	}
-			
+
+	if(cast.length === 5){
+		_loadMoreBtn(container,function(){
+			loadData(true,_date);
+		});
+	}
+	
+	_noDataToShow(container,function(){
+			loadData(true);
+	});
+		
+	
+	
 }	
 
 function print_cast_data(_data){	
@@ -98,19 +122,23 @@ function print_cast_data(_data){
 		return row;
 }
 
-function loadData(){
+function loadData(_loadMore,_date){
 		var that = this;
 
 		var url = "http://flair.me/search.php";
 		var _dataStr = {};
 		_dataStr.type = "new_hires";
 		_dataStr.accessToken = login.getAccessToken();
-	
+		if(_date){
+			_dataStr.date = _date;
+		}
+		
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
+     	Ti.API.info(this.responseText);
      	 Ti.API.debug('loaded data for new_hires ' + this.responseText);
      	 var _feed = JSON.parse(this.responseText);  
-     	 print(_feed);   	 
+     	 print(_feed,_loadMore);   	 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for new_hires');
@@ -123,8 +151,6 @@ function loadData(){
  		client.open("POST", url);
  	// Send the request.
  		client.send(_dataStr);	
- 		Ti.API.debug(url);
- 		Ti.API.debug(_dataStr);
 }
 
 function _createThumb(_data,_bgColor){
@@ -163,3 +189,88 @@ function _hr(){
 }
 
 
+function _noDataToShow(_tableView,loadMoreCallBack){
+	
+	if(_tableView.children.length < 2) {
+			var noItemsBtn = Titanium.UI.createView({
+			width:Ti.UI.FILL,
+			height:Ti.UI.SIZE,
+			left:10,right:10,top:'40%'
+			
+		});
+		
+		var noItemsBtn_header = Ti.UI.createLabel({
+			height:Ti.UI.SIZE,
+			width:Ti.UI.SIZE,
+			top:10,
+  			text:"no stars to show you yet!",
+  			color:'#aaa',
+  			font: {
+         	fontSize: 20
+    		}	
+		});
+		
+		var noItemsBtn_txt = Ti.UI.createLabel({
+			height:Ti.UI.SIZE,
+			width:Ti.UI.SIZE,
+			top:40,
+  			text:"reload",
+  			color:'#2179ca',
+  			font: {
+         	fontSize: 18
+    		}	
+		});
+		
+		noItemsBtn.add(noItemsBtn_header);
+		noItemsBtn.add(noItemsBtn_txt);
+		noItemsBtn._noItemsBtn_txt = noItemsBtn_txt;
+		
+		noItemsBtn.addEventListener('click',function(e){
+			noItemsBtn._noItemsBtn_txt.setColor("#999");
+			noItemsBtn_header.hide();
+			noItemsBtn._noItemsBtn_txt.setText("loading...");
+			loadMoreCallBack();
+		});
+		
+		_tableView.add(noItemsBtn);
+		_tableView._noItemsBtn = noItemsBtn;
+			
+		}
+}
+
+
+function _loadMoreBtn(_tableView,loadMoreCallBack){
+	var loadMoreBtn = Titanium.UI.createView({
+			width:Ti.UI.FILL,
+			height:50,
+			left:0,right:0,top:0,bottom:10,
+			backgroundColor:'#fff',
+			borderRadius:4,
+			borderWidth:0.5,
+			borderColor:'#ddd'
+		});
+		
+		var loadMoreBtn_txt = Ti.UI.createLabel({
+			height:Ti.UI.SIZE,
+			width:Ti.UI.SIZE,
+			top:20,bottom:20,
+  			text:"load more",
+  			color:'#2179ca',
+  			font: {
+         	fontSize: 11
+    		}	
+		});
+		
+		loadMoreBtn.add(loadMoreBtn_txt);
+		loadMoreBtn._loadMoreBtn_txt = loadMoreBtn_txt;
+		
+		loadMoreBtn.addEventListener('click',function(e){
+			loadMoreBtn._loadMoreBtn_txt.setColor("#999");
+			loadMoreBtn._loadMoreBtn_txt.setText("loading...");
+			loadMoreCallBack();
+		});
+		
+		_tableView._loadMoreBtn = loadMoreBtn;
+		_tableView.add(loadMoreBtn);
+		
+}
