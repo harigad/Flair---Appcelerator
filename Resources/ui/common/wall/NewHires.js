@@ -10,7 +10,7 @@ exports.init = function(_type){
 	var main = Titanium.UI.createWindow({
     	title: "stars",
     	backgroundColor: '#eee',
-    	navBarHidden:false
+    	navBarHidden:false,barColor:'#cecece'
 	});
 
 	scroll = Ti.UI.createScrollView({top:0,left:0,width:Ti.UI.FILL,height:Ti.UI.FILL});
@@ -109,6 +109,10 @@ function print_cast_data(_data){
 		row.add(placeName);
 		
 		row.addEventListener('singletap',function(e){
+			var win = require('ui/common/userProfile/UserProfile');
+			portal.open(win.init(_data.id,_data.name,_data.photo_big));	
+			return;
+			
 			  var placeView = require('ui/common/place/Place');
 		      portal.open(placeView.init({
 		      	vicinity:_data.city,

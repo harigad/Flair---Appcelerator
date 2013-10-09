@@ -1,21 +1,20 @@
 var user;
 var main;
+var _callBack;
+var _errBack;
 var fb = require('facebook');
 
-exports.init = function(_callBack){
+
+exports.init = function(_callBack,_errBack){
 
 	fb.appid = '201613399910723';
 	fb.permissions = ['publish_stream'];
 	fb.forceDialogAuth = true;
 	 
 	if(isLoggedIn()){
-	//	if(user){			
-			_callBack();
-		///}else{
-	//		launchSignup(_callBack);
-//		}
+		_callBack();
 	}else{
-		show(_callBack);
+		show(_callBack,_errBack);
 	}
 	
 }
@@ -43,21 +42,12 @@ function loadUser(_callBack){
 	var userid = Ti.App.Properties.getString("login.user.id");
 	
 	if(!userid){
-		var db = require("ui/common/data/DB");
-		db.load();
 		userid = "me";
 	}
 	
        user = new User(userid,function(){
     	 Ti.App.Properties.setString("login.user.id",user.getId());
-    	 if(user.isInvited()){
     	 	_callBack();
-    	 }else{
-    	     var newWin = Ti.UI.createWindow({
-    	     	backgroundImage:'images/signup/notify.png'
-    	     });
-    	     newWin.open();
-    	 }
     	});
 }
 
@@ -67,25 +57,98 @@ function onLogin(e,_callBack){
 		var login = require('ui/common/Login');	
 		login.init(_callBack);
 		if(main){
-			main.close();
+			
+			var slide_it_bottom = Titanium.UI.createAnimation();
+    		slide_it_bottom.top = 600; // to put it back to the left side of the window
+    		slide_it_bottom.duration = 400;
+			
+			
+			main.close(slide_it_bottom);
 		}
 	});
 	
 }	
 
-function show(_callBack){	
+function show(callBack,errBack){	
 	if(fb.loggedIn){
 		onLogin(null,_callBack);
 		return;
 	}	
 	
+	_callBack = callBack;
+	_errBack = errBack;
+	
+	 
+    var slide_it_top = Titanium.UI.createAnimation();
+    slide_it_top.top = 1; // to put it back to the left side of the window
+    slide_it_top.duration = 400;
+	
+	if(main){
+		main.open(slide_it_top);
+	}else{
+		build();
+		main.open(slide_it_top);
+	}
+
+}
+
+function build(){
+	
 	main = Ti.UI.createWindow({
-		backgroundColor:"#990000",
-		backgroundImage:'images/signup/bg1.png'
+		backgroundColor:"#2179ca",
+		top:600
 	});
+	
+	var base = Ti.UI.createView({
+		width:Ti.UI.FILL,height:Ti.UI.FILL,top:0
+	});
+	
+	var cancel_bg = Ti.UI.createView({
+		width:100,height:50,borderRadius:4,bottom:-25,
+		backgroundImage:"images/trans.png",opacity:0.35
+	});
+	
+	
+	cancel_bg.addEventListener("click",function(){
+			var slide_it_bottom = Titanium.UI.createAnimation();
+    		slide_it_bottom.top = 600; // to put it back to the left side of the window
+    		slide_it_bottom.duration = 400;
+    		main.close(slide_it_bottom);
+	});
+	
+	
+	var lbl = Ti.UI.createLabel({
+		text:"cancel",color:"#fff",top:0
+	});
+	
+	cancel_bg.add(lbl);
+	
+	var bg = Ti.UI.createImageView({
+		image:"images/signup/bg1.png",
+		width:204,height:222
+	});
+	main.add(base);
+	
+	base.add(bg);
+		
+	base.add(cancel_bg);
 
 	fb.addEventListener('login', function(e) {
-    	onLogin(e,_callBack);    	
+		if(fb.getAccessToken()){
+			bg.setImage("images/signup/bg1_loading.png");
+    		onLogin(e,_callBack);   
+    	}else{
+    		
+    		var slide_it_bottom = Titanium.UI.createAnimation();
+    		slide_it_bottom.top = 600; // to put it back to the left side of the window
+    		slide_it_bottom.duration = 400;
+			
+    		
+    		main.close(slide_it_bottom);
+    		if(_errBack){
+    			_errBack();
+    		}
+    	}
 	});
      
     var btn = Ti.UI.createView({
@@ -100,12 +163,16 @@ function show(_callBack){
     	Ti.API.debug("login btn clicked");
         fb.authorize();
     });
-    
-    main.open();
+  
 }
 
 exports.getUser = function(){
-	return user;
+	if(user){
+		return user;
+	}else{
+		var User = require('ui/common/data/User');
+		return new User(null,function(){},{});
+	}
 }
 
 exports.setFeed = function(_flairs){

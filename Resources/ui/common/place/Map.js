@@ -4,7 +4,7 @@ var login = require('ui/common/Login');
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
 	   	backgroundColor: '#eee',
-	   	navBarHidden:false
+	   	navBarHidden:false,barColor:'#cecece'
 	});
 	
 	var view = Titanium.UI.createView(

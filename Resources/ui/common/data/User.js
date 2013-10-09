@@ -20,6 +20,8 @@ function User(id,_callBack,_data){
 	}else{		
 		this.load(_callBack);
 	}
+	
+	return this;
 }
 
 User.prototype.load = function(_callBack){

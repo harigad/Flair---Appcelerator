@@ -17,8 +17,15 @@ exports.getPlaces = function(callBack,load){
 }
 
 function loadPlaces(callBack) {
-	var  url="https://flair.me/search.php";
+		Ti.API.error("places init 1");
+		var  url="https://flair.me/search.php";
 		var _dataStr = {};
+		
+		if(_location){
+			//do nothing;
+		}else{
+			_location = {};
+		}
 		
 		_dataStr.type = "search";
 		_dataStr.searchMode = "place";
@@ -28,9 +35,11 @@ function loadPlaces(callBack) {
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
+     		Ti.API.error("places init 2");
      	Ti.API.info(this.responseText);
      	 _places = JSON.parse(this.responseText);
      	 if(callBack){
+     	 		Ti.API.error("places init 3");
      	 	callBack(_places);
      	 }
      },
@@ -46,7 +55,7 @@ function loadPlaces(callBack) {
  		client.send(_dataStr);		
 }
 
-function initLocation(){
+exports.initLocation = function(_callBack){
 	Titanium.Geolocation.purpose = "Find nearby Places";
 	Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 	Titanium.Geolocation.distanceFilter = 10;
@@ -59,9 +68,10 @@ function initLocation(){
         
  		var portal = require('ui/common/Portal');
  		_location = e.coords;
- 		if(!_places){
- 			loadPlaces(); 		
- 		}
+ 		//if(!_places){
+ 			Ti.API.error("places init");
+ 			loadPlaces(_callBack); 		
+ 		//}
 		/*var current_longitude = e.coords.longitude;
 		var current_latitude = e.coords.latitude;
 		var current_altitude = e.coords.altitude;
@@ -92,20 +102,20 @@ exports.init = function(){
    _places = [];
 	main = Titanium.UI.createWindow();
 
-	var Home = require('ui/common/home/Home');
-	var home = Home.init();
+	var Places = require('ui/common/flair/Places');
+	var places = Places.init();
 	
 	nav = Titanium.UI.iPhone.createNavigationGroup({
-   		window: home
+   		window: places
 	});
 
 	main.add(nav);
 
-	nav.open(home, {animated:true});
+	nav.open(places, {animated:true});
 
 	main.open();
 	
-	initLocation();
+	//initLocation();
 }
 
 exports.open = function(win,_animated){
@@ -129,6 +139,8 @@ exports.setDirty = function(id){
 }
 
 exports.setUserData = function(id,_data){
+	var date = new Date();
+	_data._lastLoaded = date.getTime();
 	var login = require('ui/common/Login');
 	var user = login.getUser();
 		if(user.getId() == id){
@@ -144,7 +156,17 @@ exports.getUserData = function(id){
 		if(obj._dirty || obj.invited != true){
 			return false;
 		}else{
-			return obj;
+			if(obj._lastLoaded){
+				var now = new Date();	
+				var diff = (now.getTime() - obj._lastLoaded);
+				if(diff > (60*10*1000)){
+					return false;
+				}else{
+					return obj;
+				}
+			}else{
+				return false;	
+			}
 		}
 	}else{
 		return false;

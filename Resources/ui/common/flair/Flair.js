@@ -32,21 +32,22 @@ exports.init = function(_data) {
 	_flair = _data;
 	
 	main = Ti.UI.createWindow({			
-    	hideNavBar:true,
-    	backgroundColor:'#fff',
-        opacity:0
+    	hideNavBar:false,
+    	backgroundColor:'#fff'
 	});
 	
-	printPlaces();	
+	printPlaces(_data);
+	return main;
 }
 
-function printPlaces(){
-	placesView = places.init(_startFlair);
-	main.add(placesView);
+function printPlaces(_data){
+	//placesView = places.init(_startFlair);
+	//main.add(placesView);
 	var slide_it_top = Titanium.UI.createAnimation();
     slide_it_top.opacity = 1; // to put it back to the left side of the window
     slide_it_top.duration = 300;
 	main.open(slide_it_top);
+	_startFlair(_data);
 }
 
 function _startFlair(place,adj){
@@ -77,7 +78,7 @@ function _startFlair(place,adj){
 			_word = _word.toLowerCase();
 		var lastIndex = lower_txt.lastIndexOf(_word.toLowerCase());
 		
-		if(lastIndex>-1){
+		if(lastIndex>-2){
 			var new_txt = _txt.substr(0,lastIndex);
 			_textField.setValue(new_txt + e.rowData.title + " ");
 			
@@ -86,10 +87,21 @@ function _startFlair(place,adj){
 				_textField.value = "#" + _textField.value;
 			}
 			
-		
-			
 			if(e.rowData._type === "person"){
-				send_to_server();
+				 if(_adj !== "" && _food !== ""){
+				 	_person = e.rowData._word;  	
+  					var home = require('ui/common/home/Home');	
+  								_textField.blur();
+					home.init(send_to_server,_person);
+					//_textField.blur();
+					return;
+		 		}
+			}else if(e.rowData._type === "_food"){
+				 if(_adj !== ""){  	
+  					_textField.value = _textField.value + " by ";
+  					_textField.value = _textField.value.replace("  "," ");
+  					_update(_textField);
+		 		}
 			}else{
 				_update(_textField);
 			}
@@ -159,30 +171,38 @@ function _update(_textField){
 				}
 			}
 			
-			if(food_array.length>1){
+			if(food_array.length>0 && food_string.replace(" ","") != ""){
 				_food = food_string;
 			}			
 	}
 
 	
-	if(_food !== "" && _txt.lastIndexOf(" by ") > _txt.lastIndexOf(_food) && food_array.length>1 ) {
+	if(_food !== "" && (_txt.lastIndexOf(" by ") > _txt.lastIndexOf(_food)  ||  _txt.lastIndexOf(" ") == (_txt.length-1) )) {
 			Ti.API.debug("searching person");
-				var person_string = food_array[1];
-			var results = _search_person(person_string);
-				_print_last_word(" by ", true);
+				var person_string;
+				
+				if(food_array.length < 2 ){
+					person_string = " ";
+				}else{
+					person_string = food_array[1];
+				}
+			
+			    var results = _search_person(person_string);
+				//_print_last_word(" by ", true);
 			if(results.length>0){
 				_print_last_word(person_string,true);
 				_person = person_string;
-				//send_to_server();
-				//_print_place();				
-			}else{
+			}else if(person_string !==" "){
 				_print_last_word(person_string,false);
+			}else{
+				_print_last_word(person_string,true);
 			}
 	}
 	
 }
 
-function send_to_server(){
+function send_to_server(_flair,_flairWin){
+
   if(_adj !== "" && _food !== "" && _person !==""){  	
   	
   		var  url="https://flair.me/nominate.php";
@@ -205,10 +225,11 @@ function send_to_server(){
 			   Ti.API.debug("flair true"); 
 			   login.setFeed(_result.stickers); 
 			   
-			   	var userProfileWin = require('ui/common/userProfile/UserProfile');
+			   	var placeWin = require('ui/common/place/Place');
 			   //	portal.setUserData(_result.recipient.id,_result.recipient);
-				portal.open(userProfileWin.init(_result.recipient.id,_result.recipient.name,_result.recipient.photo_big));
-				main.close();		   	 	
+				portal.open(placeWin.init(_place));
+				main.close();	
+				_flairWin.close();	   	 	
 				
      	 }else{
      	 	    Ti.API.error("flair false"); 
@@ -243,21 +264,44 @@ function _search_person(_word){
 	Ti.API.info("searching persons");
 	Ti.API.info("--->" + _place.cast.length);
 	
+	var _concat = "";
+	if(_textField.getValue().indexOf(" by ") > 0){
+		 _concat = "";
+	}else{
+		_concat = "by ";
+	}
+	
+	
+	if(_word === "" && _concat === ""){
+		show_error("Type the name of your waiter or waitress.");
+		return [{"_type":"person","_word":"","title":""}];
+	}
+	
+	
 	for(var i=0;i<_place.cast.length;i++){
 		var name = _place.cast[i].name;
 		name = name.toLowerCase();
 		_word = _word.toLowerCase();
 		if(name.search(_word) > -1){
-		  rs.push({"_word":_word,"title":_place.cast[i].name});	
+		  rs.push({"_type":"person","_word":_place.cast[i].name,"title":_concat + _place.cast[i].name});	
 		}
 	}
 	
 	if(rs.length === 0  && _word.length>0){
 		if(_word.split(" ").length === 1){
 			if(!_isForbidden(_word)){
-				rs.push({"_type":"person","_word":_word,"title": _word.charAt(0).toUpperCase() + _word.slice(1).toLowerCase()});
+				rs.push({"_type":"person","_word":_word,"title":_concat + _word.charAt(0).toUpperCase() + _word.slice(1).toLowerCase()});
 			}
 		}
+	}
+	
+	_word = _word.replace(" ","")
+	
+	if(_word == ""){
+		rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
+		rs.push({"_type":"person","_word":"Jason","title":_concat + "Jason"});
+		rs.push({"_type":"person","_word":"Mason","title":_concat + "Kason"});
+		rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
 	}
 	
 	_updateTable(rs);
@@ -276,7 +320,7 @@ function _search(_table,_word,conct){
 			conct = "";
 		}
 		
-		rs.push({"_word":_word,"title":conct + rows.field(0)});
+		rs.push({"_type":_table,"_word":_word,"title":conct + rows.field(0)});
 		rows.next();
 	}
 	
@@ -284,7 +328,7 @@ function _search(_table,_word,conct){
 	
 	if(_table === "_food"){
 			if(rs.length === 0  && _word.length>0){
-					rs.push({"_word":_word,"title":_word});
+					rs.push({"_type":_table,"_word":_word,"title":_word});
 			}
 	}
 	
@@ -321,13 +365,29 @@ function _search_adv(_word){
 }
 
 function _search_adj(_word){
+	if(_word === "" || _word === "#"){
+		show_error("Type a single #word to describe your food.");
+		return [{"_type":"_adj","_word":"","title":""}];
+	}
+	
+	
 	_word = _word.replace(/^\s+|\s+$/g,'');
 	_word = _word.replace("#",'');
-	return _search("_adj",_word,"#");	
+	var results =  _search("_adj",_word,"#");
+	if(results.length === 0){
+		results.push({"_type":"_adj","_word":_word,"title":_word});
+	}	
+	return results;
 }
 
 function _search_food(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
+	
+	if(_word === "" || _word === "#"){
+		show_error("Type the name of the food or drink.");
+		return [{"_type":"_food","_word":"","title":""}];
+	}
+	
 	return _search("_food",_word);
 }
 
@@ -359,15 +419,15 @@ function show_error(str){
   	});
   	
 	var error_view = Ti.UI.createView({
-		left:10,right:10,top:10,bottom:15,height:Ti.UI.SIZE
+		width:300,height:150,top:2,bottom:15,backgroundImage:"images/bubble.png"
 	});
 	
 	var _lbl = Ti.UI.createLabel({
-       height:Ti.UI.SIZE,
-		color:'#999',
+       height:Ti.UI.SIZE,width:250,
+		color:'#333',
   		text:str,
   		font: {
-         fontSize: 30
+         fontSize: 22
     	}
 		});
 	
@@ -390,7 +450,7 @@ function _updateTable(_dataArr){
 					_tableView.setData(_dataArr);
 		},100);
 	}else{
-		show_error("not a valid word");
+		show_error("");
 	}  	
 }
 
@@ -428,7 +488,13 @@ function _top(_data){
 	});
 	var save_btn = Ti.UI.createButton({systemButton:Titanium.UI.iPhone.SystemButton.SAVE});
 	save_btn.addEventListener('click',function(){
-		send_to_server();
+		 if(_adj !== "" && _food !== "" && _person !==""){  	
+  			var home = require('ui/common/home/Home');	
+  						_textField.blur();
+			home.init(send_to_server,_person);
+
+			return;
+		 }
 	});
 	var keyboardBar = Titanium.UI.createToolbar({
  		items:[cancel_btn,flexSpace, save_btn],

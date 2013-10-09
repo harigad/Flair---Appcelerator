@@ -45,8 +45,15 @@ exports.init = function(_data,_cont,_call) {
     	}		
 	});
 	
+	main.addEventListener("close",function(e){
+					login.init(function(){
+					processLike(_data,main);
+				});
+	});
+	
+	
 	cancel_btn.addEventListener("singletap",function(e){
-		processLike(_data,main);
+		main.close();	
 	});
 	
 	cancel_btn.add(label);
@@ -126,11 +133,8 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr,_isLiked){
 	outer.add(inner);
 	outer.add(name_txt);
 	
-	outer.addEventListener('singletap', function(){
+	outer.addEventListener('singletap', function(e){
 		likeClicked(outer);
-		if(!outer._type){
-			processLike(_data,main);
-		}
 	});
 	
 	return outer;
@@ -226,9 +230,7 @@ function processLike(_data,main){
  		client.send(_dataStr);
 		
 
-		
-		
-	main.close();
+
 }
 
 

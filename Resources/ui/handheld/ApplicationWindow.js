@@ -5,7 +5,8 @@ exports.init = function() {
 	db.open();	
 
 		var login = require('ui/common/Login');	
-		login.init(launchPortal);
+		//login.init(launchPortal);
+		launchPortal();
 		//var checkin = require('ui/common/checkin/Checkin');
 		//checkin.init();
 }

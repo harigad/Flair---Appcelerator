@@ -40,7 +40,14 @@ function _createThumb(_data,index){
 
 function addShareView(_data,detailed,_showHR){
 	
+	Ti.API.error("feed item");
+	
 	var user = login.getUser();
+	
+		
+	Ti.API.error("feed item 1");
+	
+
 	
 	var thumb = _createThumb(_data,_showHR);	
 	
@@ -79,7 +86,7 @@ function addShareView(_data,detailed,_showHR){
   			left: 0,
   			top:3 			
 	});*/
-		
+		Ti.API.error("feed item 2");
 
 	top_line.add(user_photo);	
 	
@@ -151,14 +158,15 @@ function addShareView(_data,detailed,_showHR){
 	
 	text_container.add(_footer);
 	flair_details.add(text_container);
-	
+	Ti.API.error("feed item 3");
 	if(_data.headerLikedName){
 		cRight.add(print_liked_header(_data.headerLikedName,_data.headerLikedCount));
 	}
-	
+	Ti.API.error("feed item 31");
 	cRight.add(top_line);
+	Ti.API.error("feed item 32");
 	cRight.add(flair_details);
-	
+	Ti.API.error("feed item 33");
 	
 	var likeView = Titanium.UI.createView(
 		 {
@@ -167,17 +175,29 @@ function addShareView(_data,detailed,_showHR){
 		  	height:'40'
 		 }
 	);	
-	
+	Ti.API.error("feed item 34");
+	if(!detailed){
 	var likeMaker = require('ui/common/feed/Likes');
-	likeView.add(likeMaker.init(_data));	
-	
-	cRight.add(likeView);
+		likeView.add(likeMaker.init(_data));	
+		Ti.API.error("feed item 35");
+		cRight.add(likeView);
+	}
 	//--------------------------------------------------------------------------------------------------------------------
+	Ti.API.error("feed item 4");
+	var borderWidth;
+	var bgColor;
+	if(detailed){
+		borderWidth = 0;
+		bgColor = "#eee";
+	}else{
+		borderWidth = 0.5;
+		bgColor = "#fff";
+	}
 	
 	var cContainer = Titanium.UI.createView(
 		 {
 		  	left:10,
-		  	right:10,top:10,backgroundColor:'#fff',borderRadius:4,borderWidth:0.5,borderColor:'#ddd',
+		  	right:10,top:10,backgroundColor:bgColor,borderRadius:4,borderWidth:borderWidth,borderColor:'#ddd',
 		    height:Ti.UI.SIZE,
 		  	layout: 'horizontal',
 		  	_data:_data,
@@ -202,16 +222,38 @@ function addShareView(_data,detailed,_showHR){
 
 	}
 	
-	if(_data.uid === user.getId()){
-		cContainer.addEventListener('longpress',function(e){	
-		  	deleteFlair(cContainer);
-		});
+	if(user){
+		if(_data.uid === user.getId()){
+			cContainer.addEventListener('longpress',function(e){	
+		  		deleteFlair(cContainer);
+			});
+		}
 	}
-	
+	Ti.API.error("feed item 5");
 	
 	//cContainer.add(thumb);
 	cContainer.add(cRight);
 	
+	if(_data.approved !== "1" && _data.approved !== 1){
+		var appr = Ti.UI.createView({
+		height:Ti.UI.SIZE,bottom:10,
+		backgroundColor:'#ddd',width:Ti.UI.FILL
+		});
+		
+		var appr_lbl = Ti.UI.createLabel({
+			text: "waiting for approval",left:10,
+			color: "#fff",top:5,bottom:5,height:Ti.UI.SIZE,width:Ti.UI.SIZE,
+			font: {
+				fontSize:11	
+			}
+		});
+			
+		appr.add(appr_lbl);		
+		cContainer.add(appr);
+
+	}
+	
+	Ti.API.error("feed item 6");
 	return cContainer;
 }
 

@@ -5,16 +5,12 @@ var login = require('ui/common/Login');
 exports.init = function(_type){
 	var name;
 	
-	if(_type == "friends"){
-		name = "friends";
-	}else{
-		name = "friends";
-	}
+	name = "flairs";
 	
 	var main = Titanium.UI.createWindow({
     	title: name,
     	backgroundColor: '#eee',
-    	navBarHidden:false
+    	navBarHidden:false,barColor:'#cecece'
 	});
 
 	scroll = Ti.UI.createScrollView({contentOffset:{X:80,Y:80}});

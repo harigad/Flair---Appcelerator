@@ -79,7 +79,7 @@ function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn) {
 		}
 		
 		
-		if(feed_data.length === 5 && disableMoreBtn !== true){
+		if(feed_data.length === 10 && disableMoreBtn !== true){
 		
 		var loadMoreBtn = Titanium.UI.createView({
 			width:Ti.UI.FILL,

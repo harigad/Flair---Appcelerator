@@ -39,22 +39,25 @@ exports.init = function(id,name,photo){
 	
 	upperView = Titanium.UI.createView(
 		 {
-		  	left:10,right:10,
+		  
 		  	height: Ti.UI.SIZE,
-		  	top:10,
+		  
 		  	layout: 'vertical',
-		  	backgroundColor:'#fff',borderRadius:4
+		  	backgroundColor:'#eee'
 		 }
 	);
 	
 	photoView = Ti.UI.createImageView({
-			width:280,top:10,right:10,left:10,
-			backgroundColor:'#f1f1f1',
-			borderRadius:4,
+			width:320,top:0,right:0,left:0,
+			backgroundColor:'#dedede',
 			image:photo
 	});
 
+	var se = Ti.UI.createView({height:1,width:Ti.UI.FILL,backgroundColor:"#fff"});
+
+
 	upperView.add(photoView);
+	upperView.add(se);
 	
 	main.add(upperView);
 	main.userPhotoView = photoView;
@@ -126,7 +129,7 @@ function clearView(){
 		 {
 		  	width: '100%',
 		  	height: Ti.UI.SIZE,
-		  	top:0,
+		  	top:-10,
 		  	layout: 'vertical'
 		 }
 	);
@@ -162,7 +165,7 @@ function printDetails(){
 	Ti.API.debug("UserProfile.printDetails");	
 	
 	var nameLabel = Ti.UI.createLabel({
-  		left:10,top:5,
+  		left:0,top:5,
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,
   		color: '#333',
@@ -173,7 +176,7 @@ function printDetails(){
     		}
   		});
   	
-  	var nameView = Ti.UI.createView({height:Ti.UI.SIZE,layout:'horizontal'});
+  	var nameView = Ti.UI.createView({left:10,right:10,height:Ti.UI.SIZE,layout:'horizontal'});
   	nameView.add(nameLabel);
   	
   	if(user.getRole()){
@@ -194,6 +197,8 @@ function printDetails(){
 		
 	if(user.getPlace() || user.isAdmin()){
 		grayV.add(printPlace(user));	
+	}else{
+		grayV.add(Ti.UI.createView({height:10}));
 	}
 	
 	if(user.getId()){
@@ -225,12 +230,12 @@ function activation_code(user){
 	var place = user.getPlace();
 		
 	var fRow_container = Ti.UI.createView({
-		height:Ti.UI.SIZE,left:0,top:0,bottom:10,
+		height:Ti.UI.SIZE,left:10,top:0,bottom:10,
 		layout:'vertical'
 	});
 	
 	var placeName = Ti.UI.createLabel({
-  		left:10,right:10,top:0,width:280,
+  		left:0,right:10,top:0,width:280,
   		color: '#2179ca',
   		text: place.name,
   			font: {
@@ -241,7 +246,7 @@ function activation_code(user){
   	fRow_container.add(placeName);
 	
 	var roleName = Ti.UI.createLabel({
-  		left:10,right:10,top:0,
+  		left:0,right:10,top:0,
   		color: '#333',
   		text: "Verification Code : " + place.code,
   			font: {
@@ -262,7 +267,7 @@ function activation_code(user){
 	fRow_container.add(tip_container);
 	
   	var tip_text = Ti.UI.createLabel({
-  		left:10,right:10,
+  		left:0,right:10,
   		color: '#666',
   		text: "Please call 1-866-291-9993 from " + place.name + " and enter your verification code.",
   			font: {
@@ -285,7 +290,7 @@ function printPlace(user){
 	
 	var grayView = Titanium.UI.createView(
 		{
-		  left:0,right:0,top:-10,
+		  left:10,right:0,top:-10,
 		  height:Ti.UI.SIZE,
 		  layout: 'horizontal',
 		}
@@ -303,7 +308,7 @@ function printPlace(user){
 	var fRow_container = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
-		  	left:10,right:10,	
+		  	left:0,right:10,	
 		  	top:10,
 		  	bottom:10,
 		  	layout:'vertical'

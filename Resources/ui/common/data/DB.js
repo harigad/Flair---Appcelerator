@@ -8,6 +8,7 @@ exports.select = function(_sql){
 exports.open = function(){
 	_db = Ti.Database.open('flair_db');
 	var service = Ti.App.iOS.registerBackgroundService({url:'ui/common/data/DB_Background.js'});
+	_load_from_server();
 }
 
 exports.load = function(){

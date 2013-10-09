@@ -1,6 +1,7 @@
 var portal = require('ui/common/Portal');
 var _callBack;
 var _placesView;
+var _scrollable;
 var outer;
 var _places;
 var _place;var _food;var _person;
@@ -12,11 +13,16 @@ var _color;
 var _currentWords;
 var _currentWordsLen;
 var _currentPlaceIndex;
-
+var wall = require('ui/common/wall/Wall');
+var newHires = require('ui/common/wall/NewHires');
 var _db = require('ui/common/data/DB');
+var _bgColors;
+
 
 function _reloadPlaces(){
 	var _placesArr = [];
+	
+	_scrollable.scrollTo(0,0);
 	
 	//if(_place){
 //		_loadWords();		
@@ -44,6 +50,48 @@ exports.init = function(callBack) {
 	_bgColorB = "#f1f1f1";
 	_color = "#333";
 	
+	_bgColors = [];
+	
+	_bgColors[0] = "#87c600";
+	_bgColors[1] = "#579aff";
+	_bgColors[2] = "#ff9638";
+	
+	_bgColors[3] = "#0067be";
+	_bgColors[4] = "#be4c00";
+	_bgColors[5] = "#169e00";
+	
+	_bgColors[6] = "#ff4f2c";
+	_bgColors[7] = "#98bb46";
+	_bgColors[8] = "#57aeff";
+	
+	
+	
+	
+	_bgColors[9] = "#87c600";
+	_bgColors[10] = "#579aff";
+	_bgColors[11] = "#ff9638";
+	
+	_bgColors[12] = "#0067be";
+	_bgColors[13] = "#be4c00";
+	_bgColors[14] = "#169e00";
+	
+	_bgColors[15] = "#ff4f2c";
+	_bgColors[16] = "#98bb46";
+	_bgColors[17] = "#57aeff";
+	
+	
+	_bgColors[18] = "#87c600";
+	_bgColors[19] = "#579aff";
+	_bgColors[20] = "#ff9638";
+	
+	_bgColors[21] = "#0067be";
+	_bgColors[22] = "#be4c00";
+	_bgColors[23] = "#169e00";
+	
+	_bgColors[24] = "#ff4f2c";
+	_bgColors[25] = "#98bb46";
+	_bgColors[26] = "#57aeff";
+	
 	_callBack = callBack;
 	_place = null;
 	_word = null;
@@ -51,28 +99,11 @@ exports.init = function(callBack) {
 		 {
 		  	width: '320',
 		  	height: 'auto',
-		  	top:0,
+		  	top:20,
 		  	left:0,
-		  	layout:'horizontal'
+		  	layout:'horizontal',backgroundColor:'#fff'
 		 }
 	);	
-	
-	
-	var header = Titanium.UI.createView({
-		width:'100%',height:57,top:0,bottom:0,
-		backgroundColor:'#fff',
-	});
-	
-	_placeLabel = Ti.UI.createLabel({
-			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-			text: "Pick a Place",
-			width:Ti.UI.FILL,
-			color:'#2179ca'
-	});
-	
-	header.add(_placeLabel);
-	
-	outer.add(header);
 	
 	var _grayView =  Titanium.UI.createView(
 		 {
@@ -80,15 +111,41 @@ exports.init = function(callBack) {
 		  	height: Ti.UI.SIZE,
 		  	layout:'horizontal',backgroundColor:'#fff'
 		 }
-	);	
+	);
+	
+	
+	var nearbyWin;
+  	var friendsWin;
+
+  	// = wall.init("nearby"); 
+  	//var profileWin = 
+  	
+	var nearby = _createThumb({"id":"nearby","photo":"images/flairs/100/nearby.png"},'#f1f1f1');
+		nearby.addEventListener('singletap',function(e){
+			if(!nearbyWin){
+				nearbyWin = newHires.init(); 
+			}
+			portal.open(nearbyWin);
+		});
+		
+	var friends = _createThumb({"id":"friends","photo":"images/flairs/100/friends.png"},'#eee');
+		friends.addEventListener('singletap',function(e){
+			if(!friendsWin){
+				friendsWin = wall.init("nearby"); 
+			}
+			portal.open(friendsWin);
+	});
+	
+	
+		
 	
 	var cancel_btn = _createThumb({"id":"",photo:"images/cancel.png"},_bgColorA);
-	_grayView.add(cancel_btn);
+	_grayView.add(nearby);
 	
 	var middle_btn = _createThumb({"id":"",photo:""},_bgColorB);
-	_grayView.add(middle_btn);
+	_grayView.add(friends);
 	
-	var reload_btn = _createThumb({"id":"",photo:"images/reload.png"},_bgColorA);
+	var reload_btn = _createThumb({"id":"",photo:"images/reload.png"},"#f1f1f1");
 	_grayView.add(reload_btn);
 	
 	outer.add(_grayView);
@@ -104,76 +161,79 @@ exports.init = function(callBack) {
 	
   	//outer.add(_placesView);	
   		
-	var places = portal.getPlaces(printPlaces);
+	var places = portal.initLocation(printPlaces);
 
-	return outer;
+	var header = Titanium.UI.createView({
+		width:182,height:32,top:13,bottom:13,left:54,right:54,
+		backgroundImage:'images/home/header.png'
+	});
+
+	var main = Ti.UI.createWindow({			
+    	hideNavBar:false,
+    	backgroundColor:'#fff',
+    	titleControl:header,barColor:'#eee'
+	});
+
+	var ht = Titanium.Platform.displayCaps.platformHeight - 180;
+	
+	Ti.API.error("window ht =" + ht);
+
+	_scrollable = Ti.UI.createScrollView({
+			width: '290',
+		  	height: ht,
+		  	top:0,
+		  	left:17.5,
+	});
+	outer.add(_scrollable);
+
+	main.add(outer);
+	printPlaces([]);
+	return main;
 }
 
 function printPlaces(places){
 	_places = places;
+	
 	if(_placesView){
-		outer.remove(_placesView);
+		_scrollable.remove(_placesView);
 	}
 	
 	_placesView = null;
 	
 	_placesView =  Titanium.UI.createView(
 		 {
-		  	width: '290',
-		  	height: 'auto',
-		  	top:0,
-		  	left:17.5,
-		  	layout:'horizontal'
+		  	width:Ti.UI.FILL,height:Ti.UI.SIZE,
+		  	layout:'horizontal',top:0
 		 }
 	);	
-	outer.add(_placesView);	
-	var len;
-	len = 9;
 	
-	if(places.length<9+_currentPlaceIndex){
-		len = places.length-_currentPlaceIndex;
-	}
+	_scrollable.add(_placesView);	
+	
 	
 	var bgColor;
 	
-	for(var i=_currentPlaceIndex;i<len+_currentPlaceIndex;i++){
-		
-		if(i % 2){
-		  bgColor = _bgColorA;
-	    }else{
-		  bgColor = _bgColorB;
-	    }	
-	
+	for(var i=0;i<places.length;i++){
+		bgColor = _bgColors[i];
 		var place = places[i];
-		
-		//setTimeout(function(){
-					_placesView.add(_createFlairThumb(place,bgColor,i));	
-		//}, 50*i );
+		_placesView.add(_createFlairThumb(place,bgColor,i));
 	}	
 	
-	if(len<9){
-		for(var i=len;i<9;i++){
-			if(i % 2){
-		  		bgColor = _bgColorA;
-	    	}else{
-		  		bgColor = _bgColorB;
-	    	}
+	if(places.length<12){
+		for(var i=places.length;i<12;i++){
+			bgColor = _bgColors[i];
 			_placesView.add(_createFlairThumb({name:""},bgColor));	
 		}
 	}
 	
-	_currentPlaceIndex = _currentPlaceIndex + 9;
+	_currentPlaceIndex = _places.length;
 	
 }
 
 function _process(_data,_addMore){
-/*	if(_food){
-		_person = _data;
-		_callBack(_place.name,_word.name,_food.name,_person.data);
-	}if(_word){
-		_food = _data;
-		_loadPersons();
-	}else*/
+	var flairWin = require('ui/common/flair/Flair');
+	flairWin.init(_data);
+	return;
+	
 	if(_place){
 		_word = _data;
 		_callBack(_place,_word.name);
@@ -226,9 +286,11 @@ function _createFlairThumb(_data,bgColor,i){
 	var thumb = _createThumb(_data,bgColor);
 	thumb._index = i;
 	thumb.addEventListener('singletap',function(){
-		thumb._selected = true;
-		var flairWin = require('ui/common/flair/Flair');
-		_process(_data);
+		thumb._selected = false;
+		if(_data.pid){
+			var flairWin = require('ui/common/flair/Flair');
+			_process(_data);
+		}
 	});	
 	
 	/*thumb.addEventListener('longpress',function(){
@@ -269,7 +331,7 @@ function _createThumb(_data,bgColor){
 		  	left:-2.5,
 		  	right:-2.5,
 		  	backgroundImage:'images/feed/feed_flair_shadow.png',	
-		  	borderRadius: 4,
+		  	borderRadius: 50,
 		   	_data: _data	
 		 }
 	);	
@@ -286,7 +348,7 @@ function _createThumb(_data,bgColor){
 		  	width: '85',
 		  	height: '85',
 		  	backgroundColor:bgColor,
-		  	borderRadius:4,
+		  	borderRadius:42.5,
 		  	backgroundImage: _photo
 		 }
 	);
@@ -297,7 +359,7 @@ function _createThumb(_data,bgColor){
 			height:'auto',
 			width: 80,
   			text:_data.name,
-  			color:_color,
+  			color:"#fff",
   			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   			font: {
          		fontSize: 13
@@ -313,14 +375,14 @@ function _createThumb(_data,bgColor){
 	
 	   outer.addEventListener('touchstart',function(e){
 			this._cancelClick = false;
-			this._inner.setBackgroundColor('#2179ca');
-		  	this._innerLabel.setColor('#fff');					
+			this._inner.setBackgroundColor('#fff');
+		  	this._innerLabel.setColor(this._inner._bgColor);					
 		});
 		
 		outer.addEventListener('touchend',function(e){
 			 if(this._selected !== true){
 			 	 	this._inner.setBackgroundColor(this._inner._bgColor);
-		  			this._innerLabel.setColor(_color);
+		  			this._innerLabel.setColor("#fff");
 			 }
 		});
 		
@@ -328,7 +390,7 @@ function _createThumb(_data,bgColor){
 			this._cancelClick = true;
 			if(this._selected !== true){
 			 	 	this._inner.setBackgroundColor(this._inner._bgColor);
-		  			this._innerLabel.setColor(_color);
+		  			this._innerLabel.setColor("#fff");
 			 }
 		});
 	
