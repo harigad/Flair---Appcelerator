@@ -2,7 +2,6 @@ var portal = require('ui/common/Portal');
 var like_pofile = require('ui/common/feed/LikeProfile');
 
 function print_like(_data,c,_flair){
-Ti.API.error("Like 1");
 	if(_data.type == 1){
 		c.add(print_individual_like(_data,1,_flair));
 	}if(_data.type == 2){
@@ -29,7 +28,6 @@ Ti.API.error("Like 1");
 
 
 function print_individual_like(likeObj,_type,_flair){
-	Ti.API.error("Like 2");
    	var photo = likeObj.photo;
 				
 				var like_container = Titanium.UI.createView({
@@ -58,7 +56,6 @@ function print_individual_like(likeObj,_type,_flair){
 }
 
 exports.init = function(_data){
-		Ti.API.error("like 1");
 	var likeView = Titanium.UI.createView({
 		layout:'horizontal',
 		width:Ti.UI.FILL,
@@ -74,22 +71,20 @@ exports.init = function(_data){
 
 function clearView(thisView){
 	var len = thisView.children.length;
-	for(var i=0;i<len;i++){
-		thisView.remove(thisView.children[i]);
+	while(thisView.children.length>0){
+		thisView.remove(thisView.children[0]);
 	}
 }
 
 function _render(_data,likeView){	
 	clearView(likeView);
-	Ti.API.error("like 2");
 	var likeImageStr;
 	
-	if(_data.isLiked){
+	if(_data.isLiked && _data.isLiked !== 0 && _data.isLiked !== "0"){
 		likeImageStr = 'images/feed/liked.png';
 	}else{
 		likeImageStr = 'images/feed/like_blue.png';
 	}
-	Ti.API.error("like 3");
 	var like_btn = Ti.UI.createImageView({
   			image: likeImageStr,
   			left:0,right:0,top:5,bottom:5,
@@ -99,20 +94,16 @@ function _render(_data,likeView){
 				like_pofile.init(_data,likeView,_render);
 	});
 	likeView.add(like_btn);	
-	Ti.API.error("like 4");
+
 if(_data.likes){
 	if(_data.likes.length>0){
 		var like_len = 7;
 		if(_data.likes.length<7){
 			likes_len = _data.likes.length;
 		}
-Ti.API.error("like 5");
 		for(var j=0;j<likes_len;j++){
-			Ti.API.error("like 6");
 			var likeObj = _data.likes[j];
-			Ti.API.error("like 61");
 			if(likeObj && likeObj.type){
-				Ti.API.error("like 62");
 				print_like(likeObj,likeView,_data);	
   			}
 		}

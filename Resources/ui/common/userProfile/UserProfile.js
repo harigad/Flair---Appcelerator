@@ -5,7 +5,7 @@ exports.init = function(id,name,photo){
 
 	var main = Titanium.UI.createWindow({
     	backgroundColor: '#eee',
-    	navBarHidden:false ,barColor:'#cecece'	
+    	navBarHidden:false ,barColor:'#fff'	
 	});
 	
 	main.add(profileView.init(id,name,photo));

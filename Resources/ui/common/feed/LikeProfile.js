@@ -26,7 +26,7 @@ exports.init = function(_data,_cont,_call) {
 	
 	outer._food_btn = _create(main,_data,3,_data.food,'#99452b','#c26447',false,_data.isLiked);	
 	outer._place_btn = _create(main,_data,2,_data.placename,'#54733e','#84ab68',true,_data.isLiked);
-	outer._recp_btn = _create(main,_data,1,_data.recipientname,'#2179ca','#2179ca',true,_data.isLiked);	
+	//outer._recp_btn = _create(main,_data,1,_data.recipientname,'#2179ca','#2179ca',true,_data.isLiked);	
 	var cancel_btn = Titanium.UI.createView(
 		 {
 		  	width: Ti.UI.FILL,
@@ -46,7 +46,7 @@ exports.init = function(_data,_cont,_call) {
 	});
 	
 	main.addEventListener("close",function(e){
-					login.init(function(){
+				login.init(function(){
 					processLike(_data,main);
 				});
 	});
@@ -61,7 +61,7 @@ exports.init = function(_data,_cont,_call) {
 	outer.add(outer._cancel_btn);
 	outer.add(outer._food_btn);
 	outer.add(outer._place_btn);
-	outer.add(outer._recp_btn);
+	//outer.add(outer._recp_btn);
 	
 	
 	main._outer = outer;
@@ -76,7 +76,7 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr,_isLiked){
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: '100%',
-		  	height: 100,
+		  	height: 160,
 		  	left:0,
 		  	layout: 'horizontal'
 		 }
@@ -158,7 +158,7 @@ function getIsLiked(_type,isLiked){
 }
 
 
-function getLikeNumber(recp,place,food){
+function getLikeNumber(place,food,recp){
 	if(recp && place && food){
 		return 7;
 	}else if(place && food){
@@ -191,7 +191,7 @@ function likeClicked(_likeObj){
 }
 
 function processLike(_data,main){
-	   _data.isLiked = getLikeNumber(main._outer._recp_btn._isLiked,main._outer._place_btn._isLiked,main._outer._food_btn._isLiked);
+	   _data.isLiked = getLikeNumber(main._outer._place_btn._isLiked,main._outer._food_btn._isLiked);
 	
 		var that = this;
 

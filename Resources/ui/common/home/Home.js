@@ -9,9 +9,8 @@ var _callBack;
 var main;
 exports.init = function(callBack,person_name) {
 
-	login.init(function(){
-		init_process(callBack,person_name);
-	});
+	init_process(callBack,person_name);
+	
 	
 }	
 	
@@ -283,7 +282,10 @@ function _createFlairThumb(_data,bgColor){
 	
 	thumb.addEventListener('singletap',function(){
 		Ti.API.debug("Flair Icon Clicked " + _data.id);	
+		login.init(function(){
+
 		activeThumb = thumb;
+		
 		_callBack(_data,main);
 		thumb._inner_bg._inner.setBackgroundImage("");
 		var inner = Ti.UI.createLabel({
@@ -302,7 +304,9 @@ function _createFlairThumb(_data,bgColor){
 		// thumb.add(newBg);
 		// newBg.animate({duration:500,view:_createInnerBg(thumb._data,thumb._bgColor),transition:Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
 		//});
-		
+		},function(){
+			flairWin.close();
+		});
 		
 	});	
 	

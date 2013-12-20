@@ -10,16 +10,37 @@ exports.launch = function(_place){
 }
 
 function _build(_place){
+	var annotations = [];
 	if(!_place){
     	_place = user.getPlace();
+    	
+   	annotations = [
+    Ti.Map.createAnnotation({
+        latitude: _place.lat,
+        longitude: _place.lng,
+        title: _place.title,
+        animate: true,
+        pincolor: Ti.Map.ANNOTATION_GREEN
+    })];
+		
+   	 	
+    	
 	}
 	var mapView = Titanium.Map.createView({
     mapType: Titanium.Map.STANDARD_TYPE,
     region:{latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.01, longitudeDelta:0.01},
     animate:true,
     regionFit:true,
-    userLocation:true
+    userLocation:true,
+     annotations: annotations
     });
+    
+    mapView.addEventListener("complete",function(e){
+   	mapView.region = {
+   		latitude:_place.lat, longitude:_place.lng, latitudeDelta:0.01, longitudeDelta:0.01
+   	}
+   });
+	
 	
    var mapViewCont = Titanium.UI.createView(
 		 {
@@ -178,6 +199,15 @@ function _deleteCode(_data){
 
 
 function _loadCode(_data){
+	var thisplace = user.getPlace();
+	if(thisplace){
+		if(thisplace.pid === _data.pid){
+			 searchPlaceNav.close(true,user);
+		     main.close();
+			return;	
+		}	
+	}
+	
 	user.setDirty();
 	Ti.API.info("1" + _data);
 	
@@ -194,15 +224,21 @@ function _loadCode(_data){
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
  	 	Ti.API.info("3");
+ 	 	Ti.API.info(this.responseText);
  	 	 var _response = JSON.parse(this.responseText);
  	 	 if(_response.status){
  	 	 	 user.setPlace(_response.place);
+ 	 	 	 searchPlaceNav.close(true,user);
+		     main.close();
+ 	 	 }else{
  	 	 	 searchPlaceNav.close(true,user);
 		     main.close();
  	 	 }
  	 },
  	 onerror: function(e){
  	 	Ti.API.info("4");
+ 	 	 searchPlaceNav.close(true,user);
+		     main.close();
  		 	Ti.API.error("User.load error " + e);
  	 }
  	});

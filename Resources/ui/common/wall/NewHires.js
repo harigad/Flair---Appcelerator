@@ -21,8 +21,8 @@ exports.init = function(_type){
 	});
 	
 	loadData();
-	
-	return main;
+	return scroll;
+	//return main;
 }
 
 function print(cast,_loadMore){
@@ -40,7 +40,7 @@ function print(cast,_loadMore){
 	}
 	
 	if(!_loadMore){
-		container = Ti.UI.createView({top:10,left:10,right:10,bottom:10,width:Ti.UI.FILL,height:Ti.UI.SIZE,layout:'vertical'});
+		container = Ti.UI.createView({top:20,left:10,right:10,bottom:10,width:Ti.UI.FILL,height:Ti.UI.SIZE,layout:'vertical'});
 		scroll.add(container);
 	}
 
@@ -60,8 +60,6 @@ function print(cast,_loadMore){
 			loadData(true);
 	});
 		
-	
-	
 }	
 
 function print_cast_data(_data){	

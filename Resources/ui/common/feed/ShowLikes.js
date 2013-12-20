@@ -5,8 +5,8 @@ exports.init = function(_data){
 	
 	var main = Titanium.UI.createWindow({
     	title: "Likes",
-    	backgroundColor: '#eee',
-    	navBarHidden:false,barColor:'#cecece'
+    	backgroundColor: '#fff',
+    	navBarHidden:false,barColor:'#fff'
 	});
 
 	var scroll = Ti.UI.createScrollView({contentOffset:{X:80,Y:80}});
@@ -36,33 +36,27 @@ function printFlair(container,_data){
 
 function printLikes(container,_data){
 	
-	var cont = Ti.UI.createView({top:10,layout:"vertical",backgroundColor:"#eee",height:Ti.UI.SIZE});
+	var cont = Ti.UI.createView({top:10,layout:"vertical",backgroundColor:"#fff",height:Ti.UI.SIZE});
 	
 	for(var i=0;i<_data.likes.length;i++){
 		var likeObj = _data.likes[i];
-		cont.add(print_cast_data(likeObj));
+		cont.add(print_cast_data(likeObj,_data));
 	}
 	
 	container.add(cont);
 }
 
-
-
-
-function print_cast_data(_data){	
+function print_cast_data(_data,_flair){	
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,width:300,
 		  	layout:'vertical',
-		  	bottom:10,
-		  	backgroundColor:'#fff',
-		  	borderRadius:4,bottom:10,
-		  	borderWidth:0.5,borderColor:'#ddd'
+		  	bottom:10
 		 }
 		);
 		
 		var img = Ti.UI.createImageView({
-			width:280,top:10,
+			width:280,top:5,
 			backgroundColor:'#f1f1f1',
 			borderRadius:4,
 			image:_data.photo_big
@@ -77,7 +71,7 @@ function print_cast_data(_data){
 		width:Ti.UI.SIZE,
   		text:_data.name,
   		wordWrap:false,
-  		color:'#333',
+  		color:'#2179ca',
   		font: {
          fontSize: 28,
          fontWeight:'bold'
@@ -85,7 +79,7 @@ function print_cast_data(_data){
 		});
 		name_cont.add(name_txt);
 		
-		name_cont.add(add_likes(_data));
+		name_cont.add(add_likes(_data,_flair));
 		
 		
 		row.add(name_cont);
@@ -98,40 +92,34 @@ function print_cast_data(_data){
 		return row;
 }
 
-function add_likes(_data){
+function add_likes(_data,_flair){
 	
-	var c = Ti.UI.createView({height:Ti.UI.SIZE,width:Ti.UI.SIZE,layout:"horizontal"});
+	var c = Ti.UI.createLabel({color:"#999",font:{fontSize:10},height:Ti.UI.SIZE,width:Ti.UI.SIZE,layout:"horizontal"});
+	var text;
+	
 	
 	if(_data.type == 1){
-		c.add(print_individual_like(_data,1));
+		text = _flair.recipientname;
 	}if(_data.type == 2){
-		c.add(print_individual_like(_data,2));
+		text = _flair.placename;
 	}else if(_data.type == 3){
-		c.add(print_individual_like(_data,3));
+		text = _flair.food;
 	}else if(_data.type == 4){
-		c.add(print_individual_like(_data,1));
-		c.add(print_individual_like(_data,2));
+		text = _flair.recipientname + " & " + _flair.placename;
 	}else if(_data.type == 5){
-		c.add(print_individual_like(_data,1));
-		c.add(print_individual_like(_data,3));
+		text = _flair.recipientname + " & " + _flair.food;
 	}else if(_data.type == 6){
-		c.add(print_individual_like(_data,2));
-		c.add(print_individual_like(_data,3));
+		text = _flair.food + " & " + _flair.placename;
 	}else if(_data.type == 7){
-		c.add(print_individual_like(_data,1));
-		c.add(print_individual_like(_data,2));
-		c.add(print_individual_like(_data,3));
+		text = _flair.food + ", " + _flair.food + " & " + _flair.recipientname;
 	}
 	
+	c.setText(text);
 	return c;
 	
 }
 
 function print_individual_like(data,_type){
-	return Titanium.UI.createView({
-					width:27,left:10,
-					height:27,
-					backgroundImage:'images/feed/like_' + _type + '_100.png'
-				});
+
 }
 

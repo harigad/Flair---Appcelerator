@@ -1,8 +1,12 @@
 
 
-exports.init = function(scroll,_callBack){
-	
-	var topView = Ti.UI.createView({width:Ti.UI.FILL,height:Ti.UI.SIZE,top:-45,layout:'vertical'});
+exports.init = function(scroll,_callBack,_top){
+	if(_top){
+		
+	}else{
+		_top = -45;
+	}
+	var topView = Ti.UI.createView({width:Ti.UI.FILL,height:Ti.UI.SIZE,top:_top,layout:'vertical'});
 	var _footer = Ti.UI.createLabel({
 		top:15,bottom:15,
 		height:Ti.UI.SIZE,
@@ -35,6 +39,9 @@ exports.init = function(scroll,_callBack){
 		if(_footer._status === true){
 			_callBack();
 		}
+				_footer.setColor("#aaa");
+          		_footer.setText("pull to refresh");
+          		_footer._status = false;	
 	});
 	
 }

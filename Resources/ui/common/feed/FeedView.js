@@ -1,8 +1,8 @@
+var feed = require('ui/common/feed/FeedItem');
+var newCast = require('ui/common/feed/NewCast');
+var _grayView;
+function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn,_profileType,_profileId) {	
 
-function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn) {	
-
-
-	var feed = require('ui/common/feed/FeedItem');
 	Ti.API.debug("printing feedView");
 	
 		if(!_tableView){
@@ -20,16 +20,26 @@ function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn) {
 			_tableView.remove(_tableView._noItemsBtn);
 		}
 		
-
 		Ti.API.debug("feed.length " + feed_data.length);
 		
-		var _date = "";
+		var _date = "";var row;
 	    for (var i=0; i<feed_data.length; i++){
 	    	_date = feed_data[i].updated;
-	    	var _row = feed.feedItem(feed_data[i],null,i);	
-	    	_row._parentView = _tableView;	
-		    _tableView.add(_row);
+	    	if(feed_data[i].isCastData === 1 || feed_data[i].isCastData === "1"){
+	    		if(_profileType !== "place"){
+	    			_row = newCast.init(feed_data[i],null,i,_profileType,_profileId);	
+	    			_row._parentView = _tableView;
+	    			_tableView.add(_row);
+	  	    	}
+	    	}else{
+	    		_grayView = null;
+	    		_row = feed.feedItem(feed_data[i],null,i,_profileType,_profileId);	
+	    		_row._parentView = _tableView;	
+		    	_tableView.add(_row);
+	    	}
 		}
+		
+		row = null;
 		
 		Ti.API.debug("_tableView.children.length " + _tableView.children.length);
 		if(_tableView.children.length < 2 && loadMoreCallBack) {
@@ -125,12 +135,13 @@ function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn) {
 }
 
 
+
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
 		  	backgroundImage: 'images/feed/like_hr.png',
-		  	height:2,
-		  	bottom:0,
+		  	height:2,opacity:0.6,
+		  	top:10,bottom:5,
 		  	width:'320'
 		 }
 	);

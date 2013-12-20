@@ -1,8 +1,8 @@
 var portal = require('ui/common/Portal');
 var _callBack;
 var _placesView;
+var _scrollableContainer;
 var _scrollable;
-var outer;
 var _places;
 var _place;var _food;var _person;
 var _word;
@@ -17,30 +17,19 @@ var wall = require('ui/common/wall/Wall');
 var newHires = require('ui/common/wall/NewHires');
 var _db = require('ui/common/data/DB');
 var _bgColors;
-
+var showingHome;var main;
 
 function _reloadPlaces(){
 	var _placesArr = [];
 	
-	_scrollable.scrollTo(0,0);
-	
-	//if(_place){
-//		_loadWords();		
-//	}else{
-	if(_placesView){
+	   _scrollable.scrollTo(0,0);
 		for(var i=0;i<_placesView.children.length;i++){
-			_placesView.children[i]._label.setText("loading");
+			if(!_placesView.children[i]._data.id){
+				_placesView.children[i]._label.setText("loading");
+			}
 		}
-		
-		
-		if(_currentPlaceIndex >= _places.length){
-			_currentPlaceIndex = 0;
-			portal.getPlaces(printPlaces,true);	
-		}else{
-			printPlaces(_places);
-		}
-	}	
-//	}
+		portal.getPlaces(printPlaces,true);	
+	
 }
 
 exports.init = function(callBack) {
@@ -63,9 +52,6 @@ exports.init = function(callBack) {
 	_bgColors[6] = "#ff4f2c";
 	_bgColors[7] = "#98bb46";
 	_bgColors[8] = "#57aeff";
-	
-	
-	
 	
 	_bgColors[9] = "#87c600";
 	_bgColors[10] = "#579aff";
@@ -95,98 +81,40 @@ exports.init = function(callBack) {
 	_callBack = callBack;
 	_place = null;
 	_word = null;
-	outer =  Titanium.UI.createView(
-		 {
-		  	width: '320',
-		  	height: 'auto',
-		  	top:20,
-		  	left:0,
-		  	layout:'horizontal',backgroundColor:'#fff'
-		 }
-	);	
+	
+	var reload_btn = Ti.UI.createView({backgroundColor:"#eee",borderRadius:50,backgroundImage:"images/flairs/100/cancel.png",top:-20,width:100,height:100});
+	reload_btn.addEventListener('singletap',function(e){
+			main.close();
+    });
+	
+	 main = Ti.UI.createWindow({			
+    	backgroundColor:"#eee",
+    	navBarHidden:false,
+    	barColor: '#fff',
+    	titleControl:reload_btn
+    });
+    
+		_scrollable = Ti.UI.createScrollView({top:0,contentOffset:{X:80,Y:80}});
+		
+		main.add(_scrollable);	
+		var pull_to_refresh = require('ui/common/components/PullToRefresh');
+		pull_to_refresh.init(_scrollable,function(){
+			_reloadPlaces();
+		},15);
 	
 	var _grayView =  Titanium.UI.createView(
 		 {
-		  	width: '290',left:17.5,top:0,
-		  	height: Ti.UI.SIZE,
-		  	layout:'horizontal',backgroundColor:'#fff'
+		  	width: '320',top:0,
+		  	height: Ti.UI.FILL
 		 }
 	);
+	var _grayViewCont = Ti.UI.createView({top:0,left:0,width:Ti.UI.FILL,height:70,backgroundImage:"images/trans_dark.png"})
+	_grayViewCont.add(_grayView);
+	//main.add(_grayViewCont);	
 	
 	
-	var nearbyWin;
-  	var friendsWin;
-
-  	// = wall.init("nearby"); 
-  	//var profileWin = 
-  	
-	var nearby = _createThumb({"id":"nearby","photo":"images/flairs/100/nearby.png"},'#f1f1f1');
-		nearby.addEventListener('singletap',function(e){
-			if(!nearbyWin){
-				nearbyWin = newHires.init(); 
-			}
-			portal.open(nearbyWin);
-		});
-		
-	var friends = _createThumb({"id":"friends","photo":"images/flairs/100/friends.png"},'#eee');
-		friends.addEventListener('singletap',function(e){
-			if(!friendsWin){
-				friendsWin = wall.init("nearby"); 
-			}
-			portal.open(friendsWin);
-	});
 	
-	
-		
-	
-	var cancel_btn = _createThumb({"id":"",photo:"images/cancel.png"},_bgColorA);
-	_grayView.add(nearby);
-	
-	var middle_btn = _createThumb({"id":"",photo:""},_bgColorB);
-	_grayView.add(friends);
-	
-	var reload_btn = _createThumb({"id":"",photo:"images/reload.png"},"#f1f1f1");
-	_grayView.add(reload_btn);
-	
-	outer.add(_grayView);
-	
-	cancel_btn.addEventListener('singletap',function(e){
-		var flairWin = require('ui/common/flair/Flair');
-		flairWin.close();
-	});
-	
-	reload_btn.addEventListener('singletap',function(e){
-		_reloadPlaces();
-	});
-	
-  	//outer.add(_placesView);	
-  		
 	var places = portal.initLocation(printPlaces);
-
-	var header = Titanium.UI.createView({
-		width:182,height:32,top:13,bottom:13,left:54,right:54,
-		backgroundImage:'images/home/header.png'
-	});
-
-	var main = Ti.UI.createWindow({			
-    	hideNavBar:false,
-    	backgroundColor:'#fff',
-    	titleControl:header,barColor:'#eee'
-	});
-
-	var ht = Titanium.Platform.displayCaps.platformHeight - 180;
-	
-	Ti.API.error("window ht =" + ht);
-
-	_scrollable = Ti.UI.createScrollView({
-			width: '290',
-		  	height: ht,
-		  	top:0,
-		  	left:17.5,
-	});
-	outer.add(_scrollable);
-
-	main.add(outer);
 	printPlaces([]);
 	return main;
 }
@@ -196,30 +124,31 @@ function printPlaces(places){
 	
 	if(_placesView){
 		_scrollable.remove(_placesView);
+		_placesView = null;
 	}
-	
-	_placesView = null;
-	
 	_placesView =  Titanium.UI.createView(
-		 {
-		  	width:Ti.UI.FILL,height:Ti.UI.SIZE,
-		  	layout:'horizontal',top:0
-		 }
-	);	
-	
-	_scrollable.add(_placesView);	
+		 	{
+		  		width:290,height:Ti.UI.SIZE,
+		  		layout:'horizontal',top:55
+		 	}
+		);	
+		
+		_scrollable.add(_placesView);
 	
 	
 	var bgColor;
 	
+	_placesView.add(_createFlairThumb({id:"_cancel_btn",photo:"images/flairs/100/cancel.png"},"#dedede",0));
+	
+	
 	for(var i=0;i<places.length;i++){
 		bgColor = _bgColors[i];
 		var place = places[i];
-		_placesView.add(_createFlairThumb(place,bgColor,i));
+		_placesView.add(_createFlairThumb(place,bgColor,i+1));
 	}	
 	
-	if(places.length<12){
-		for(var i=places.length;i<12;i++){
+	if(places.length<18){
+		for(var i=places.length+1;i<18;i++){
 			bgColor = _bgColors[i];
 			_placesView.add(_createFlairThumb({name:""},bgColor));	
 		}
@@ -230,8 +159,13 @@ function printPlaces(places){
 }
 
 function _process(_data,_addMore){
+	Ti.API.debug("5");
+	main.close();
 	var flairWin = require('ui/common/flair/Flair');
-	flairWin.init(_data);
+	flairWin.init(_data,function(){
+		//Ti.API.debug("6");
+		main.close();
+	});
 	return;
 	
 	if(_place){
@@ -255,7 +189,7 @@ function _loadFoods(){
 		rs.push({"name":rows.field(0)});
 		rows.next();
 	}
-	
+	rows.close();
 	printPlaces(rs);
 }
 
@@ -272,56 +206,39 @@ function _loadWords(){
 		rs.push({"name":"#" + rows.field(0)});
 		rows.next();
 	}
-	
+	rows.close();
 	printPlaces(rs);
 }
 
-function _createFlairThumb(_data,bgColor,i){
+function _createFlairThumb(_data,bgColor,i,_borderColor){
 	
 	if(_currentWords["index_"+i] && _currentWords["index_"+i]._selected){
 		return _currentWords["index_"+i];
 	}
 	
-	
-	var thumb = _createThumb(_data,bgColor);
+	var thumb = _createThumb(_data,bgColor,_borderColor);
 	thumb._index = i;
 	thumb.addEventListener('singletap',function(){
+		if(_data.id === "_cancel_btn"){
+			main.close();return;
+		}
+		
+		
+		Ti.API.debug("1");
 		thumb._selected = false;
 		if(_data.pid){
+			Ti.API.debug("2");
 			var flairWin = require('ui/common/flair/Flair');
+			Ti.API.debug("3");
 			_process(_data);
+			Ti.API.debug("4");
 		}
 	});	
-	
-	/*thumb.addEventListener('longpress',function(){
-		if(_place){
-		  if(thumb._selected){
-		  	thumb._inner.setBackgroundColor(thumb._inner._bgColor);
-		  	thumb._innerLabel.setColor("#2179ca");
-		  	thumb._selected = false;
-		  	thumb.setOpacity(1);
-		  	_currentWords["index_" + thumb._index] = thumb;
-		  	_currentWordsLen = _currentWordsLen -1;
-		  }else{
-		  	thumb._inner.setBackgroundColor("#2179ca");
-		  	thumb._innerLabel.setColor("#fff");
-		  	thumb._selected = true;
-		  	thumb.setOpacity(1);
-		  	_currentWords["index_" + thumb._index] = thumb;
-		  	_currentWordsLen = _currentWordsLen + 1;
-		  	if(_currentWordsLen === 2){
-		  			var flairWin = require('ui/common/flair/Flair');
-					_process(_data);
-			}
-		  }
-		}
-	});*/
-	
 	
 	return thumb;
 }
 
-function _createThumb(_data,bgColor){
+function _createThumb(_data,bgColor,_borderColor){
 	var outer =  Titanium.UI.createView(
 		 {
 		  	width: 100,
@@ -330,7 +247,6 @@ function _createThumb(_data,bgColor){
 		  	bottom:-2.5,
 		  	left:-2.5,
 		  	right:-2.5,
-		  	backgroundImage:'images/feed/feed_flair_shadow.png',	
 		  	borderRadius: 50,
 		   	_data: _data	
 		 }
@@ -342,13 +258,19 @@ function _createThumb(_data,bgColor){
 		_photo = _data.photo;
 	}
 	
+	if(_borderColor){
+		
+	}else{
+		_borderColor = "#f1f1f1";
+	}
+	
 	var inner_bg =  Titanium.UI.createView(
 		 {
 		 	_bgColor:bgColor,
 		  	width: '85',
 		  	height: '85',
 		  	backgroundColor:bgColor,
-		  	borderRadius:42.5,
+		  	borderRadius:42.5,borderWidth:2.5,borderColor:_borderColor,
 		  	backgroundImage: _photo
 		 }
 	);
@@ -397,9 +319,18 @@ function _createThumb(_data,bgColor){
 	return outer;
 }
 
+function show(_view){
+	clear(_scrollableContainer);
+	_scrollableContainer.add(_view);
+}
+
 function clear(thisView){
-	var len = thisView.children.length;
-		for(var i=0;i<len;i++){
-			thisView.remove(thisView.children[i]);
-		}
+	if(thisView){
+		var len = thisView.children.length;
+			for(var i=0;i<len;i++){
+				var v = thisView.children[i];
+				thisView.remove(v);
+				v = null;
+			}
+	}
 }

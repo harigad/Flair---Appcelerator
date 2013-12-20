@@ -18,25 +18,41 @@ var login = require('ui/common/Login');
 
 var main;
 var placesView;
+var _callBack;
 
 
 exports.close = function(){
+	_close();
+}
+
+function _close(){
+	//_callBack();
 	var slide_it_bottom = Titanium.UI.createAnimation();
     slide_it_bottom.opacity = 0; // to put it back to the left side of the window
     slide_it_bottom.duration = 300;
 
 	main.close(slide_it_bottom);
+	
 }
 
-exports.init = function(_data) {	
+exports.init = function(_data,_callback) {	
 	_flair = _data;
+	_callBack = _callback;
 	
 	main = Ti.UI.createWindow({			
     	hideNavBar:false,
-    	backgroundColor:'#fff'
+    	backgroundColor:'#eee'
 	});
 	
+	_startFlair(_data);
 	printPlaces(_data);
+	
+	setTimeout(function(){
+		//_textField.setValue(_adj + " ");
+    	_textField.focus();
+    	_update(_textField);
+		_callBack();
+	},200);
 	return main;
 }
 
@@ -46,8 +62,8 @@ function printPlaces(_data){
 	var slide_it_top = Titanium.UI.createAnimation();
     slide_it_top.opacity = 1; // to put it back to the left side of the window
     slide_it_top.duration = 300;
-	main.open(slide_it_top);
-	_startFlair(_data);
+	main.open();//slide_it_top);
+	
 }
 
 function _startFlair(place,adj){
@@ -92,16 +108,17 @@ function _startFlair(place,adj){
 				 	_person = e.rowData._word;  	
   					var home = require('ui/common/home/Home');	
   								_textField.blur();
-					home.init(send_to_server,_person);
+					send_to_server(_person);
 					//_textField.blur();
 					return;
 		 		}
 			}else if(e.rowData._type === "_food"){
-				 if(_adj !== ""){  	
-  					_textField.value = _textField.value + " by ";
+				// if(_adj !== ""){  	
+  					_textField.value = _textField.value;
   					_textField.value = _textField.value.replace("  "," ");
   					_update(_textField);
-		 		}
+  					send_to_server(_person);
+		 		//}
 			}else{
 				_update(_textField);
 			}
@@ -110,9 +127,7 @@ function _startFlair(place,adj){
 	
 	main.add(outer);
 	
-	//_textField.setValue(_adj + " ");
-    _textField.focus();
-    _update(_textField);
+	
 }
 
 function _update(_textField){
@@ -131,7 +146,7 @@ function _update(_textField){
 	
 	Ti.API.debug("words le" + words.length);
 
-	//if(_adj === ""){
+	if(words.length < 2){
 		Ti.API.debug("searching adjectives ");
 		var results = _search_adj(words[0]);
 		if(results.length === 0){
@@ -150,7 +165,9 @@ function _update(_textField){
 		}else{
 			_print_last_word(words[0],false);
 		}
-	//}
+	}else{
+		_adj = words[0];
+	}
 	
 	
 	if(_adj !=="" && _food === "" && words.length>1){
@@ -175,9 +192,8 @@ function _update(_textField){
 				_food = food_string;
 			}			
 	}
-
 	
-	if(_food !== "" && (_txt.lastIndexOf(" by ") > _txt.lastIndexOf(_food)  ||  _txt.lastIndexOf(" ") == (_txt.length-1) )) {
+	 /*if(_food !== "" && (_txt.lastIndexOf(" by ") > _txt.lastIndexOf(_food) )) {
 			Ti.API.debug("searching person");
 				var person_string;
 				
@@ -197,30 +213,41 @@ function _update(_textField){
 			}else{
 				_print_last_word(person_string,true);
 			}
-	}
+	}*/
 	
 }
 
 function send_to_server(_flair,_flairWin){
 
-  if(_adj !== "" && _food !== "" && _person !==""){  	
+  if(_adj !== "" && _food !== ""){  	
   	
-  		var  url="https://flair.me/nominate.php";
+  		var  url="http://flair.me/nominate.php";
 		var _dataStr = {};
 			
 		_dataStr.flair = _flair.id;
 		_dataStr.place = _place.pid;
 		_dataStr.adjective = _adj;
 		_dataStr.food = _food;		
-		_dataStr.recipientName = _person;
+		//_dataStr.recipientName = _person;
 		
 		_dataStr.accessToken=login.getAccessToken();
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	//Ti.API.info(this.responseText);
+     	Ti.API.info("------->" + this.responseText);
+     	 
+     	 if(this.responseText === -1 || this.responseText === "-1"){
+     	 		login.logout();
+     	 		login.init(function(){
+					send_to_server(_flair,_flairWin);
+				},function(){
+					//_flairWin.close();
+				});
+				return;
+     	 }
+     	 
      	 var _result = JSON.parse(this.responseText);  
-     	// Ti.API.info(this.responseText);
+     	 
      	 if(_result.stickers){     	 
 			   Ti.API.debug("flair true"); 
 			   login.setFeed(_result.stickers); 
@@ -228,8 +255,9 @@ function send_to_server(_flair,_flairWin){
 			   	var placeWin = require('ui/common/place/Place');
 			   //	portal.setUserData(_result.recipient.id,_result.recipient);
 				portal.open(placeWin.init(_place));
-				main.close();	
-				_flairWin.close();	   	 	
+			
+				//_flairWin.close();	 
+				_close();  	 	
 				
      	 }else{
      	 	    Ti.API.error("flair false"); 
@@ -265,7 +293,7 @@ function _search_person(_word){
 	Ti.API.info("--->" + _place.cast.length);
 	
 	var _concat = "";
-	if(_textField.getValue().indexOf(" by ") > 0){
+	if(_textField.getValue().indexOf(" by ") > 0 || _textField.getValue().lastIndexOf(" by ") === _textField.getValue().length-4 || _textField.getValue().lastIndexOf(" by") === _textField.getValue().length-3){
 		 _concat = "";
 	}else{
 		_concat = "by ";
@@ -298,10 +326,10 @@ function _search_person(_word){
 	_word = _word.replace(" ","")
 	
 	if(_word == ""){
-		rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
-		rs.push({"_type":"person","_word":"Jason","title":_concat + "Jason"});
-		rs.push({"_type":"person","_word":"Mason","title":_concat + "Kason"});
-		rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
+		//rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
+		//rs.push({"_type":"person","_word":"Jason","title":_concat + "Jason"});
+		//rs.push({"_type":"person","_word":"Mason","title":_concat + "Kason"});
+		//rs.push({"_type":"person","_word":"Mason","title":_concat + "Mason"});
 	}
 	
 	_updateTable(rs);
@@ -324,6 +352,16 @@ function _search(_table,_word,conct){
 		rows.next();
 	}
 	
+	rows.close();
+	
+	Ti.API.error("s1");
+	if(_table === "_adj"){
+		Ti.API.error("s2");
+		if(rs.length === 0  && _word.length>0){
+			Ti.API.error("s3");
+			rs.push({"_type":"_adj","_word":"#" + _word,"title":"#" + _word});
+		}	
+	}
 
 	
 	if(_table === "_food"){
@@ -344,9 +382,6 @@ function _isForbidden(_line){
 	str = str.replace(/[^a-zA-Z ]/g,"");	
 	
 	var rows = _db.select("SELECT _txt FROM _forbidden");
-
-		
-		Ti.API.info("-------------" + str);
 		
 	while (rows.isValidRow()){
 		var thisWord = rows.field(0).toLowerCase();
@@ -355,6 +390,7 @@ function _isForbidden(_line){
 		}	
 		rows.next();
 	}
+	rows.close();
 	
 	return false;
 }
@@ -374,9 +410,6 @@ function _search_adj(_word){
 	_word = _word.replace(/^\s+|\s+$/g,'');
 	_word = _word.replace("#",'');
 	var results =  _search("_adj",_word,"#");
-	if(results.length === 0){
-		results.push({"_type":"_adj","_word":_word,"title":_word});
-	}	
 	return results;
 }
 
@@ -455,7 +488,7 @@ function _updateTable(_dataArr){
 }
 
 function _top(_data){
-	var thumb = _createThumb(_data);	
+	//var thumb = _createThumb(_data);	
 	
 	var cRight = Titanium.UI.createView(
 		 {
@@ -492,8 +525,15 @@ function _top(_data){
   			var home = require('ui/common/home/Home');	
   						_textField.blur();
 			home.init(send_to_server,_person);
-
-			return;
+		 }else if(_adj !=="" && _food !==""){
+		 				//if(_textField.getValue().indexOf(" by ") > 0 || _textField.getValue().lastIndexOf(" by") === _textField.getValue().length-3 ||_textField.getValue().lastIndexOf(" by ") === _textField.getValue().length-4){
+							//do nothing
+						//}else{_textField.value = _textField.value + " by ";
+							_textField.value = _textField.value;
+							_textField.value = _textField.value.replace("  "," ");
+  							_update(_textField);
+  							send_to_server(_person);
+  						//}
 		 }
 	});
 	var keyboardBar = Titanium.UI.createToolbar({

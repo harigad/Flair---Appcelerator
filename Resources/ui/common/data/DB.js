@@ -1,14 +1,32 @@
 var _db;
 var login = require('ui/common/Login');
 
-exports.select = function(_sql){	
+exports.getDB = function(){
+	return Ti.Database.open('flair_db');
+}
+
+exports.select = function(_sql){
+	_open();	
 	return _db.execute(_sql);	
+	_close();
 }
 
 exports.open = function(){
-	_db = Ti.Database.open('flair_db');
+	_open();
+	_db.execute('CREATE TABLE IF NOT EXISTS places(pid INTEGER,name TEXT,vicinity TEXT)');
+	_db.execute('CREATE TABLE IF NOT EXISTS people(id INTEGER,name TEXT,photo TEXT,placename TEXT)');
+	_close();
 	var service = Ti.App.iOS.registerBackgroundService({url:'ui/common/data/DB_Background.js'});
 	_load_from_server();
+}
+
+
+function _open(){
+		_db = Ti.Database.open('flair_db');
+}
+
+function _close(){
+		_db.close();
 }
 
 exports.load = function(){
@@ -18,7 +36,6 @@ exports.load = function(){
 function _load_from_server(){
 	//load and insert
 	var that = this;
-	var _db = Ti.Database.open('flair_db');
 	
 	var url = "http://flair.me/search.php";	
 	var _data = {type:"_data",accessToken:login.getAccessToken()};
@@ -50,18 +67,30 @@ function _load_from_server(){
 
 function _insert_data(_table,_data,_db){
 	//create table
+	_open();
 	_db.execute('CREATE TABLE IF NOT EXISTS ' + _table + '(_txt TEXT)');
          	for(var i=0;i<_data.length;i++){
          		    var exists = _db.execute("select * from " + _table + " where _txt='" + _data[i] + "'");
-         		    	if(exists.rowCount === 0){
+         		    	if(exists && exists.rowCount === 0){
          					_db.execute("INSERT INTO " + _table + "(_txt) VALUES (?)",_data[i]);
          				}
+         			row_close(exists);
          	}
+    _close();     	
+}
+
+function row_close(rowset){
+	if(rowset){
+		rowset.close();
+		rowset = null;
+	}
 }
 
 function _delete_data(_data,_db){
+	_open();
 		for(var i=0;i<_data.length;i++){
           _db.execute("delete from " + _data[i]._table + " where _txt ='" + _data[i]._txt + "'");
 		}
+	_close();
 }
 

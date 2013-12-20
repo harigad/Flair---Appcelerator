@@ -5,6 +5,8 @@ var photoView;
 var main;
 var placeViewTopLayer;
 var upperView;
+var click_to_refresh;
+var loadTimeout;
 var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
 var pull_to_refresh = require('ui/common/components/PullToRefresh');
@@ -61,7 +63,7 @@ exports.init = function(id,name,photo){
 	
 	main.add(upperView);
 	main.userPhotoView = photoView;
-	//clearView();	
+	clearView();	
 	loadUser(id,main);
 	scroll.add(main);
 	return scroll;
@@ -134,6 +136,40 @@ function clearView(){
 		 }
 	);
 	
+	
+	var retry = Ti.UI.createLabel({text:"loading...please wait..",color:"#cecece",font:{fontSize:24}});
+    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
+     click_to_refresh = Ti.UI.createView({layout:"vertical",top:35});
+    	click_to_refresh.add(network_error);
+    	click_to_refresh.add(retry);
+    view.add(click_to_refresh);
+    
+        loadTimeout = setTimeout(function(){
+    		if(click_to_refresh){
+    			network_error.setText("network error");
+    			retry.setText("RETRY");
+    		}
+    		loadTimeout = null;
+    	},10000);
+    
+    
+    
+    click_to_refresh.addEventListener("singletap",function(e){
+    	network_error.setText("  ");
+    	retry.setText("loading...please wait..");
+    	loadUser(main.userId,main);
+    	
+    	 loadTimeout = setTimeout(function(){
+    		if(click_to_refresh){
+    			network_error.setText("network error");
+    			retry.setText("RETRY");
+    		}
+    		loadTimeout = null;
+    	},10000);
+    	
+    });
+		
+	
 	main.add(view);
 
 	if(grayV){
@@ -161,6 +197,9 @@ exports.refresh = function(_user){
 function printDetails(){
 	
 	clearView();
+	
+	view.remove(click_to_refresh);
+	
 	
 	Ti.API.debug("UserProfile.printDetails");	
 	
@@ -201,12 +240,12 @@ function printDetails(){
 		grayV.add(Ti.UI.createView({height:10}));
 	}
 	
-	if(user.getId()){
+	//if(user.getId()){
 		var FeedView = require('ui/common/feed/FeedView');
-		var feed = new FeedView(user.feed(),view,null,null,true);		
-	}else{
-		view.add(userHasNotClaimed());		
-	}
+		var feed = new FeedView(user.feed(),view,null,null,true,"user",user.getId());		
+	//}else{
+//		view.add(userHasNotClaimed());		
+	//}
 	
 }
 
@@ -320,7 +359,7 @@ function printPlace(user){
   		left:0,
   		width:'auto',
   		color: '#2179ca',  	
-  		text: "@ " + place.name + ", " + place.city,
+  		text: "@ " + place.name,
   			font: {
          		fontSize: 14
     		}

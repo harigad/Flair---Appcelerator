@@ -5,23 +5,28 @@ var _errBack;
 var fb = require('facebook');
 
 
-exports.init = function(_callBack,_errBack){
+exports.init = function(_callBack,_errBack,_dontShow){
 
 	fb.appid = '201613399910723';
 	fb.permissions = ['publish_stream'];
-	fb.forceDialogAuth = true;
+	fb.forceDialogAuth = false;
 	 
 	if(isLoggedIn()){
 		_callBack();
 	}else{
-		show(_callBack,_errBack);
+		show(_callBack,_errBack,_dontShow);
 	}
 	
 }
 
+exports.loggedIn = function(){
+	return isLoggedIn();
+}
+
+
 function isLoggedIn(){
-		if(fb.loggedIn){
-			if(user){
+		if(_getAccessToken()){
+			if(user && user.getId()){
 				return true;
 			}else{
 				return false;
@@ -31,8 +36,19 @@ function isLoggedIn(){
 		}	
 }
 
+function _getAccessToken(){
+	var FB_ACCESSTOKEN = Ti.App.Properties.getString("FB_ACCESSTOKEN");
+	return FB_ACCESSTOKEN;
+}
+
+exports.logout = function(){
+	fb.logout();
+	Ti.App.Properties.setString("FB_ACCESSTOKEN", null);
+}
+
 exports.getAccessToken = function(){
-	return fb.getAccessToken();
+	var FB_ACCESSTOKEN = Ti.App.Properties.getString("FB_ACCESSTOKEN");
+	return FB_ACCESSTOKEN;
 }
 
 function loadUser(_callBack){
@@ -52,6 +68,8 @@ function loadUser(_callBack){
 }
 
 function onLogin(e,_callBack){
+	Ti.App.Properties.setString("FB_ACCESSTOKEN", fb.getAccessToken());
+	
 	loadUser(function(){
 	
 		var login = require('ui/common/Login');	
@@ -61,23 +79,32 @@ function onLogin(e,_callBack){
 			var slide_it_bottom = Titanium.UI.createAnimation();
     		slide_it_bottom.top = 600; // to put it back to the left side of the window
     		slide_it_bottom.duration = 400;
-			
-			
 			main.close(slide_it_bottom);
 		}
+		
+		setTimeout(function(){
+			Ti.App.fireEvent("userLoggedIn");
+		},500);
+		
 	});
 	
 }	
 
-function show(callBack,errBack){	
+function show(callBack,errBack,_dontShow){	
 	if(fb.loggedIn){
-		onLogin(null,_callBack);
+		onLogin(null,callBack);
 		return;
 	}	
 	
+	if(_dontShow){
+		if(errBack){
+			errBack();
+		}
+		return;
+	}
+	
 	_callBack = callBack;
 	_errBack = errBack;
-	
 	 
     var slide_it_top = Titanium.UI.createAnimation();
     slide_it_top.top = 1; // to put it back to the left side of the window
@@ -114,6 +141,9 @@ function build(){
     		slide_it_bottom.top = 600; // to put it back to the left side of the window
     		slide_it_bottom.duration = 400;
     		main.close(slide_it_bottom);
+    		if(_errBack){
+    			_errBack();
+    		}
 	});
 	
 	
@@ -138,12 +168,10 @@ function build(){
 			bg.setImage("images/signup/bg1_loading.png");
     		onLogin(e,_callBack);   
     	}else{
-    		
     		var slide_it_bottom = Titanium.UI.createAnimation();
     		slide_it_bottom.top = 600; // to put it back to the left side of the window
     		slide_it_bottom.duration = 400;
 			
-    		
     		main.close(slide_it_bottom);
     		if(_errBack){
     			_errBack();
@@ -167,6 +195,7 @@ function build(){
 }
 
 exports.getUser = function(){
+	
 	if(user){
 		return user;
 	}else{

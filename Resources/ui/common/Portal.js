@@ -3,6 +3,7 @@ var nav;
 var _location;
 var _places;
 var login = require('ui/common/Login');
+var _db = require('ui/common/data/DB');
 
 exports.getLocation = function(){
 	return _location;
@@ -17,8 +18,7 @@ exports.getPlaces = function(callBack,load){
 }
 
 function loadPlaces(callBack) {
-		Ti.API.error("places init 1");
-		var  url="https://flair.me/search.php";
+		var  url="http://flair.me/search.php";
 		var _dataStr = {};
 		
 		if(_location){
@@ -35,11 +35,15 @@ function loadPlaces(callBack) {
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     		Ti.API.error("places init 2");
      	Ti.API.info(this.responseText);
      	 _places = JSON.parse(this.responseText);
+     	 		var db = _db.getDB();
+     	 		db.execute("DELETE from places");
+     	 		for(var i=0;i<_places.length;i++){
+         		   db.execute("INSERT INTO places(pid,name,vicinity) VALUES (?,?,?)",_places[i].pid,_places[i].name,_places[i].vicinity);
+         		}
+         		db.close();
      	 if(callBack){
-     	 		Ti.API.error("places init 3");
      	 	callBack(_places);
      	 }
      },
@@ -69,7 +73,6 @@ exports.initLocation = function(_callBack){
  		var portal = require('ui/common/Portal');
  		_location = e.coords;
  		//if(!_places){
- 			Ti.API.error("places init");
  			loadPlaces(_callBack); 		
  		//}
 		/*var current_longitude = e.coords.longitude;
@@ -100,23 +103,33 @@ exports.init = function(){
 //    			Ti.App.Properties.removeProperty(props[i]);
 //		}	
    _places = [];
+	login.init(function(){
+		draw();
+	},function(){
+		draw();
+	},true);
+	
+}
+
+function draw(){
 	main = Titanium.UI.createWindow();
 
-	var Places = require('ui/common/flair/Places');
-	var places = Places.init();
+	var Wall = require('ui/common/wall/Wall');
+	
+	var wall = Wall.init("nearby");
 	
 	nav = Titanium.UI.iPhone.createNavigationGroup({
-   		window: places
+   		window: wall
 	});
 
 	main.add(nav);
 
-	nav.open(places, {animated:true});
+	nav.open(wall, {animated:true});
 
 	main.open();
-	
-	//initLocation();
+
 }
+
 
 exports.open = function(win,_animated){
 	if(_animated !== false){

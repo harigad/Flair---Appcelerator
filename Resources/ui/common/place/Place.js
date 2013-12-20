@@ -6,12 +6,17 @@ var view;
 var _tabViews;
 var scrollView;
 var _foodView;
+var click_to_refresh;
+var loadTimeout;
 var pull_to_refresh = require('ui/common/components/PullToRefresh');
 
+
+var roles = ["","Founders","Investors","Advisors","Team","Marketing/Web"];
+
 exports.init = function(_data){
-	var main = Ti.UI.createWindow({	
-	   	backgroundColor: '#eee',
-	   	navBarHidden:false,barColor:'#cecece'
+	var main = Titanium.UI.createWindow({
+    	backgroundColor: '#eee',
+    	navBarHidden:false ,barColor:'#fff'	
 	});
 	
 	loadData(_data);
@@ -27,7 +32,7 @@ exports.init = function(_data){
 	
 	view = Titanium.UI.createView(
 		 {
-		 	top:'0',
+		 	top:0,
 		 	height:Ti.UI.SIZE,
 		  	layout: 'vertical'
 		 }
@@ -40,69 +45,82 @@ exports.init = function(_data){
     regionFit:true,
     userLocation:false
    });
+   
+   mapView.addEventListener("complete",function(e){
+   	mapView.region = {
+   		latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.05, longitudeDelta:0.05
+   	}
+   });
 	
-  var mapViewCont_outer = Titanium.UI.createView(
+    var mapViewCont_outer = Titanium.UI.createView(
 		 {
-		 	top:'0',
-		  	height: Ti.UI.SIZE,layout:'vertical'
+		 	top:0,
+		  	height: 140
 		 }
-   );
-	
-   var mapViewCont = Titanium.UI.createView(
-		 {
-		 	top:'0',left:0,right:0,top:0,bottom:0,
-		  	height: '140',borderWidth:1.0,borderColor:"#fff"
-		 }
-	);		
+    );
  	
-	var addrLabel = Ti.UI.createLabel({
-  		left:10,top:0,
-  		width:'auto',
-  		color: '#2179ca',  	
-  		text: _data.vicinity,
-  			font: {
-         		fontSize: 14
-    		}
-    });
-    
-    var mapDesc = Titanium.UI.createView(
-		 {
-		 	top:'0',
-		  	height: '140',width:'320',bubbleParent:true,layout:'vertical'
-		 }
-	);	
-	
-	mapView.add(mapDesc);
-	
-	mapViewCont.add(mapView);
-	mapViewCont_outer.add(mapViewCont);
-	
-	mapViewCont.addEventListener('click',function(){
-		var win = require('ui/common/place/Map');
-		portal.open(win.init(_data));	
-	});
-	
-	
-	var _title = Ti.UI.createLabel({
-  		left:10,top:5,
+ 	var _title = Ti.UI.createLabel({
+  		left:10,top:5,bottom:5,
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,
-  		color: '#333',
+  		color: '#999',
   		text: _data.name,
   			font: {
          		fontSize:18,
          		fontWeight: 'bold'
     		}
   		});
-	mapViewCont_outer.add(_title);
-	mapViewCont_outer.add(addrLabel);
+    
+    var mapDesc = Titanium.UI.createView(
+		 {
+		 	top:0,bottom:5,
+		  	width:Ti.UI.FILL,bubbleParent:true,layout:'vertical',backgroundColor:"#333",height:Ti.UI.SIZE
+		 }
+	);	
+	mapDesc.add(_title);
 	
-	//_foodView = Ti.UI.createView({height:Ti.UI.SIZE,left:10,right:10,bottom:10});
-	//mapViewCont_outer.add(_foodView);
+	mapViewCont_outer.add(mapView);
+	
+	mapView.addEventListener('click',function(){
+		var win = require('ui/common/place/Map');
+		portal.open(win.init(_data));	
+	});
 	
     view.add(mapViewCont_outer);
+    view.add(mapDesc);
+	
     
-    scrollView.add(view);
+    var retry = Ti.UI.createLabel({text:"loading...please wait..",color:"#cecece",font:{fontSize:24}});
+    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
+     click_to_refresh = Ti.UI.createView({layout:"vertical",top:50});
+    	click_to_refresh.add(network_error);
+    	click_to_refresh.add(retry);
+    view.add(click_to_refresh);
+    
+        loadTimeout = setTimeout(function(){
+    		if(click_to_refresh){
+    			network_error.setText("network error");
+    			retry.setText("RETRY");
+    		}
+    		loadTimeout = null;
+    	},10000);
+    
+    click_to_refresh.addEventListener("singletap",function(e){
+    	network_error.setText("  ");
+    	retry.setText("loading...please wait..");
+    	loadData(_data);
+    	
+    	 loadTimeout = setTimeout(function(){
+    		if(click_to_refresh){
+    			network_error.setText("network error");
+    			retry.setText("RETRY");
+    		}
+    		loadTimeout = null;
+    	},10000);
+    	
+    });
+	
+	scrollView.add(view);
     main.add(scrollView);
         
 	return main;
@@ -110,7 +128,7 @@ exports.init = function(_data){
 
 function separator(str){
 	 var lbl = Ti.UI.createLabel({
-  		left:10,top:10,botttom:10,
+  		left:10,top:0,botttom:0,
   		height:Ti.UI.SIZE,
   		color: '#bbb',
   		shadowColor: '#fff',
@@ -162,21 +180,30 @@ function print_food(_place){
 function print_cast(_place){
 	//view.add(separator("Starring"));
 	
-	var _localView = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	layout: 'vertical',top:10,
-		  	left:10,right:10,borderRadius:4,borderColor:'#ddd',
-		  	borderWidth:0.5,backgroundColor:'#fafafa'
-		  	
-		 }
-	);	
-	
-	view.add(_localView);
-
+	var _localView;
     Ti.API.debug("places.cast length " + _place.cast.length);
 
+
+var role_id=0;
+
     for(var i=0;i<_place.cast.length;i++){	
+    	
+    	if(role_id != _place.cast[i].role_id){
+    		view.add(separator(roles[_place.cast[i].role_id]));
+    		role_id = _place.cast[i].role_id;
+    		
+    		 _localView = Titanium.UI.createView(
+		 		{
+		  			height: Ti.UI.SIZE,
+		  			layout: 'vertical',top:5,bottom:5,
+		  			left:10,right:10,borderRadius:4,borderColor:'#ddd',
+		  			borderWidth:0.5,backgroundColor:'#fafafa'
+		 	});
+		 	
+		 	view.add(_localView);
+			
+    	}
+    	
 		var row = Titanium.UI.createView(
 		 {
 		  	height: Ti.UI.SIZE,
@@ -199,22 +226,13 @@ function print_cast(_place){
 		var placeName = Ti.UI.createLabel({
   		left:0,top:0,
   		width:Ti.UI.FILL,
-  		color: '#2179ca',
+  		color: '#333',
   		text: _place.cast[i].name,
   			font: {
-         		fontSize: 36
+         		fontSize: 24
     		}
   		});  
-  		var roleName = Ti.UI.createLabel({
-  		left:0,bottom:10,
-  		width:Ti.UI.FILL,
-  		color: '#999',
-  		text: _place.cast[i].role,
-  			font: {
-         		fontSize: 18
-    		}
-  		});
-		
+  		
 		titleView.add(placeName);
   		//titleView.add(roleName);
   			  
@@ -228,16 +246,16 @@ function print_cast(_place){
   		
   		_localView.add(row);
   	
-  		if(i<_place.cast.length-1){
+  		if(i<_place.cast.length-1 && _place.cast[i+1].role_id == role_id){
   			_localView.add(_hr());
   		}
   	
 	}
 	
-	//view.add(separator("Flairs"));
+	view.add(separator("Flairs"));
 	
     var FeedView = require('ui/common/feed/FeedView');
-	var feed = new FeedView(_place.feed,view,null,null,true);
+	var feed = new FeedView(_place.feed,view,null,null,true,"place",_place.pid);
 }
 
 
@@ -253,6 +271,10 @@ function loadData(_data){
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
+     	
+     	view.remove(click_to_refresh);
+     	
+     	Ti.API.debug(this.responseText);
      	 var _place = JSON.parse(this.responseText);  
      	 print_cast(_place);
      	 print_food(_place); 
@@ -276,20 +298,10 @@ function _createThumb(_data,_bgColor){
 		 {
 		 	backgroundImage:_data.photo,
 		  	left:10,right:10,top:10,bottom:10,
-		  	borderRadius:4,
-		  	height:75,width:75  
+		  	borderRadius:2,
+		  	height:30,width:30 
 		 }
 	);
-		
-		var inner =  Titanium.UI.createView(
-		 {
-		 	backgroundImage:_data.photo,
-		  	left:12.5,right:12.5,top:12.5,bottom:12.5,
-		  	borderRadius:4,
-		  	height:50,width:50 
-		 }
-	);
-		
 		//outer.add(inner);
 		
 	return outer;
@@ -300,7 +312,7 @@ function _hr(){
 	return  Titanium.UI.createView(
 		 {
 		  	backgroundImage: 'images/feed/like_hr.png',
-		  	height:2,
+		  	height:2,opacity:0.6,
 		  	bottom:0,
 		  	width:'320'
 		 }

@@ -4,7 +4,7 @@ var login = require('ui/common/Login');
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
 	   	backgroundColor: '#eee',
-	   	navBarHidden:false,barColor:'#cecece'
+	   	navBarHidden:false,barColor:'#fff'
 	});
 	
 	var view = Titanium.UI.createView(
@@ -33,6 +33,12 @@ exports.init = function(_data){
     userLocation:false,
     annotations: annotations
    });
+	
+	mapView.addEventListener("complete",function(e){
+   		mapView.region = {
+   			latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.05, longitudeDelta:0.05
+   		};
+   	});
 	
   var mapViewCont_outer = Titanium.UI.createView(
 		 {
