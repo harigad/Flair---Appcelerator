@@ -1,0 +1,1 @@
+/Users/harigadiraju/Documents/Flair_Workspace/Flair---Appcelerator/Resources/ui/common/checkin/Checkin_do.js

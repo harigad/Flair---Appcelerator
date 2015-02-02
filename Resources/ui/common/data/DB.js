@@ -6,6 +6,7 @@ exports.getDB = function(){
 }
 
 exports.select = function(_sql){
+	Ti.API.info("select = " + _sql);
 	_open();	
 	return _db.execute(_sql);	
 	_close();
@@ -13,12 +14,7 @@ exports.select = function(_sql){
 
 exports.open = function(){
 	_open();
-	_db.execute('CREATE TABLE IF NOT EXISTS places(pid INTEGER,name TEXT,vicinity TEXT)');
-	_db.execute('CREATE TABLE IF NOT EXISTS people(id INTEGER,name TEXT,photo TEXT,placename TEXT)');
-	_close();
-	var service = Ti.App.iOS.registerBackgroundService({url:'ui/common/data/DB_Background.js'});
-	_load_from_server();
-}
+};
 
 
 function _open(){
@@ -30,14 +26,14 @@ function _close(){
 }
 
 exports.load = function(){
-	_load_from_server();
+	//_load_from_server();
 }
 
 function _load_from_server(){
 	//load and insert
 	var that = this;
 	
-	var url = "http://flair.me/search.php";	
+	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"_data",accessToken:login.getAccessToken()};
 		
 	Ti.API.debug("DB _data.load");

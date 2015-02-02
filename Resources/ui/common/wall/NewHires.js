@@ -95,7 +95,7 @@ function print_cast_data(_data){
 		
 		var placeName = Ti.UI.createLabel({
   		left:10,right:10,top:0,bottom:10,height:Ti.UI.SIZE,
-  		color: '#2179ca',
+  		color: '#40a3ff',
   		text: "@ " + _data.place + ", " + _data.city,
   			font: {
          		fontSize: 14
@@ -127,7 +127,7 @@ function print_cast_data(_data){
 function loadData(_loadMore,_date){
 		var that = this;
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _dataStr = {};
 		_dataStr.type = "new_hires";
 		_dataStr.accessToken = login.getAccessToken();
@@ -217,7 +217,7 @@ function _noDataToShow(_tableView,loadMoreCallBack){
 			width:Ti.UI.SIZE,
 			top:40,
   			text:"reload",
-  			color:'#2179ca',
+  			color:'#40a3ff',
   			font: {
          	fontSize: 18
     		}	
@@ -257,7 +257,7 @@ function _loadMoreBtn(_tableView,loadMoreCallBack){
 			width:Ti.UI.SIZE,
 			top:20,bottom:20,
   			text:"load more",
-  			color:'#2179ca',
+  			color:'#40a3ff',
   			font: {
          	fontSize: 11
     		}	

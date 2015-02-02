@@ -96,7 +96,7 @@ exports.init = function(_callBack){
 }
 
 function process(_callBack){
-	var url = "http://flair.me/carkey/secure.php?page=signup2";	
+	var url = "http://services.flair.me/carkey/secure.php?page=signup2";	
 	var _data = "plate=" + plateField.value + "&state=TX";
 		_data = _data + "&accessToken=" + Ti.Facebook.getAccessToken();
 	

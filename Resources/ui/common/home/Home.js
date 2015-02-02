@@ -33,7 +33,7 @@ Ti.API.debug("home init");
 	var container = Titanium.UI.createView({
 		height: Ti.UI.FILL,
 		width:Ti.UI.FILL,
-		top:85,backgroundColor:'#eee',
+		top:85,backgroundColor:'#fff',
 	});
 
 	var homeMenu = Titanium.UI.createView(

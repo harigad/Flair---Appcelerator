@@ -110,7 +110,7 @@ exports.init = function(_callBack,_data){
 }
 
 function process(_callBack){
-	var url = "http://flair.me/carkey/secure.php?page=ccprocess";	
+	var url = "http://services.flair.me/carkey/secure.php?page=ccprocess";	
 	var _data = "amt=" + amtField.value + "&ccField=" + ccField + "&expField=" + expField;
 		_data = _data + "&accessToken=" + Ti.Facebook.getAccessToken();
 	

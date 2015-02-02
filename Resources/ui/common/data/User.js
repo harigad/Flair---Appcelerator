@@ -28,20 +28,20 @@ User.prototype.load = function(_callBack){
 	Ti.API.debug("User.load " + this.id);
 	var that = this;
 		
-	var url = "http://flair.me/search.php";	
+	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"user",id:this.id,accessToken:login.getAccessToken()};
 		
-	Ti.API.debug("User.load sending data " + _data);
+	Ti.API.debug("User.load sending data -> " + this.id);
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
  	 	Ti.API.debug("User.load recieved data " + this.responseText);
  	 	 var response = JSON.parse(this.responseText);
-         if(response.status){
- 	 		that._data = response;	
+         if(response){
+ 	 		that.setData(response);	
  	 		that.id = that._data.id; 
  	 		portal.setUserData(that.id,response);
- 	 	 }
- 	 	 	_callBack(that);
+ 	 		_callBack(that);
+ 	 	 }	
  	 },
  	 onerror: function(e){
  		 	Ti.API.error("User.load error " + e);
@@ -53,15 +53,33 @@ User.prototype.load = function(_callBack){
  		client.open("POST", url);
  	// Send the request.
  		client.send(_data); 
-}
+};
 
 User.prototype.getId = function(){
 	return this.id;
-}
+};
 
 User.prototype.setPlace = function(_place){
 	this._data.place = _place;
-}
+};
+
+User.prototype.getPlaces = function(){
+	return this._data.places || [];
+};
+
+User.prototype.getAccess = function(pid){
+	var places = this._data.places;
+	for(var i=0;i<places.length;i++){
+		if(pid == places[i].pid){
+			if(places[i].role_id == 1){
+				return 1;
+			}else{
+				return 2;
+			}
+		}
+	}
+	return 0;
+};
 
 User.prototype.getPlace = function(){
 	if(this._data.place){
@@ -69,7 +87,7 @@ User.prototype.getPlace = function(){
 	}else{
 		return false;
 	}
-}
+};
 
 User.prototype.getRole = function(){
 	if(this._data.place){
@@ -77,39 +95,42 @@ User.prototype.getRole = function(){
 	}else{
 		return false;
 	}
-}
+};
 
 
 User.prototype.setData = function(data){
 	this._data = data;
-}
+};
 
 
 User.prototype.getName = function(){
 	return this._data.name;
-}
+};
 
 User.prototype.getPhoto = function(){
 	return this._data.photo;
-}
+};
 
 User.prototype.getPhotoBig = function(){
 	return this._data.photo_big;
-}
+};
 
 User.prototype.setFeed = function(_feed){
 	Ti.API.info("user.setFeed " + _feed.length);
 	this._data.feed = _feed;
 	portal.setUserData(this.id,this._data);
-}
+};
 
 User.prototype.isInvited = function(){
 	return this._data.invited;
-}
+};
 
 User.prototype.feed = function(){
+	Ti.API.debug(this._data.id);
+	Ti.API.debug(this._data.feed);
+	Ti.API.debug('done');
 	return this._data.feed;
-}
+};
 
 User.prototype.isAdmin = function(){	
    var Login = require('ui/common/Login');
@@ -119,7 +140,7 @@ User.prototype.isAdmin = function(){
    }else{
    	return false;
    }
-}
+};
 
 User.prototype.loadFriends = function(){
 	var that = this;
@@ -132,7 +153,7 @@ User.prototype.loadFriends = function(){
     	}
 	});	
 	
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _data = {type:"friends",accessToken:login.getAccessToken()};
 	
  	var client = Ti.Network.createHTTPClient({
@@ -155,19 +176,19 @@ User.prototype.loadFriends = function(){
  	// Send the request.
  		client.send(_data); 
 		
-}
+};
 
 User.prototype.getAllFriends = function(){
 	return this.friends;
 	
-}
+};
 
 User.prototype.getUserFriends = function(){
 	return this.friendsUsing;	
-}
+};
 
 User.prototype.setDirty = function(){
     portal.setDirty(this.getId());
-}
+};
 
 module.exports = User;

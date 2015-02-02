@@ -112,12 +112,10 @@ exports.init = function(callBack) {
 	_grayViewCont.add(_grayView);
 	//main.add(_grayViewCont);	
 	
-	
-	
 	var places = portal.initLocation(printPlaces);
 	printPlaces([]);
 	return main;
-}
+};
 
 function printPlaces(places){
 	_places = places;
@@ -197,7 +195,7 @@ function _loadWords(){
 	_currentPlaceIndex = 0;
 	_bgColorA = "#f1f1f1";
 	_bgColorB = "#fff";
-	_color = "#2179ca";
+	_color = "#40a3ff";
 		
 	var rs = [];
 	var rows = _db.select("SELECT _txt FROM _adj order BY RANDOM() limit 12");

@@ -3,10 +3,12 @@ var _tableView;
 var _db = require('ui/common/data/DB');
 var Portal = require('ui/common/Portal');
 var _callBack;
-var _textField;
+var _textField,_textFieldLabl;
 var _places;
 
 var serverSearchTimout;
+var pleaseWaitTimeout;
+
 exports.init = function() {	
 	_places = [];
 	serverSearchTimout = null;
@@ -16,35 +18,27 @@ exports.init = function() {
 	});
 	
 	_draw();
-}
+};
 
 exports.reset = function(){
 	_textField.setText("");
-}
+};
 
 exports.open = function(callBack){
 	_callBack = callBack;
 	
-	Portal.getPlaces(function(places){
-		_places = places;
-	});
-	
 	main.open();
 	setTimeout(function(){
     	_textField.focus();
-    	//_update(_textField);
-		//_callBack();
-	},200);
+  },200);
 	
-}
+};
 
 function _draw(){
-	clear(main);
-	
 	var outer =  Titanium.UI.createView(
 		 {
-		  	width: '100%',
-		  	height: '100%',
+		  	width: Ti.UI.FILL,
+		  	height: Ti.UI.FILL,
 		  	top:0,
 		  	left:0,
 		  	layout:'vertical',backgroundColor:'#fff'
@@ -55,53 +49,23 @@ function _draw(){
 	
 	_tableView = Ti.UI.createTableView({
   	 	    height:'auto',
-  	 		top:0,backgroundColor:'#eee'
+  	 		top:0,backgroundColor:'#f1f1f1'
 	});
 	outer.add(_tableView);
 	
 	_tableView.addEventListener("click",function(e){
-		
-		if(e.rowData._type === "place"){
-			var flairWin = require('ui/common/flair/Flair');
-			var placeObj;
-			
-			Portal.getPlaces(function(places){
-				
-			for(var i=0;i<places.length;i++){
-				if(places[i].name === e.rowData.title){
-					placeObj = places[i];	
-				}
-			}
-		
-			  if(e.x<250){
-			 
 			  	var placeView = require('ui/common/place/Place');
-		      	Portal.open(placeView.init({vicinity:placeObj.vicinity,lat:placeObj.lat,lng:placeObj.lng,pid:placeObj.pid,name:placeObj.name,launchRecepient:placeObj.recipient,launchEName:placeObj.recepientname}));
-		
-			 }else{
-			
-				flairWin.init(placeObj,function(){
-				//Ti.API.debug("6");
-				});	
-			}
-				
-				
-		_textField.setValue("");
-
-				
-			});
-			
-			
-		}else{
-			_callBack(e.rowData);
-		}
+		      	Portal.open(placeView.init(e.row.place));
 		main.close();
 	});
 	
 	main.add(outer);
+	Portal.loadPlaces(function(places){
+		draw_update(places);
+	},"cafe and bar");
+
 	
 }
-
 
 function _top(){	
 	var cRight = Titanium.UI.createView(
@@ -125,8 +89,13 @@ function _top(){
 		
 	var _header = header();
 	
-	_textField.addEventListener("change",function(){
+	_textField.addEventListener("change",function(e){
 		   _update();
+		if(e.value !==""){
+			_textFieldLabl.hide();
+		}else{
+			_textFieldLabl.show();
+		}
 	});
 
 	flair_details.add(_header);
@@ -157,63 +126,74 @@ function _update(){
 		clearTimeout(serverSearchTimout);
 		serverSearchTimout = null;
 	}
-	var rs = [];
+	
+	if(pleaseWaitTimeout){
+		clearTimeout(pleaseWaitTimeout);
+		pleaseWaitTimeout = null;
+	}
 	var txt = _textField.getValue();
 	
-	var places_rs = _db.select("SELECT  name as _txt,'place' as _type FROM places where name like '"+ txt + "%'");
-	while (places_rs.isValidRow()){
-			conct = "images/place_20_20.png";
-			color = "#2179ca";
-		rs.push({"_type":places_rs.field(1),color:color,rightImage:"images/signup/bg1_30.png",leftImage:conct,_word:places_rs.field(0),"title":places_rs.field(0)});
-		places_rs.next();
-  	}
-  	
-  	if(places_rs){
-		places_rs.close();
-	}
-	
-	var rows = _db.select("SELECT  _txt,'adj' as _type FROM _adj where _txt like '"+ txt + "%'  union SELECT _txt,'food' as _type from _food where _txt like '"+ txt + "%' ");
-	
-	var conct;var color;
-	while (rows.isValidRow()){
-
-		if(rows.field(1) === "adj"){
-			conct = "images/hash_20_20.png";
-			color = "#333";
-		}else if(rows.field(1) === "food"){
-			conct = "images/food_20_20.png";
-			color = "#693100";
-		}
-		
-		rs.push({"_type":rows.field(1),color:color,leftImage:conct,_word:rows.field(0),"title":rows.field(0)});
-		rows.next();
-  }
-  
-  if(rows){
-  	rows.close();
-  }
-  
-   if(rs.length === 0){
-   	 serverSearchTimout = setTimeout(function(){
-   	 	showPleaseWait()
+   	 pleaseWaitTimeout = setTimeout(function(){
+   	 	showPleaseWait(txt);
    	 },500);
-   	
-   }
-  
-  	_updateTable(rs);
 }
 
-function showPleaseWait(){
+function draw_update(places){	
+	var rs = [];
+	for (var i=0;i<places.length;i++){
+			
+		var row = Ti.UI.createTableViewRow({
+			height:Ti.UI.SIZE,layout:"vertical",
+			place:places[i]
+		});
+		
+		var title = Ti.UI.createLabel({
+			text:places[i].placename,
+			left:10,top:10,
+			color:"#40a3ff",
+			font:{
+				fontSize:18
+			}
+		});
+		var splitVic = "";
+		if(places[i].vicinity){
+			splitVic = places[i].vicinity.split(",")[0];
+		}
+		var sub = Ti.UI.createLabel({
+			text:splitVic,
+			left:10,bottom:10,
+			color:"#aaa",
+			font:{
+				fontSize:14
+			}});
+			
+			
+		row.add(title);	
+		row.add(sub);
+		
+		rs.push(row);
+  	}
+  	        /*define('QA_MYSQL_HOSTNAME', 'dlaswovdb02.nonprod.avaya.com'); // try '127.0.0.1' or 'localhost' if MySQL on same server
+        define('QA_MYSQL_USERNAME', 'mukul');
+        define('QA_MYSQL_PASSWORD', 'Avaya123');
+        define('QA_MYSQL_DATABASE', 'avaya_answers_dev');*/
+	_updateTable(rs);
+
+}
+
+function showPleaseWait(txt){
 	var rs = [];
 	rs.push({"_type":"searching..",color:"#999",leftImage:"",_word:"searching..","title":"searching.."});
 	_updateTable(rs);
-	loadPlacesFromServer();
+	 serverSearchTimout = setTimeout(function(){
+   	 	loadPlacesFromServer(txt);
+   	 },500);
 }
 
-function loadPlacesFromServer(){
-		
-	
-	
+function loadPlacesFromServer(txt){
+		Portal.loadPlaces(function(places){
+			draw_update(places);
+		},txt);
 }
 
 var testTimeout;
@@ -240,17 +220,17 @@ function clear(_view){
 	}
 }
 
-
 function header(){	
-	var reload_btn = Ti.UI.createView({layout:'horizontal',width:300,borderRadius:4,height:40,top:15});
+	var reload_btn = Ti.UI.createView({left:20,right:20,borderRadius:4,height:40,top:15,bottom:10});
 	
-	var search_btn = Ti.UI.createView({opacity:0.5,left:10,height:20,width:20,backgroundImage:"images/search.png"});
+	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"images/search.png"});
 	
 	reload_btn.add(search_btn);
-	
-	_textField = Ti.UI.createTextField({hint:"search",color:"#666",left:15,width:200,height:30});
+	_textFieldLabl = Ti.UI.createTextField({value:"type name of business",color:"#cecece",left:30,width:200,height:30});
+	_textField = Ti.UI.createTextField({hint:"search",color:"#666",left:30,width:200,height:30});
+	reload_btn.add(_textFieldLabl);
 	reload_btn.add(_textField);
-	var cancel_btn = Ti.UI.createView({visible:true,bubbleParent:false,height:30,width:50});
+	var cancel_btn = Ti.UI.createView({right:0,visible:true,bubbleParent:false,height:30,width:50});
 	var cancel_lbl = Ti.UI.createLabel({text:"cancel",color:"#aaa",font: {
          fontSize: 14
     	},});
@@ -263,5 +243,7 @@ function header(){
 	
 	return reload_btn;
 }
+
+
 
 

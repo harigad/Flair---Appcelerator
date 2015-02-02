@@ -8,7 +8,7 @@ var fb = require('facebook');
 exports.init = function(_callBack,_errBack,_dontShow){
 
 	fb.appid = '201613399910723';
-	fb.permissions = ['publish_stream'];
+	fb.permissions = ['email'];
 	fb.forceDialogAuth = false;
 	 
 	if(isLoggedIn()){
@@ -17,11 +17,11 @@ exports.init = function(_callBack,_errBack,_dontShow){
 		show(_callBack,_errBack,_dontShow);
 	}
 	
-}
+};
 
 exports.loggedIn = function(){
 	return isLoggedIn();
-}
+};
 
 
 function isLoggedIn(){
@@ -44,14 +44,16 @@ function _getAccessToken(){
 exports.logout = function(){
 	fb.logout();
 	Ti.App.Properties.setString("FB_ACCESSTOKEN", null);
-}
+	Ti.App.Properties.setString("login.user.id",null);
+};
 
 exports.getAccessToken = function(){
 	var FB_ACCESSTOKEN = Ti.App.Properties.getString("FB_ACCESSTOKEN");
 	return FB_ACCESSTOKEN;
-}
+};
 
 function loadUser(_callBack){
+	debugger;
 	Ti.API.debug("login.loadUser");
 	var User = require('ui/common/data/User');
 	
@@ -62,16 +64,18 @@ function loadUser(_callBack){
 	}
 	
        user = new User(userid,function(){
+       	debugger;
     	 Ti.App.Properties.setString("login.user.id",user.getId());
     	 	_callBack();
     	});
 }
 
 function onLogin(e,_callBack){
+	Ti.API.error("####################################" + fb.getAccessToken());
 	Ti.App.Properties.setString("FB_ACCESSTOKEN", fb.getAccessToken());
 	
 	loadUser(function(){
-	
+	debugger;
 		var login = require('ui/common/Login');	
 		login.init(_callBack);
 		if(main){
@@ -122,7 +126,7 @@ function show(callBack,errBack,_dontShow){
 function build(){
 	
 	main = Ti.UI.createWindow({
-		backgroundColor:"#2179ca",
+		backgroundColor:"#40a3ff",
 		top:600
 	});
 	
@@ -164,6 +168,7 @@ function build(){
 	base.add(cancel_bg);
 
 	fb.addEventListener('login', function(e) {
+		Ti.API.error("####################################" + fb.getAccessToken());
 		if(fb.getAccessToken()){
 			bg.setImage("images/signup/bg1_loading.png");
     		onLogin(e,_callBack);   
@@ -195,19 +200,19 @@ function build(){
 }
 
 exports.getUser = function(){
-	
 	if(user){
 		return user;
 	}else{
 		var User = require('ui/common/data/User');
-		return new User(null,function(){},{});
+	    user = new User(null,function(){},{});
+	    return user;
 	}
-}
+};
 
 exports.setFeed = function(_flairs){
 	Ti.API.info("login.setFeed");
 	user.setFeed(_flairs);
-}
+};
 
 function launchSignup(_callBack){
 	var signup = require('ui/common/signup/Signup1');

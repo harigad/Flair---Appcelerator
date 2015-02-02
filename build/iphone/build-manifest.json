@@ -1,0 +1,23 @@
+{
+	"target": "simulator",
+	"deployType": "development",
+	"deviceFamily": "iphone",
+	"iosSdkPath": "/Users/harigadiraju/Library/Application Support/Titanium/mobilesdk/osx/3.3.0.GA/iphone",
+	"tiCoreHash": "77157e1ffaec640cf559356a147b6a4c",
+	"modulesHash": "2ba2795cd43384524c21bbd49c43e33a",
+	"modulesNativeHash": "5537ea1152aa39e055371d5e083e9529",
+	"gitHash": "787cd39",
+	"name": "Flair",
+	"id": "me.flair",
+	"analytics": true,
+	"publisher": "HGadiraju",
+	"url": "http://flair.me",
+	"version": "1.7",
+	"description": "not specified",
+	"copyright": "2012 by ivc1215adm",
+	"guid": "25b8bd5f-fad5-4336-9119-e4bbf0ed080b",
+	"skipJSMinification": true,
+	"forceCopy": false,
+	"forceCopyAll": false,
+	"encryptJS": false
+}

@@ -26,7 +26,7 @@ exports.init = function(_data,_cont,_call) {
 	
 	outer._food_btn = _create(main,_data,3,_data.food,'#99452b','#c26447',false,_data.isLiked);	
 	outer._place_btn = _create(main,_data,2,_data.placename,'#54733e','#84ab68',true,_data.isLiked);
-	//outer._recp_btn = _create(main,_data,1,_data.recipientname,'#2179ca','#2179ca',true,_data.isLiked);	
+	//outer._recp_btn = _create(main,_data,1,_data.recipientname,'#40a3ff','#40a3ff',true,_data.isLiked);	
 	var cancel_btn = Titanium.UI.createView(
 		 {
 		  	width: Ti.UI.FILL,
@@ -195,7 +195,7 @@ function processLike(_data,main){
 	
 		var that = this;
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _dataStr = {};
 		
 		_dataStr.type = "like";

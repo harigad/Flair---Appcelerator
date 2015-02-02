@@ -3,7 +3,6 @@ var feed;
 var pull_to_refresh = require('ui/common/components/PullToRefresh');
 var login = require('ui/common/Login');
 var portal = require('ui/common/Portal');
-var places;
 var click_to_refresh;
 var loadTimeout;
 var _nearbyFeed;
@@ -18,121 +17,58 @@ exports.init = function(_type){
 	name = "flairs";
 	
 	var _header = header();
+	
 		
 	var main = Titanium.UI.createWindow({
     	title: name,
-    	backgroundColor: '#eee',
-    	navBarHidden:false,barColor:'#fff',titleControl:_header
-	});
-
-	scroll = Ti.UI.createScrollView({top:0,contentOffset:{X:80,Y:80}});
-	
-	pull_to_refresh.init(scroll,function(){
-		loadData(_type);
+    	backgroundColor: '#fff',barColor:"#fff",
+    	navBarHidden:true
 	});
 	
-	Ti.App.addEventListener("userLoggedIn",function(){
-		loadData(_type);
-	});
-	
-	
-	main.add(scroll);
-	
-	loadData(_type);
-	
-			var Places = require('ui/common/flair/Places');
-			places = Places.init();
-
-
-    main.addEventListener("open",function(e){
-    	
-    	var animation = Titanium.UI.createAnimation();
-    	animation.top = 0;
-    	duration = 200;
-    	_header.animate(animation);
-    	
-    });	
-    
-    main.addEventListener("close",function(e){
-    	
-    	var animation = Titanium.UI.createAnimation();
-    	animation.top = -150;
-    	duration = 200;
-    	_header.animate(animation);
-    	
-    });	
-    
- 	
-	return main;
-}
-
-function print(_feed,_container){
-	if(!_container && feed){
-		scroll.remove(feed);
-	}
-	
-	if(click_to_refresh){
-		scroll.remove(click_to_refresh);
-	}
-
-	var FeedView = require('ui/common/feed/FeedView');
-	feed = new FeedView(_feed,_container,function(_date){
-		loadData('nearby',feed,_date);
-	},scroll);	
-
-	var user = login.getUser();
-	
-	if(login.loggedIn()){	
-	var user_photo = Titanium.UI.createView(
+	var container = Titanium.UI.createView(
 		 {
-		  	left:10,
-		  	top:10,bottom:10,
-		  	width:'30',height: '30',
-		  	backgroundImage:user.getPhoto(),borderRadius:2,
-		  	backgroundColor:'#ccc',_dontUseParentEventListener:true
+		 	left:0,
+		 	width:Ti.UI.FILL,
+		 	height:Ti.UI.SIZE,
+		 	top:0,layout:"vertical",
+		 	backgroundColor:"#fff"
 		 }
 	);	
-		var myFlairs = Ti.UI.createView({layout:"horizontal",height:Ti.UI.SIZE,backgroundColor:"#fff",borderRadius:4,left:10,right:10,top:10});
+	
+	scroll = Ti.UI.createTableView({top:0,backgroundColor:"#f1f1f1",separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE});
+	
+	container.add(_header);
+	
+	 var menu = Ti.UI.createView({height:50,backgroundColor:"#40a3ff"});
+    var menu_a = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.5,left:0,height:50,width:"50%"});
+    	menu_a.add( Ti.UI.createLabel({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));
+     var menu_b = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.85,right:0,height:50,width:"50%"});
+     	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));   
+   // menu.add(menu_a);  menu.add(menu_b); 
 
-		var myFlairs_lbl = Ti.UI.createLabel({height:Ti.UI.SIZE,left:5,text:"My flairs",color:"#2179ca",font:{fontSize:18}});
-		myFlairs.add(user_photo);
-		myFlairs.add(myFlairs_lbl);
-		
-			var arrow = Ti.UI.createView({
-					left:10,
-					backgroundImage:"images/rightarrow.png",
-					width:16.6,height:30
-				});
-				
-				myFlairs.add(arrow);
+	container.add(menu);
+	container.add(scroll);
+	main.add(container);
+	loadData(_type);
+	
+	return main;
+};
 
-		
-		myFlairs.addEventListener("singletap",function(e){
-			var win = require('ui/common/userProfile/UserProfile');
-			portal.open(win.init(user.getId(),user.getName(),user.getPhotoBig()));	
-		});
-		scroll.add(myFlairs);
-  		feed.setTop(60);
-  }else{
-  	feed.setTop(10);
-  }
-
-		scroll.add(feed);
-
+function print(_feed,_container){
+	var FeedView = require('ui/common/feed/FeedView');
+	feed = new FeedView(_feed.feed,scroll,function(_date){
+		loadData('nearby',feed,_date);
+	},scroll);
 }
 
 function loadData(_type,_container,_date,_searchType,_searchWord){
-	
 if(!_container){
-	if(feed){
-		scroll.remove(feed);
-	}
-		   var retry = Ti.UI.createLabel({text:"searching...please wait..",color:"#cecece",font:{fontSize:24}});
+	var retry = Ti.UI.createLabel({text:"searching...please wait..",color:"#cecece",font:{fontSize:24}});
     var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
     click_to_refresh = Ti.UI.createView({layout:"vertical",top:150});
     	click_to_refresh.add(network_error);
     	click_to_refresh.add(retry);
-    scroll.add(click_to_refresh);
+    //scroll.add(click_to_refresh);
     
        loadTimeout = setTimeout(function(){
     		if(click_to_refresh){
@@ -150,20 +86,11 @@ if(!_container){
 
 }
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	
 		var that = this;
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _dataStr = {};
 		_dataStr.type = _type;
 		if(_searchType){
@@ -176,8 +103,7 @@ if(!_container){
 		}
 
 	Ti.API.debug("loading feed = " + _dataStr);
-	
- 	var client = Ti.Network.createHTTPClient({
+	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
      	 Ti.API.error('loaded data for Wall -> ' + this.responseText);
      	 var _feed = JSON.parse(this.responseText);  
@@ -208,25 +134,49 @@ if(!_container){
 
 
 function header(){	
-	var reload_btn = Ti.UI.createView({layout:'horizontal',width:300,borderRadius:4,height:40,top:5});
+	var c = Ti.UI.createView({top:0,left:0,backgroundColor:"#fff",height:Ti.UI.SIZE});
+	var reload_btn = Ti.UI.createView({top:25,bottom:10,left:20,right:20,height:40});
 	
-	var search_btn = Ti.UI.createView({opacity:0.5,left:10,height:20,width:20,backgroundImage:"images/search.png"});
+	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"images/search.png"});
 	
 	reload_btn.add(search_btn);
 	
-	var label = Ti.UI.createLabel({text:"search",color:"#999",left:15,width:200,height:30});
+	var label = Ti.UI.createLabel({text:"find a business",color:"#999",left:30,width:205,height:30});
 	reload_btn.add(label);
-	var cancel_btn = Ti.UI.createView({visible:false,bubbleParent:false,height:35,width:35,backgroundImage:"images/cancel.png"});
-	reload_btn.add(cancel_btn);
 	
-	cancel_btn.addEventListener("singletap",function(e){
-		label.setText("search");
-		cancel_btn.setVisible(false);
-		Search.reset();
-		if(_nearbyFeed){
-			print(_nearbyFeed);
-		}
+	
+	var photo = login.getUser().getPhoto() || "images/flairs/100/1.png";
+	
+	var cancel_btn;
+
+	
+	cancel_btn =  Titanium.UI.createView(
+		 {
+		 	right:0,
+		  	backgroundColor:'#ccc',borderRadius:25,
+		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
+		  	backgroundImage:photo,bubbleParent:false
+		 }
+	);	
+
+
+	Ti.App.addEventListener("userLoggedIn",function(){
+		cancel_btn.setWidth(50);
+		cancel_btn.setHeight(50);
+		cancel_btn.setBorderRadius(25);
+		cancel_btn.setBackgroundImage(login.getUser().getPhoto());
+		cancel_btn.setBackgroundColor("#ccc");
 	});
+	
+		reload_btn.add(cancel_btn);
+		cancel_btn.addEventListener("singletap",function(e){
+			//portal.toggleMenu();
+			login.init(function(){
+				var user = login.getUser();
+				var win = require('ui/common/userProfile/UserProfile');
+				portal.open(win.init(user.getId(),user.getName(),user.getPhotoBig(),user.getPhoto()));
+			});
+		});
 	
 	reload_btn.addEventListener('singletap',function(e){
 				Search.open(function(_data){
@@ -235,7 +185,8 @@ function header(){
 					onSearch(_data);
 				});
 	});
-	return reload_btn;
+	c.add(reload_btn);
+	return c;
 }
 
 function onSearch(_data){

@@ -12,7 +12,6 @@ var login = require('ui/common/Login');
 var pull_to_refresh = require('ui/common/components/PullToRefresh');
 var userClass = "ui/common/data/User";
 
-
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
@@ -24,167 +23,130 @@ function _hr(){
 	);
 }
 
-exports.init = function(id,name,photo){
-	var t = {x:0,y:60};
-	
-	var scroll = Ti.UI.createScrollView({width:Ti.UI.FILL,top:0});
-	
-	main = Titanium.UI.createView({top:0,width:Ti.UI.FILL,layout:'vertical',height:Ti.UI.SIZE});	
-	
+exports.init = function(id,name,photo_big,photo){
+	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'#f1f1f1'});	
 	main.userId = id;
 	main.userName = name;
 	
-	pull_to_refresh.init(scroll,function(){
-		main.user.setDirty();
-		loadUser(id,main);
-	});
-	
-	upperView = Titanium.UI.createView(
+	var upperView = Titanium.UI.createView(
 		 {
 		  
-		  	height: Ti.UI.SIZE,
-		  
-		  	layout: 'vertical',
-		  	backgroundColor:'#eee'
-		 }
-	);
-	
-	photoView = Ti.UI.createImageView({
-			width:320,top:0,right:0,left:0,
-			backgroundColor:'#dedede',
-			image:photo
-	});
-
-	var se = Ti.UI.createView({height:1,width:Ti.UI.FILL,backgroundColor:"#fff"});
-
-
-	upperView.add(photoView);
-	upperView.add(se);
-	
-	main.add(upperView);
-	main.userPhotoView = photoView;
-	clearView();	
-	loadUser(id,main);
-	scroll.add(main);
-	return scroll;
-}
-
-function tabbedBar(){
-	  
-    var bar_container = Titanium.UI.createView(
-		 {
-		  	height:'40',width:'320',
-		  	backgroundColor:'#999'
+		  	height: Ti.UI.SIZE,layout:"vertical",
 		  	
 		 }
 	);
 	
-	var _tabViews = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	width: Ti.UI.FILL
-		 }
-	);	
+	var photoViewOuter = Ti.UI.createView({
+		width:60,height:60,top:10,
+		backgroundColor:"#fff",
+		borderRadius:30
+	});
 	
-    var bar = Titanium.UI.iOS.createTabbedBar({
-    labels:[{enabled:true,title:'cast'}, {enabled:true,title:'menu'}],
-    backgroundColor:'#999',
-    style:Titanium.UI.iPhone.SystemButtonStyle.BAR,
-    height:30,
-    width:280,
-    _tabViews:_tabViews,
-    index:0
-    });
-    bar_container.add(bar);
-    
-    bar.addEventListener('singletap',function(e){
-    	if(e.index === 0){
-    		this._tabViews._foodView.hide();
-    		this._tabViews._castView.show();
-     	}else{
-    		this._tabViews._castView.hide();
-    		this._tabViews._foodView.show();
-    	}
-    });
+	photoView = Ti.UI.createImageView({
+			width:50,height:50,borderRadius:25,
+			image:photo
+	});
+	
+	photoViewOuter.add(photoView);
+	upperView.add(photoViewOuter);
+	
+	var title = Ti.UI.createLabel({
+  		top:5,bottom:10,
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,
+  		text: name,
+  			font: {
+         		fontSize:30,
+    	},
+    	color: '#fff'
+  		});
+  	upperView.add(title);
+	
+	
+	var rowOne = Ti.UI.createTableViewRow({backgroundColor:'#40a3ff',height:Ti.UI.SIZE});
+	var photo_big = Ti.UI.createImageView({opacity:0.25,image:photo_big,width:Ti.UI.FILL});
+		var bottomMenu = Ti.UI.createView({opacity:0.6,backgroundColor:"#fff",bottom:0,height:50});
+  		photo_big.add(bottomMenu);
+	rowOne.add(photo_big);
+	rowOne.add(upperView);
 
-   return bar_container;
-}
+/* 	
+	var nameLabel = Ti.UI.createLabel({
+  		left:0,top:5,
+    	width:Ti.UI.SIZE,
+  		height:Ti.UI.SIZE,
+  		color: '#333',
+  		text: name,
+  			font: {
+         		fontSize:18,
+         		fontWeight: 'bold'
+    		}
+  		});
+  	
+  	
+	var se = Ti.UI.createView({height:1,width:Ti.UI.FILL,backgroundColor:"#fff"});
 
+	upperView.add(photoView);
+	upperView.add(se);
+*/	
 
-function loadUser(id,main){
-	Ti.API.debug('loading user from server ' + id);
-	var User = require('ui/common/data/User');
+ 		
+	loadUser(id,main);
+	
+	main.setData([rowOne]);
+	return main;
+};
 
-    	main.user = new User(id,function(userObj){
-    		Ti.API.info("userProfile.loadUser");
-    		user = userObj;
-    		printDetails();
-    	});
+function loadUser(id){
+	Ti.API.debug("User.load " + id);
+	/*if(loadTimeout){
+		clearTimeout(loadTimeout);
+		loadTimeout = null;
+	}
+	loadTimeout = setTimeout(function(){
+    		_retry(id);
+    },3000);*/
+	
+	var that = this;
+		
+	var url = "http://services.flair.me/search.php";	
+	var _data = {type:"user",id:id,accessToken:login.getAccessToken()};
+		
+	Ti.API.debug("User.load sending data -> " + this.id);
+ 	var client = Ti.Network.createHTTPClient({ 		
+ 	 onload : function(e) {
+ 	 	Ti.API.debug("User.load recieved data " + this.responseText);
+ 	 	 var response = JSON.parse(this.responseText);
+         if(response){
+         	if(click_to_refresh){
+				main.remove(click_to_refresh);
+				click_to_refresh = null;
+			}
+			if(loadTimeout){
+				clearTimeout(loadTimeout);
+				loadTimeout = null;
+			}
+         	
+         	var User = require('ui/common/data/User');
+         	user = new User(id,function(){
+         		//do nothing
+         	},response);
+         	main.user = user;
+         	printDetails();
+ 	 	 }	
+ 	 },
+ 	 onerror: function(e){
+ 		 	Ti.API.error("User.load error " + e);
+ 	 }
+ 	});
+ 	
+ 	// Prepare the connection.
+ 		client.open("POST", url);
+ 	// Send the request.
+ 		client.send(_data);
 }
 
 function clearView(){
-	if(view){
-		main.remove(view);
-	}
-	
-	view = Titanium.UI.createView(
-		 {
-		  	width: '100%',
-		  	height: Ti.UI.SIZE,
-		  	top:-10,
-		  	layout: 'vertical'
-		 }
-	);
-	
-	
-	var retry = Ti.UI.createLabel({text:"loading...please wait..",color:"#cecece",font:{fontSize:24}});
-    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
-     click_to_refresh = Ti.UI.createView({layout:"vertical",top:35});
-    	click_to_refresh.add(network_error);
-    	click_to_refresh.add(retry);
-    view.add(click_to_refresh);
-    
-        loadTimeout = setTimeout(function(){
-    		if(click_to_refresh){
-    			network_error.setText("network error");
-    			retry.setText("RETRY");
-    		}
-    		loadTimeout = null;
-    	},10000);
-    
-    
-    
-    click_to_refresh.addEventListener("singletap",function(e){
-    	network_error.setText("  ");
-    	retry.setText("loading...please wait..");
-    	loadUser(main.userId,main);
-    	
-    	 loadTimeout = setTimeout(function(){
-    		if(click_to_refresh){
-    			network_error.setText("network error");
-    			retry.setText("RETRY");
-    		}
-    		loadTimeout = null;
-    	},10000);
-    	
-    });
-		
-	
-	main.add(view);
-
-	if(grayV){
-		upperView.remove(grayV);
-	}
-	
-	grayV = Titanium.UI.createView(
-		 {
-		  	width: '100%',
-		  	height: Ti.UI.SIZE,
-		  	top:0,
-		  	layout: 'vertical'
-		 }
-	);
-	upperView.add(grayV);
 	
 }
 
@@ -192,61 +154,15 @@ exports.refresh = function(_user){
 	Ti.API.debug("in refresh " + _user.getPlace());
 	user = _user;
 	printDetails(true);
-}
+};
 
 function printDetails(){
-	
-	clearView();
-	
-	view.remove(click_to_refresh);
-	
-	
+	//return;
+	//clearView();
+	//view.remove(click_to_refresh);
 	Ti.API.debug("UserProfile.printDetails");	
-	
-	var nameLabel = Ti.UI.createLabel({
-  		left:0,top:5,
-    	width:Ti.UI.SIZE,
-  		height:Ti.UI.SIZE,
-  		color: '#333',
-  		text: user.getName(),
-  			font: {
-         		fontSize:18,
-         		fontWeight: 'bold'
-    		}
-  		});
-  	
-  	var nameView = Ti.UI.createView({left:10,right:10,height:Ti.UI.SIZE,layout:'horizontal'});
-  	nameView.add(nameLabel);
-  	
-  	if(user.getRole()){
-  	var roleLabel = Ti.UI.createLabel({
-  		left:0,top:5,
-    	width:Ti.UI.SIZE,
-  		height:Ti.UI.SIZE,
-  		color: '#999',
-  		text: " ",
-  			font: {
-         		fontSize:18
-    		}
-  		});   
-  	 nameView.add(roleLabel);	
-  	}	
-  		
-	grayV.add(nameView);
-		
-	if(user.getPlace() || user.isAdmin()){
-		grayV.add(printPlace(user));	
-	}else{
-		grayV.add(Ti.UI.createView({height:10}));
-	}
-	
-	//if(user.getId()){
-		var FeedView = require('ui/common/feed/FeedView');
-		var feed = new FeedView(user.feed(),view,null,null,true,"user",user.getId());		
-	//}else{
-//		view.add(userHasNotClaimed());		
-	//}
-	
+	var FeedView = require('ui/common/feed/FeedView');
+	var feed = new FeedView(user.feed(),main,null,true,"user",user.getId());
 }
 
 function userHasNotClaimed(){
@@ -264,192 +180,54 @@ function userHasNotClaimed(){
 }
 
 
-function activation_code(user){
-
-	var place = user.getPlace();
-		
-	var fRow_container = Ti.UI.createView({
-		height:Ti.UI.SIZE,left:10,top:0,bottom:10,
-		layout:'vertical'
-	});
+function _noData(){
+	var h = Ti.UI.createView({height:Ti.UI.SIZE,width:Ti.UI.SIZE,top:80,layout:"horizontal"});
 	
-	var placeName = Ti.UI.createLabel({
-  		left:0,right:10,top:0,width:280,
-  		color: '#2179ca',
-  		text: place.name,
+	 h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
+			text:' not',
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
   			font: {
-         		fontSize: 14
-    		}
-  	});
-  	
-  	fRow_container.add(placeName);
-	
-	var roleName = Ti.UI.createLabel({
-  		left:0,right:10,top:0,
-  		color: '#333',
-  		text: "Verification Code : " + place.code,
+         		fontSize: 20
+    		}}));
+    
+    h.add(Ti.UI.createView({left:-5,right:5,width:25,height:25,backgroundImage:"images/glasses_blue_40_40.png"}));
+    		
+	h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
+			text:"Flairs to show",
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
   			font: {
-         		fontSize: 14
-    		}
-  	});
-  	
-  	fRow_container.add(roleName);
-	
-	var tip_container = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	left:0,	
-		  	top:0,
-		  	layout:'horizontal'
-		 }
-	);
-	fRow_container.add(tip_container);
-	
-  	var tip_text = Ti.UI.createLabel({
-  		left:0,right:10,
-  		color: '#666',
-  		text: "Please call 1-866-291-9993 from " + place.name + " and enter your verification code.",
-  			font: {
-         		fontSize: 14
-    		}
-  	}); 	
-  	tip_container.add(tip_text);
-  	
-  		fRow_container.addEventListener('singletap',function(){
-			var searchPlace= require('ui/common/userProfile/SearchPlace');
-  			searchPlace.launch();
-		});	
-		
-		return fRow_container;
-		
+         		fontSize: 20
+    		}}));
+    		
+    		
+    		h.addEventListener("click",function(){
+    			launchFlair();
+    		});
+    		return h;
 }
 
-function printPlace(user){
-	var place = user.getPlace();
-	
-	var grayView = Titanium.UI.createView(
-		{
-		  left:10,right:0,top:-10,
-		  height:Ti.UI.SIZE,
-		  layout: 'horizontal',
-		}
-	);	
-	
-	var oscar = Ti.UI.createImageView({
-  		image: 'images/profile/oscar_48.png',
-  		left: 10,
-  		right:10,
-  		top:10,
-  		bottom:10,width:30,height:50  		
-	});	
-	//grayView.add(oscar);	
-	
-	var fRow_container = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	left:0,right:10,	
-		  	top:10,
-		  	bottom:10,
-		  	layout:'vertical'
-		 }
-	);
-	if(place && !place.code){
-	
-	var placeName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#2179ca',  	
-  		text: "@ " + place.name,
-  			font: {
-         		fontSize: 14
-    		}
-  	});  
-  	var roleName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#eee',
-  		text: "",
-  			font: {
-         		fontSize: 14
-    		}
-  	}); 
-  	
-  	var settingsView = Titanium.UI.createView(
-		{ 
-		  width:'auto',
-		  height:Ti.UI.SIZE,
-		  layout: 'horizontal',
-		  left:0
-		}
-	);	
-	
-	if(user.getId() == login.getUser().getId()){
-	var settingsText = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#2179ca',
-  		text: "(change)",
-  			font: {
-         		fontSize: 14
-    		}
-  	}); 
- 	settingsView.add(settingsText);
-  	
-  	settingsView.addEventListener('singletap',function(e){
-  		var searchPlace= require('ui/common/userProfile/SearchPlace');
-  		searchPlace.launch();
-  	});	
-  	
-  	}
-  	
-  	placeName.addEventListener('singletap',function(){
-  		var placeView = require('ui/common/place/Place');
-		portal.open(placeView.init(place));
-  	});
-  	roleName.addEventListener('singletap',function(){
-  		var placeView = require('ui/common/place/Place');
-		portal.open(placeView.init(place));
-  	});
-  	   	
-  	fRow_container.add(placeName);
-  	//fRow_container.add(roleName);
-  	fRow_container.add(settingsView);
-  	
-	}else if(place && place.code && user.isAdmin()){
-		
-	  return activation_code(user);
-		
-	}else if(!place && user.isAdmin()){
-	
-	var addName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#aaa',
-  		text: "(add new)",
-  			font: {
-         		fontSize: 14
-    		}
-  	});  
-  	var roleName = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#2179ca',
-  		text: "My Restaurant/Cafe",
-  			font: {
-         		fontSize: 14
-    		}
-  	});    	
-  	
-  	fRow_container.add(roleName);fRow_container.add(addName);
-		
-		fRow_container.addEventListener('singletap',function(){
-			var searchPlace= require('ui/common/userProfile/SearchPlace');
-  			searchPlace.launch();
-		});	
-		
-	}	
-		
-	grayView.add(fRow_container);
-
-	return grayView;	
+function _retry(data){
+	if(click_to_refresh){
+		view.remove(click_to_refresh);
+		click_to_refresh = null;
+	}
+	var retry = Ti.UI.createLabel({text:"searching...please wait..",color:"#cecece",font:{fontSize:24}});
+    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
+    click_to_refresh = Ti.UI.createView({layout:"vertical",top:80});
+    	click_to_refresh.add(network_error);
+    	click_to_refresh.add(retry);
+    	network_error.setText("network error");
+    	retry.setText("RETRY");
+    	main.add(click_to_refresh);
+    
+    click_to_refresh.addEventListener("singletap",function(e){
+    	loadUser(data);
+    	main.remove(click_to_refresh);
+    });
 }

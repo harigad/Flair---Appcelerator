@@ -8,28 +8,27 @@ var scrollView;
 var _foodView;
 var click_to_refresh;
 var loadTimeout;
-var pull_to_refresh = require('ui/common/components/PullToRefresh');
+var _feed;
+var _place;
 
-
-var roles = ["","Founders","Investors","Advisors","Team","Marketing/Web"];
-
-exports.init = function(_data){
+var user = login.getUser();
+exports.init = function(data){
 	var main = Titanium.UI.createWindow({
-    	backgroundColor: '#eee',
-    	navBarHidden:false ,barColor:'#fff'	
+    	backgroundColor: '#40a3ff',
+    	navBarHidden:true ,barColor:'#40a3ff'	
 	});
 	
-	loadData(_data);
+	Ti.App.addEventListener("close_all",function(){
+		portal.close(main);
+	});
 	
+	
+	main.add(header(main));
 	scrollView = Ti.UI.createScrollView({
-  		width: 320,
-  		top:0
+  		width: Ti.UI.FILL,
+  		top:55,backgroundColor:"#f1f1f1"
 	});
-	
-	pull_to_refresh.init(scrollView,function(){
-		loadData(_data);
-	});
-	
+
 	view = Titanium.UI.createView(
 		 {
 		 	top:0,
@@ -37,250 +36,263 @@ exports.init = function(_data){
 		  	layout: 'vertical'
 		 }
 	);	
-		
-	var mapView = Titanium.Map.createView({
-    mapType: Titanium.Map.STANDARD_TYPE,
-    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.01, longitudeDelta:0.01},
-    animate:true,
-    regionFit:true,
-    userLocation:false
-   });
-   
-   mapView.addEventListener("complete",function(e){
-   	mapView.region = {
-   		latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.05, longitudeDelta:0.05
-   	}
-   });
-	
-    var mapViewCont_outer = Titanium.UI.createView(
-		 {
-		 	top:0,
-		  	height: 140
-		 }
-    );
  	
- 	var _title = Ti.UI.createLabel({
-  		left:10,top:5,bottom:5,
-    	width:Ti.UI.SIZE,
-  		height:Ti.UI.SIZE,
-  		color: '#999',
-  		text: _data.name,
-  			font: {
-         		fontSize:18,
-         		fontWeight: 'bold'
-    		}
-  		});
-    
-    var mapDesc = Titanium.UI.createView(
+ 	var titleV = Titanium.UI.createView(
 		 {
-		 	top:0,bottom:5,
-		  	width:Ti.UI.FILL,bubbleParent:true,layout:'vertical',backgroundColor:"#333",height:Ti.UI.SIZE
+		 	top:0,backgroundColor:"#40a3ff",
+		 	height:Ti.UI.SIZE,
+		  	layout: 'vertical'
 		 }
 	);	
-	mapDesc.add(_title);
-	
-	mapViewCont_outer.add(mapView);
-	
-	mapView.addEventListener('click',function(){
-		var win = require('ui/common/place/Map');
-		portal.open(win.init(_data));	
-	});
-	
-    view.add(mapViewCont_outer);
-    view.add(mapDesc);
-	
+ 	
+ 	
+ 	var _title = Ti.UI.createLabel({
+  		bottom:0,top:30,
+    	left:5,right:5,
+    	textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
+  		height:Ti.UI.SIZE,
+  		minimumFontSize:16,
+  		text: data.placename || data.name,
+  			font: {
+         		fontSize:24,
+    	},
+    	color: '#fff'
+  		});
+   titleV.add(_title);
+   var _addr = Ti.UI.createLabel({
+  		bottom:30,top:0,
+    	left:20,right:20,
+  		height:Ti.UI.SIZE,
+  		minimumFontSize:16,textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
+  		text: data.vicinity.split(",")[0],
+  			font: {
+         		fontSize:14,
+    	},
+    	color: '#fff'
+  		});
+  	titleV.add(_addr);
+  	
+  	_title.addEventListener("click",function(){
+  		goToMap();
+  	});
+  	
+  	_addr.addEventListener("click",function(){
+  		goToMap();
+  	});
+  	
+  	var btn = Ti.UI.createView({borderWidth:5,borderColor:"#5bb0ff",borderRadius:50,width:100,height:100,bottom:30});
+  	btn.add(Ti.UI.createView({width:75,height:75,backgroundImage:"images/glasses_100_100_white.png"}));
+  	btn.addEventListener("click",function(){
+  		launchFlair();
+  	});
+  		titleV.add(btn);
+   view.add(titleV);
+   
+    var menu = Ti.UI.createView({height:Ti.UI.SIZE});
+    var menu_a = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.5,left:0,height:50,width:"50%"});
+    	menu_a.add( Ti.UI.createLabel({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));
+     var menu_b = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.85,right:0,height:50,width:"50%"});
+     	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));   
+    menu.add(menu_a);  menu.add(menu_b); 
     
-    var retry = Ti.UI.createLabel({text:"loading...please wait..",color:"#cecece",font:{fontSize:24}});
-    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
-     click_to_refresh = Ti.UI.createView({layout:"vertical",top:50});
-    	click_to_refresh.add(network_error);
-    	click_to_refresh.add(retry);
-    view.add(click_to_refresh);
-    
-        loadTimeout = setTimeout(function(){
-    		if(click_to_refresh){
-    			network_error.setText("network error");
-    			retry.setText("RETRY");
-    		}
-    		loadTimeout = null;
-    	},10000);
-    
-    click_to_refresh.addEventListener("singletap",function(e){
-    	network_error.setText("  ");
-    	retry.setText("loading...please wait..");
-    	loadData(_data);
-    	
-    	 loadTimeout = setTimeout(function(){
-    		if(click_to_refresh){
-    			network_error.setText("network error");
-    			retry.setText("RETRY");
-    		}
-    		loadTimeout = null;
-    	},10000);
-    	
+    menu_a.addEventListener("click",function(){
+    	menu_a.setOpacity(0.5);menu_b.setOpacity(0.85);
+    	printFeed();
     });
-	
+    
+    menu_b.addEventListener("click",function(){
+    	menu_a.setOpacity(0.85);menu_b.setOpacity(0.5);
+    	printCast();
+    });
+    
+    
+    titleV.add(menu);
+    
+    view.add(_hr());
 	scrollView.add(view);
     main.add(scrollView);
-        
+    
+    loadData(data);
+    
 	return main;
+};
+var _feedView;
+
+function launchFlair(){
+	var win = require('ui/common/flair/Search');
+  			win.open(_place,function(flair){
+  					if(_feedView){
+						view.remove(_feedView);
+					}
+  					loadData(_place,flair);
+  			});
 }
 
-function separator(str){
-	 var lbl = Ti.UI.createLabel({
-  		left:10,top:0,botttom:0,
-  		height:Ti.UI.SIZE,
-  		color: '#bbb',
-  		shadowColor: '#fff',
-  		shadowOffset: {x:1, y:1},
-  		text: str,
-  			font: {
-         		fontSize: 18
-    		}
-  		});  
-  		
-  		return lbl;
+function printFeed(){
+	if(_feedView){
+		view.remove(_feedView);
+	}
+	if(_place.feed.length === 0){
+   		_feedView = _noData();
+   }else{
+    	var FeedView = require('ui/common/feed/FeedView');
+    	_feedView = new FeedView(_place.feed,null,null,null,true,"place",_place.pid || _place.id);
+   }
+    view.add(_feedView);
 }
 
-function print_food(_place){
-  var str = "";
-  return;
-  
-  Ti.API.debug("places.food length " + _place.foods.length);
-  
-  if(_foodView.children.length>0){
-  	_foodView.remove(_foodView.children[0]);
+function printCast(){
+	if(_feedView){
+		view.remove(_feedView);
+	}
+   _feedView = Ti.UI.createView({height:Ti.UI.SIZE,layout:"vertical"});	
+   if(_place.cast.length === 0){
+   		_feedView.add(_noData());
+   }
+   
+   
+    for(var i=0;i<_place.cast.length;i++){	
+    	_feedView.add(getCastRow(_place,_place.cast[i]));
+    	_feedView.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
+		  	height:2,opacity:0.6}));
+  	
   }
+  view.add(_feedView);
+}
   
-  var container = Ti.UI.createView({layout:'horizontal',width:Ti.UI.FILL,height:Ti.UI.SIZE});
-  
-  for(var i=0;i<_place.foods.length;i++){
-  	str = str + _place.foods[i].name + ", ";
-  }
-  
-  str = str.substring(0,str.length-2);
-  if(_place.foods.length>0){
-   var lbl = Ti.UI.createLabel({
-  		height:Ti.UI.SIZE,
-  		color: '#2179ca',top:0,left:0,
-  		text: str,
+
+function getCastRow(place,data){
+	var cContainer = Titanium.UI.createView(
+		 {
+		  	left:20,right:0,
+		  	top:25,bottom:25,
+		  	height:Ti.UI.SIZE,
+		  	layout: 'horizontal'
+		 }
+	);
+	
+	cContainer.addEventListener("click",function(){
+							var win = require('ui/common/userProfile/UserProfile');
+								portal.open(win.init(data.uid,data.name,data.photo_big,data.photo));	
+	});
+	
+	var user_photo = Titanium.UI.createImageView(
+		 {
+		  	left:0,backgroundColor:'#ccc',
+		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
+		  	image:data.photo,
+		  	borderRadius: 25,
+		 }
+	);
+	
+	cContainer.add(user_photo);	
+	
+	var v = Ti.UI.createView({left:20,width:220,height:Ti.UI.SIZE,layout:"vertical"});
+	
+	var name_txt = Ti.UI.createLabel({
+		height:Ti.UI.SIZE,
+		left:0,width:Ti.UI.SIZE,
+  		text:data.name,
+  		wordWrap:false,
+  		color:'#40a3ff',
+  		font: {
+         fontSize: 24
+    }
+	});v.add(name_txt);
+	
+	if(data.role_id){
+ 	var place_txt = Ti.UI.createLabel({
+     		left:0,width:Ti.UI.SIZE,
+			height:Ti.UI.SIZE,
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
+  			text:data.role_id,
   			font: {
          		fontSize: 14
     		}
-  		});  
-  		
-  	container.add(lbl);
-   }
-   
-   _foodView.add(container);
-   
-}
-
-
-function print_cast(_place){
-	//view.add(separator("Starring"));
-	
-	var _localView;
-    Ti.API.debug("places.cast length " + _place.cast.length);
-
-
-var role_id=0;
-
-    for(var i=0;i<_place.cast.length;i++){	
-    	
-    	if(role_id != _place.cast[i].role_id){
-    		view.add(separator(roles[_place.cast[i].role_id]));
-    		role_id = _place.cast[i].role_id;
-    		
-    		 _localView = Titanium.UI.createView(
-		 		{
-		  			height: Ti.UI.SIZE,
-		  			layout: 'vertical',top:5,bottom:5,
-		  			left:10,right:10,borderRadius:4,borderColor:'#ddd',
-		  			borderWidth:0.5,backgroundColor:'#fafafa'
-		 	});
-		 	
-		 	view.add(_localView);
-			
-    	}
-    	
-		var row = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	layout:'horizontal',
-		  	_data: _place.cast[i]
-		 }
-		);
-		
-		var thumb = _createThumb(_place.cast[i],"#dedede");
-		
-		var titleView = Titanium.UI.createView(
-		 {
-		  	height: Ti.UI.SIZE,
-		  	left:0,	
-		  	width:170,
-		  	layout:'vertical'
-		 }
-		);
-		
-		var placeName = Ti.UI.createLabel({
-  		left:0,top:0,
-  		width:Ti.UI.FILL,
-  		color: '#333',
-  		text: _place.cast[i].name,
-  			font: {
-         		fontSize: 24
-    		}
-  		});  
-  		
-		titleView.add(placeName);
-  		//titleView.add(roleName);
-  			  
-  	row.add(thumb);
-  	row.add(titleView);  
-  		
-  		row.addEventListener("singletap",function(e){
-  			var win = require('ui/common/userProfile/UserProfile');
-			portal.open(win.init(this._data.uid,this._data.name,this._data.photo_big));	
-  		});
-  		
-  		_localView.add(row);
-  	
-  		if(i<_place.cast.length-1 && _place.cast[i+1].role_id == role_id){
-  			_localView.add(_hr());
-  		}
-  	
+	});v.add(place_txt);
 	}
 	
-	view.add(separator("Flairs"));
-	
-    var FeedView = require('ui/common/feed/FeedView');
-	var feed = new FeedView(_place.feed,view,null,null,true,"place",_place.pid);
+	cContainer.add(v);
+  		
+ return cContainer;
+}
+
+function delete_cast(obj,data){
+			var dialog = Ti.UI.createAlertDialog({
+    			cancel: -1,
+    			buttonNames: ['Remove', 'Cancel'],
+    			message: 'Remove Permanently?'
+   			 });
+   			 
+   			  dialog.addEventListener('click', function(e){
+      			Ti.API.debug('edit share dialog button clicked with index ' + e.index);
+    			if (e.index === 0){
+    					//delete_flair_from_server(data);
+    				    _localView.remove(obj);	
+    			}else{
+    		 //do nothing
+    		// obj.setBackgroundColor("#f1f1f1");
+    			}
+   			 });
+   			// obj.setBackgroundColor("#990000");
+   			 dialog.show();
 }
 
 
-function loadData(_data){
+function loadData(data,flair){
+
+	_wait();
+	if(loadTimeout){
+		clearTimeout(loadTimeout);
+		loadTimeout = null;
+	}
+	   loadTimeout = setTimeout(function(){
+    		_retry(data);
+    	},3000);
+    
 		var that = this;
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _dataStr = {};
 		_dataStr.type = "search";
 		_dataStr.searchMode = "place";
-		_dataStr.pid = _data.pid;
+		_dataStr.pid = data.pid || data.id;
+		
+		if(flair){
+			_dataStr.recipient_uid = flair.uid;
+			_dataStr.recipient_name = flair.name;
+		}
+		
 		_dataStr.accessToken = login.getAccessToken();
-	
+
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
      	
-     	view.remove(click_to_refresh);
+     	if(click_to_refresh){
+			view.remove(click_to_refresh);
+			click_to_refresh = null;
+		}
+		if(loadTimeout){
+			clearTimeout(loadTimeout);
+			loadTimeout = null;
+		}
+     	
      	
      	Ti.API.debug(this.responseText);
-     	 var _place = JSON.parse(this.responseText);  
-     	 print_cast(_place);
-     	 print_food(_place); 
+     	 _place = JSON.parse(this.responseText); 
+     	 if(loadTimeout){
+			clearTimeout(loadTimeout);
+			loadTimeout = null;
+		 }
+	
+     	 printFeed(); 
+     	
      },
      onerror : function(e) {
-     	 Ti.API.error('error loading data for Place -> ' + _data.pid);
+     	 Ti.API.error('error loading data for Place -> ' + data.pid);
          Ti.API.error(e.error);
      },
      timeout : 5000  // in milliseconds
@@ -292,30 +304,95 @@ function loadData(_data){
  		client.send(_dataStr);	
 }
 
-function _createThumb(_data,_bgColor){
-		
-	var outer =  Titanium.UI.createView(
-		 {
-		 	backgroundImage:_data.photo,
-		  	left:10,right:10,top:10,bottom:10,
-		  	borderRadius:2,
-		  	height:30,width:30 
-		 }
-	);
-		//outer.add(inner);
-		
-	return outer;
-
+function _wait(){
+	if(click_to_refresh){
+		view.remove(click_to_refresh);
+		click_to_refresh = null;
+	}
+	
+	var retry = Ti.UI.createLabel({text:"please wait..",color:"#cecece",font:{fontSize:18}});
+    click_to_refresh = Ti.UI.createView({layout:"vertical",top:80});
+    	click_to_refresh.add(retry);
+    	view.add(click_to_refresh);
 }
 
+function _noData(){
+	var h = Ti.UI.createView({height:Ti.UI.SIZE,width:Ti.UI.SIZE,top:80,layout:"horizontal"});
+	
+	 h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
+			text:'Be the first to',
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
+  			font: {
+         		fontSize: 20
+    		}}));
+    
+    h.add(Ti.UI.createView({left:-5,right:5,width:25,height:25,backgroundImage:"images/glasses_blue_40_40.png"}));
+    		
+	h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
+			text:"Flair",
+			color:"#40a3ff",
+  			font: {
+         		fontSize: 20
+    		}}));
+    		
+    		
+    		h.addEventListener("click",function(){
+    			launchFlair();
+    		});
+    		return h;
+}
+
+function _retry(data){
+	if(click_to_refresh){
+		view.remove(click_to_refresh);
+		click_to_refresh = null;
+	}
+	var retry = Ti.UI.createLabel({text:"searching...please wait..",color:"#cecece",font:{fontSize:24}});
+    var network_error = Ti.UI.createLabel({text:" ",color:"#cecece",font:{fontSize:18}});
+    click_to_refresh = Ti.UI.createView({layout:"vertical",top:80});
+    	click_to_refresh.add(network_error);
+    	click_to_refresh.add(retry);
+    	network_error.setText("network error");
+    	retry.setText("RETRY");
+    	view.add(click_to_refresh);
+    
+    click_to_refresh.addEventListener("singletap",function(e){
+    	loadData(data);
+    	view.remove(click_to_refresh);
+    });
+}
+
+
 function _hr(){
-	return  Titanium.UI.createView(
-		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
-		  	height:2,opacity:0.6,
-		  	bottom:0,
-		  	width:'320'
-		 }
-	);
+	return  Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
+		  	height:2,opacity:0.6});
+}
+
+function header(win){
+	var h = Ti.UI.createView({top:15,height:40,width:Ti.UI.FILL});
+	var left = Ti.UI.createView({left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
+	h.add(left);
+	
+	
+	left.addEventListener("click",function(){
+		portal.close(win);
+	});
+	
+	
+	
+	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
+	home.addEventListener("click",function(){
+		Ti.App.fireEvent("close_all");
+	});
+	h.add(home);
+	return h;
+}
+
+function goToMap(){
+	var win = require('ui/common/place/Map');
+	portal.open(win.init(_place));	
 }
 

@@ -81,7 +81,7 @@ exports.init = function(_data, detailed, _showHR,_profileType,_profileId){
 		
 	return cont;
 	
-}
+};
 
 
 

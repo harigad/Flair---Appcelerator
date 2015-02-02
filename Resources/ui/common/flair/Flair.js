@@ -221,7 +221,7 @@ function send_to_server(_flair,_flairWin){
 
   if(_adj !== "" && _food !== ""){  	
   	
-  		var  url="http://flair.me/nominate.php";
+  		var  url="http://services.flair.me/nominate.php";
 		var _dataStr = {};
 			
 		_dataStr.flair = _flair.id;

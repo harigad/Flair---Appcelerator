@@ -178,7 +178,7 @@ function _create(_data,_showHR){
 		width:'auto',
   		text:_data.name,
   		borderStyle:Titanium.UI.INPUT_BORDERSTYLE_NONE,
-  		color:'#2179ca',
+  		color:'#40a3ff',
   		font: {
          fontSize: 14
     	}		
@@ -263,7 +263,7 @@ function _create(_data,_showHR){
 			if(e.source._title != "like"){
 				this._cancelClick = true;			
 				this.setBackgroundColor('#fff');
-				this._name_txt.setColor("#2179ca");
+				this._name_txt.setColor("#40a3ff");
 				this._comments_txt.setColor("#666");
 				var win = require('ui/common/userProfile/UserProfile');
 				portal.open(win.init(this._data.uid,this._data.name,this._data.photo));
@@ -276,7 +276,7 @@ function _create(_data,_showHR){
 			if(e.source._title != "like"){
 				setTimeout(function(){
 					if(that._cancelClick !== true){
-						that.setBackgroundColor('#2179ca');
+						that.setBackgroundColor('#40a3ff');
 						that._name_txt.setColor("#fff");
 						that._comments_txt.setColor("#fff");
 					}
@@ -286,14 +286,14 @@ function _create(_data,_showHR){
 		
 		cContainer.addEventListener('touchend',function(e){
 			this.setBackgroundColor('#fff');
-			this._name_txt.setColor("#2179ca");
+			this._name_txt.setColor("#40a3ff");
 			this._comments_txt.setColor("#666");
 		});
 		
 		cContainer.addEventListener('touchmove',function(e){
 			this._cancelClick = true;
 			this.setBackgroundColor('#fff');
-			this._name_txt.setColor("#2179ca");
+			this._name_txt.setColor("#40a3ff");
 			this._comments_txt.setColor("#666");
 		});
 		
@@ -306,7 +306,7 @@ function _create(_data,_showHR){
 function process(data,action,_view){
 	var that = this;
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _data = "&type=comments&action=" + action;
 		_data = _data + "&coid=" + data.coid + "&data=" + data.data + "&fid=" + data.fid;
 		_data = _data + "&accessToken=" + Ti.Facebook.getAccessToken();
@@ -349,7 +349,7 @@ function loadAndPrint(fid) {
 		});	
 		view.add(loading);
 
-		var url = "http://flair.me/search.php";
+		var url = "http://services.flair.me/search.php";
 		var _data = "&type=comments&action=get";
 		_data = _data + "&fid=" + fid;
 		_data = _data + "&accessToken=" + Ti.Facebook.getAccessToken();

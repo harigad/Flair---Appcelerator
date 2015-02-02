@@ -1,0 +1,1 @@
+/Users/harigadiraju/Documents/Flair_Workspace/Flair---Appcelerator/Resources/ui/tablet/ApplicationWindow.js

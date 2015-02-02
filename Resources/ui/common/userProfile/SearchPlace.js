@@ -194,7 +194,7 @@ function _search(){
 	
 	var that = this;
 	
-	var url = "http://flair.me/search.php";	
+	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"search",searchMode:"place",search:_txt,city:_zipcode,accessToken:login.getAccessToken()};
 		
 	clear(results_view);
@@ -226,7 +226,7 @@ function _search(){
   		left:20,top:5,
      	height:'auto',
      	width: 'auto',
-		color:'#2179ca',
+		color:'#40a3ff',
   		text:_response[x].name,
   		font: {
          fontSize: 14

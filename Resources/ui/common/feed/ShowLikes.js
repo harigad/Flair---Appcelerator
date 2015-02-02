@@ -71,7 +71,7 @@ function print_cast_data(_data,_flair){
 		width:Ti.UI.SIZE,
   		text:_data.name,
   		wordWrap:false,
-  		color:'#2179ca',
+  		color:'#40a3ff',
   		font: {
          fontSize: 28,
          fontWeight:'bold'

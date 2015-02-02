@@ -73,7 +73,7 @@ function _createRole(_data,_showHR){
 	var _role_title = Ti.UI.createLabel({
   		left:0,
   		width:'auto',
-  		color: '#2179ca',
+  		color: '#40a3ff',
   		shadowColor: '#aaa',
   		shadowOffset: {x:1, y:1},
   		text: _data._role_title,
@@ -107,11 +107,11 @@ function _createRole(_data,_showHR){
 				return;
 			}
 			
-			this.setBackgroundColor('#2179ca');
+			this.setBackgroundColor('#40a3ff');
 			this._role_title.setColor("#fff");
 			if(selectedRoleView){
 				selectedRoleView.setBackgroundColor('#fff');
-				selectedRoleView._role_title.setColor('#2179ca');
+				selectedRoleView._role_title.setColor('#40a3ff');
 			}
 			selectedRoleView = this;
 			user.getPlace().role = this._data._role_title;
@@ -123,7 +123,7 @@ function _createRole(_data,_showHR){
 			var that = this;	
 				setTimeout(function(){
 					if(that._cancelClick !== true){
-						that.setBackgroundColor('#2179ca');
+						that.setBackgroundColor('#40a3ff');
 						that._role_title.setColor("#fff");
 					}
 				}, 300 );
@@ -132,21 +132,21 @@ function _createRole(_data,_showHR){
 		
 		role_view.addEventListener('touchend',function(e){
 			//this.setBackgroundColor('#fff');
-			//this._role_title.setColor("#2179ca");
+			//this._role_title.setColor("#40a3ff");
 		});
 		
 		role_view.addEventListener('touchmove',function(e){
 			this._cancelClick = true;
 			if(selectedRoleView && selectedRoleView !== this){
 				this.setBackgroundColor('#fff');
-				this._role_title.setColor("#2179ca");
+				this._role_title.setColor("#40a3ff");
 			}
 		});
 		
 		
 		if(user.getPlace().role == _data._role_title){
 			selectedRoleView = role_view;
-			role_view.setBackgroundColor('#2179ca');
+			role_view.setBackgroundColor('#40a3ff');
 			_role_title.setColor("#fff");
 		}
 	
