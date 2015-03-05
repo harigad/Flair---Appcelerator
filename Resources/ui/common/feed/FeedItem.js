@@ -65,19 +65,29 @@ function topRow(_data,_profileType,_profileId){
 	
 	top_line.add(user_photo);	
 	
-	var h = Ti.UI.createView({left:5,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
+	var h = Ti.UI.createView({left:0,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
 	
 	var name_txt = Ti.UI.createLabel({
 		height:Ti.UI.SIZE,
 		left:0,right:3,width:Ti.UI.SIZE,
-  		text:_data.name,
+  		text:_data.name.split(" ")[0],
   		wordWrap:false,
   		color:'#40a3ff',
   		font: {
-         fontSize: 18
+         fontSize: 14
     },
     _gotoRecipient:true
 	});
+	
+	var d;
+	if(_data.days == 0){
+		d = "today";
+	}else if(_data.days == 1){
+		d = "yesterday";
+	}else{
+		d = _data.days + " days ago";
+	}
+	
 	
  	var place_txt = Ti.UI.createLabel({
      		left:0,width:Ti.UI.SIZE,
@@ -86,33 +96,65 @@ function topRow(_data,_profileType,_profileId){
 			shadowColor: '#fff',
     		shadowOffset: {x:1, y:1},
     		shadowRadius: 3,
-  			text:"flaired " + _data.recipientname,
+  			text:"flaired " + d,
   			font: {
-         		fontSize: 14
+         		fontSize: 11
     		}
 	});
 	h.add(name_txt);h.add(place_txt);
 	
+	var recp_name = Ti.UI.createLabel({
+     		left:0,width:Ti.UI.SIZE,
+			height:Ti.UI.SIZE,
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
+  			text:_data.recipientname,
+  			font: {
+         		fontSize: 24
+    		}
+	});
+
+	
 	var desc_txt = Ti.UI.createLabel({
-		height:Ti.UI.SIZE,
-		left:5,
+		height:20,width:Ti.UI.SIZE,
+		left:0,
   		text:"@ " + _data.placename + ", " + _data.city,
   		wordWrap:false,
   		color:'#40a3ff',
   		font: {
-         fontSize: 14
+         fontSize: 11
         }
     });
     
+    var city_txt = Ti.UI.createLabel({
+     		left:0,width:Ti.UI.SIZE,
+			height:Ti.UI.SIZE,
+			color:"#aaa",
+			shadowColor: '#fff',
+    		shadowOffset: {x:1, y:1},
+    		shadowRadius: 3,
+  			text:"in " + _data.city +", a month ago",
+  			font: {
+         		fontSize: 11
+    		}
+	});
+    
 	var name_view = Ti.UI.createView({
-		width:250,top:5,
+		width:240,top:0,left:10,
 		layout:"vertical",
 		height:Ti.UI.SIZE
 	});
 	
 	
 	name_view.add(h);
+	//name_view.add(place_txt);
+	name_view.add(recp_name);
 	name_view.add(desc_txt);
+	//name_view.add(city_txt);
+	
+	
 	if(_data.approved == "0" || _data.approved == 0){
 		var approved = Ti.UI.createLabel({
 			left:3,

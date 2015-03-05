@@ -3,6 +3,7 @@
 	<name>Flair</name>
 	<comment></comment>
 	<projects>
+		<project>Services</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

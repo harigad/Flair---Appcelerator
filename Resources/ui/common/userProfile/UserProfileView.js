@@ -11,7 +11,7 @@ var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
 var pull_to_refresh = require('ui/common/components/PullToRefresh');
 var userClass = "ui/common/data/User";
-
+var _imageHeight = 200;
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
@@ -23,16 +23,26 @@ function _hr(){
 	);
 }
 
-exports.init = function(id,name,photo_big,photo){
+exports.init = function(id,name,photo_big,photo,_callBack){
+	
+	photo = photo || "images/flairs/100/1.png";
+	photo_big = photo_big || "images/blur_cafe.jpg";
+	
 	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'#f1f1f1'});	
 	main.userId = id;
 	main.userName = name;
 	
+	main.addEventListener("scroll",function(e){
+		if(e.contentOffset.y > _imageHeight){
+		  _callBack(true);	
+		}else{
+		  _callBack(false);
+		}
+	});
+	
 	var upperView = Titanium.UI.createView(
 		 {
-		  
-		  	height: Ti.UI.SIZE,layout:"vertical",
-		  	
+		  	height: Ti.UI.SIZE,layout:"vertical"
 		 }
 	);
 	
@@ -51,7 +61,7 @@ exports.init = function(id,name,photo_big,photo){
 	upperView.add(photoViewOuter);
 	
 	var title = Ti.UI.createLabel({
-  		top:5,bottom:10,
+  		top:5,bottom:10,textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,
   		text: name,
@@ -63,10 +73,21 @@ exports.init = function(id,name,photo_big,photo){
   	upperView.add(title);
 	
 	
-	var rowOne = Ti.UI.createTableViewRow({backgroundColor:'#40a3ff',height:Ti.UI.SIZE});
+	var rowOne = Ti.UI.createTableViewRow({backgroundColor:'#999',height:Ti.UI.SIZE});
 	var photo_big = Ti.UI.createImageView({opacity:0.25,image:photo_big,width:Ti.UI.FILL});
-		var bottomMenu = Ti.UI.createView({opacity:0.6,backgroundColor:"#fff",bottom:0,height:50});
-  		photo_big.add(bottomMenu);
+	
+	
+	var adjust_header_color = function(e){
+		if(photo_big.rect.height>200){
+			_imageHeight = photo_big.rect.height;
+			photo_big.removeEventListener("postlayout",adjust_header_color);
+		}
+	};
+	
+	photo_big.addEventListener("postlayout",adjust_header_color);
+	
+	var bottomMenu = Ti.UI.createView({opacity:0.6,backgroundColor:"#fff",bottom:0,height:50});
+  	photo_big.add(bottomMenu);
 	rowOne.add(photo_big);
 	rowOne.add(upperView);
 

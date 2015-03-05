@@ -3,18 +3,17 @@ var main;
 var _callBack;
 var _errBack;
 var fb = require('facebook');
-
-
-exports.init = function(_callBack,_errBack,_dontShow){
-
 	fb.appid = '201613399910723';
 	fb.permissions = ['email'];
-	fb.forceDialogAuth = false;
-	 
+	fb.forceDialogAuth = true;
+
+exports.init = function(callBack,errBack,dontShow){
 	if(isLoggedIn()){
-		_callBack();
+		callBack();
+	}else if(_getAccessToken()){
+		loadUser(callBack);
 	}else{
-		show(_callBack,_errBack,_dontShow);
+		show(callBack,errBack,dontShow);
 	}
 	
 };
@@ -25,15 +24,11 @@ exports.loggedIn = function(){
 
 
 function isLoggedIn(){
-		if(_getAccessToken()){
-			if(user && user.getId()){
+			if(user){
 				return true;
 			}else{
 				return false;
 			}
-		}else{
-			return false;
-		}	
 }
 
 function _getAccessToken(){
@@ -48,12 +43,10 @@ exports.logout = function(){
 };
 
 exports.getAccessToken = function(){
-	var FB_ACCESSTOKEN = Ti.App.Properties.getString("FB_ACCESSTOKEN");
-	return FB_ACCESSTOKEN;
+	return _getAccessToken();
 };
 
 function loadUser(_callBack){
-	debugger;
 	Ti.API.debug("login.loadUser");
 	var User = require('ui/common/data/User');
 	
@@ -64,9 +57,11 @@ function loadUser(_callBack){
 	}
 	
        user = new User(userid,function(){
-       	debugger;
     	 Ti.App.Properties.setString("login.user.id",user.getId());
     	 	_callBack();
+    	 	setTimeout(function(){
+				Ti.App.fireEvent("userLoggedIn");
+			},500);
     	});
 }
 
@@ -75,26 +70,36 @@ function onLogin(e,_callBack){
 	Ti.App.Properties.setString("FB_ACCESSTOKEN", fb.getAccessToken());
 	
 	loadUser(function(){
-	debugger;
-		var login = require('ui/common/Login');	
-		login.init(_callBack);
-		if(main){
-			
-			var slide_it_bottom = Titanium.UI.createAnimation();
-    		slide_it_bottom.top = 600; // to put it back to the left side of the window
-    		slide_it_bottom.duration = 400;
-			main.close(slide_it_bottom);
-		}
-		
-		setTimeout(function(){
-			Ti.App.fireEvent("userLoggedIn");
-		},500);
-		
+		_callBack();
 	});
 	
-}	
+}
 
-function show(callBack,errBack,_dontShow){	
+var _fbsEventListener = false;
+function show(callBack,errBack,_dontShow){
+	if(_dontShow){
+		if(errBack){
+			errBack();
+		}
+		return;
+	}
+	
+	if(!_fbsEventListener){
+	_fbsEventListener = true;
+	fb.addEventListener('login', function(e) {
+		Ti.API.error("####################################" + fb.getAccessToken());
+		if(fb.getAccessToken()){
+    		onLogin(e,callBack);   
+    	}else{
+			//do nothing
+    	}
+	});
+	}
+	
+    fb.authorize();
+}
+
+function showWindow(callBack,errBack,_dontShow){	
 	if(fb.loggedIn){
 		onLogin(null,callBack);
 		return;
@@ -107,8 +112,6 @@ function show(callBack,errBack,_dontShow){
 		return;
 	}
 	
-	_callBack = callBack;
-	_errBack = errBack;
 	 
     var slide_it_top = Titanium.UI.createAnimation();
     slide_it_top.top = 1; // to put it back to the left side of the window
@@ -136,7 +139,7 @@ function build(){
 	
 	var cancel_bg = Ti.UI.createView({
 		width:100,height:50,borderRadius:4,bottom:-25,
-		backgroundImage:"images/trans.png",opacity:0.35
+		backgroundImage:"images/trans.png",opacity:0.9
 	});
 	
 	
@@ -152,7 +155,7 @@ function build(){
 	
 	
 	var lbl = Ti.UI.createLabel({
-		text:"cancel",color:"#fff",top:0
+		text:"cancel",color:"#40a3ff",top:0
 	});
 	
 	cancel_bg.add(lbl);
@@ -167,32 +170,8 @@ function build(){
 		
 	base.add(cancel_bg);
 
-	fb.addEventListener('login', function(e) {
-		Ti.API.error("####################################" + fb.getAccessToken());
-		if(fb.getAccessToken()){
-			bg.setImage("images/signup/bg1_loading.png");
-    		onLogin(e,_callBack);   
-    	}else{
-    		var slide_it_bottom = Titanium.UI.createAnimation();
-    		slide_it_bottom.top = 600; // to put it back to the left side of the window
-    		slide_it_bottom.duration = 400;
-			
-    		main.close(slide_it_bottom);
-    		if(_errBack){
-    			_errBack();
-    		}
-    	}
-	});
-     
-    var btn = Ti.UI.createView({
-    	left:10,top:190,
-    	width:300,height:80,
-    	borderRadius:4
-    });
-    
-    main.add(btn);
-    
-    btn.addEventListener('singletap',function(){
+   
+    bg.addEventListener('singletap',function(){
     	Ti.API.debug("login btn clicked");
         fb.authorize();
     });
@@ -204,8 +183,7 @@ exports.getUser = function(){
 		return user;
 	}else{
 		var User = require('ui/common/data/User');
-	    user = new User(null,function(){},{});
-	    return user;
+	    return new User(null,function(){},{});
 	}
 };
 

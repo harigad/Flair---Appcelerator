@@ -145,7 +145,7 @@ function header(){
 	reload_btn.add(label);
 	
 	
-	var photo = login.getUser().getPhoto() || "images/flairs/100/1.png";
+	var photo = login.getUser().getPhoto() || "images/profile/settings2.png";
 	
 	var cancel_btn;
 
@@ -153,19 +153,15 @@ function header(){
 	cancel_btn =  Titanium.UI.createView(
 		 {
 		 	right:0,
-		  	backgroundColor:'#ccc',borderRadius:25,
-		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
+		  	backgroundColor:'#ccc',borderRadius:20,
+		  	width:'40',height: '40',borderWidth:3,borderColor:"#eee",
 		  	backgroundImage:photo,bubbleParent:false
 		 }
 	);	
 
 
 	Ti.App.addEventListener("userLoggedIn",function(){
-		cancel_btn.setWidth(50);
-		cancel_btn.setHeight(50);
-		cancel_btn.setBorderRadius(25);
 		cancel_btn.setBackgroundImage(login.getUser().getPhoto());
-		cancel_btn.setBackgroundColor("#ccc");
 	});
 	
 		reload_btn.add(cancel_btn);

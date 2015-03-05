@@ -72,7 +72,7 @@ exports.init = function(data){
   		});
   	titleV.add(_addr);
   	
-  	_title.addEventListener("click",function(){
+  	titleV.addEventListener("click",function(){
   		goToMap();
   	});
   	
@@ -80,7 +80,7 @@ exports.init = function(data){
   		goToMap();
   	});
   	
-  	var btn = Ti.UI.createView({borderWidth:5,borderColor:"#5bb0ff",borderRadius:50,width:100,height:100,bottom:30});
+  	var btn = Ti.UI.createView({bubbleParent:false,borderWidth:5,borderColor:"#5bb0ff",borderRadius:50,width:100,height:100,bottom:30});
   	btn.add(Ti.UI.createView({width:75,height:75,backgroundImage:"images/glasses_100_100_white.png"}));
   	btn.addEventListener("click",function(){
   		launchFlair();
@@ -89,26 +89,47 @@ exports.init = function(data){
    view.add(titleV);
    
     var menu = Ti.UI.createView({height:Ti.UI.SIZE});
-    var menu_a = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.5,left:0,height:50,width:"50%"});
-    	menu_a.add( Ti.UI.createLabel({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));
-     var menu_b = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.85,right:0,height:50,width:"50%"});
-     	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));   
+    var menu_a = Ti.UI.createView({bubbleParent:false,opacity:0.4,backgroundColor:"#66b5ff",left:0,height:50,width:"50%"});
+    	menu_a.add( Ti.UI.createView({height:20,width:20,backgroundImage:"images/glasses_45_white.png"}));
+     var menu_b = Ti.UI.createView({bubbleParent:false,backgroundColor:"#66b5ff",right:0,height:50,width:"50%"});
+     	menu_b.add( Ti.UI.createView({height:30,width:30,backgroundImage:"images/team_45_white.png"}));
     menu.add(menu_a);  menu.add(menu_b); 
     
     menu_a.addEventListener("click",function(){
-    	menu_a.setOpacity(0.5);menu_b.setOpacity(0.85);
+    	menu_a.setOpacity(0.4);menu_b.setOpacity(1);
+    	sub_title_icon.setBackgroundImage("images/glasses_45_white.png");
+    	sub_title_text.setText("flairs");
     	printFeed();
     });
     
     menu_b.addEventListener("click",function(){
-    	menu_a.setOpacity(0.85);menu_b.setOpacity(0.5);
+    	menu_a.setOpacity(1);menu_b.setOpacity(0.4);
+    	sub_title_icon.setBackgroundImage("images/team_45_white.png");
+    	sub_title_text.setText("teammates");
     	printCast();
     });
     
     
     titleV.add(menu);
     
+    
+    var sub_title = Ti.UI.createView({layout:"horizontal",backgroundColor:"#777",height:Ti.UI.SIZE});
+    
+    var sub_title_icon = Ti.UI.createView({left:20,height:20,width:20,backgroundImage:"images/glasses_45_white.png"});
+    sub_title.add(sub_title_icon);
+    
+    var sub_title_text = Ti.UI.createLabel({
+    	top:10,bottom:10,height:Ti.UI.SIZE,left:10,
+    	text:"flairs",font:{
+    		fontSize:16
+    	},
+    	color:"#aaa",
+    });
+    
+    sub_title.add(sub_title_text);
+    view.add(sub_title);
     view.add(_hr());
+    
 	scrollView.add(view);
     main.add(scrollView);
     
@@ -180,7 +201,7 @@ function getCastRow(place,data){
 		 {
 		  	left:0,backgroundColor:'#ccc',
 		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  	image:data.photo,
+		  	image:data.photo || "images/flairs/100/1.png",
 		  	borderRadius: 25,
 		 }
 	);
@@ -372,8 +393,8 @@ function _hr(){
 }
 
 function header(win){
-	var h = Ti.UI.createView({top:15,height:40,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
+	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
+	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
 	h.add(left);
 	
 	
@@ -383,7 +404,7 @@ function header(win){
 	
 	
 	
-	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
+	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
 	home.addEventListener("click",function(){
 		Ti.App.fireEvent("close_all");
 	});
@@ -393,6 +414,6 @@ function header(win){
 
 function goToMap(){
 	var win = require('ui/common/place/Map');
-	portal.open(win.init(_place));	
+	portal.open(win.init(_place));
 }
 

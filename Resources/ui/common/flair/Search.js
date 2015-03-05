@@ -3,6 +3,7 @@ var _tableView;
 var _db = require('ui/common/data/DB');
 var Portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
+var confirm = require('ui/common/flair/Confirm_Flair');
 var _place;
 var _callBack;
 var _textField,_textFieldLabl;
@@ -55,8 +56,13 @@ function _draw(){
 	
 	_tableView.addEventListener("click",function(e){
 			login.init(function(){
+				Ti.API.info("->" + e.row._data.ignore);
 				if(e.row._data.ignore !== true){
+					Ti.API.info("1");
+					confirm.init(e.row._data.name,_place.name);
+					Ti.API.info("2");
 			  		_callBack(e.row._data);
+			  		Ti.API.info("3");
 			  		main.close();
 			 	}
 			});
@@ -178,7 +184,7 @@ function createRow(data){
 		 {
 		  	left:0,backgroundColor:'#ccc',
 		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  	image:data.photo,
+		  	image:data.photo || "images/flairs/100/1.png",
 		  	borderRadius: 25,
 		 }
 		);

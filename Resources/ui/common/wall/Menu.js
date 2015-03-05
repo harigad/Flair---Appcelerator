@@ -17,7 +17,7 @@ exports.init = function(){
 	
 	_main.add(_view);
 	_draw();
-	_main.open();
+	//_main.open();
 };
 
 function _draw(){

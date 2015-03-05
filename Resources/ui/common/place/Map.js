@@ -28,7 +28,7 @@ exports.init = function(_data){
 		
 	var mapView = map.createView({
     mapType: map.NORMAL_TYPE,
-    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.05, longitudeDelta:0.05},
+    region:{latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.02, longitudeDelta:0.02},
     animate:true,
     regionFit:true,
     userLocation:false,
@@ -37,7 +37,7 @@ exports.init = function(_data){
 	
 	mapView.addEventListener("complete",function(e){
    		mapView.region = {
-   			latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.05, longitudeDelta:0.05
+   			latitude:_data.lat, longitude:_data.lng, latitudeDelta:0.02, longitudeDelta:0.02
    		};
    	});
 	
@@ -59,7 +59,7 @@ exports.init = function(_data){
 	});
 	
 	mapViewCont_outer.add(addr);
-	mapViewCont_outer.add(Ti.UI.createView({height:20,backgroundColor:"#fff"}));
+	mapViewCont_outer.add(Ti.UI.createView({height:20,backgroundColor:"#666"}));
 	
    var mapViewCont = Titanium.UI.createView(
 		 {
@@ -85,11 +85,15 @@ function header(win){
 	h.add(left);
 	
 	
-	h.addEventListener("click",function(){
+	left.addEventListener("click",function(){
 		portal.close(win);
 	});
 	
 	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
+	home.addEventListener("click",function(){
+		Ti.App.fireEvent("close_all");
+	});
+	
 	h.add(home);
 	return h;
 }

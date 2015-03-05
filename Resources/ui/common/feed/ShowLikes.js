@@ -19,7 +19,7 @@ exports.init = function(_data){
 	
 	return main;
 	
-}
+};
 
 
 function printFlair(container,_data){

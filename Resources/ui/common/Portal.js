@@ -14,12 +14,15 @@ exports.loadPlaces = function(callBack,query){
 };
 
 function _loadPlaces(callBack,query) {
+	debugger;
 		var  url="http://services.flair.me/search.php";
 		var _dataStr = {};
 		query = query.trim();
-		if(_location.latitude && query.length > 6){
+		if(query.length > 6){
 			//do nothing;
+			debugger;
 		}else{
+			debugger;
 			callBack([_places]);return;
 		}
 		
@@ -31,10 +34,9 @@ function _loadPlaces(callBack,query) {
 			_dataStr.search = query;
 		}
 		_dataStr.accessToken=login.getAccessToken();
-		debugger;
- 		var client = Ti.Network.createHTTPClient({
+		var client = Ti.Network.createHTTPClient({
      	onload : function(e) {
-     	Ti.API.info(this.responseText);
+     	Ti.API.info("places loaded ..." + this.responseText);
      	 _places = JSON.parse(this.responseText);
      	 if(callBack){
      	 	callBack(_places);

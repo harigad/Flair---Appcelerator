@@ -6,10 +6,6 @@ function User(id,_callBack,_data){
 	Ti.API.debug("User.init " + id);
 	this.id = id;
 	
-	if(!_data){
-		_data = portal.getUserData(this.id);
-	}
-	
 	if(_data){
 		var that = this;
 		this._data = _data;		
@@ -30,10 +26,11 @@ User.prototype.load = function(_callBack){
 		
 	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"user",id:this.id,accessToken:login.getAccessToken()};
-		
+		debugger;
 	Ti.API.debug("User.load sending data -> " + this.id);
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
+ 	 debugger;
  	 	Ti.API.debug("User.load recieved data " + this.responseText);
  	 	 var response = JSON.parse(this.responseText);
          if(response){

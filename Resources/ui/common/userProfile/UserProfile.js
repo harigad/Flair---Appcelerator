@@ -13,7 +13,15 @@ exports.init = function(id,name,photo_big,photo){
 		portal.close(main);
 	});
 	
-	main.add(profileView.init(id,name,photo_big,photo));main.add(header(main));
+	var head = header(main);
+	main.add(profileView.init(id,name,photo_big,photo,function(e){
+		if(e){
+			head.setBackgroundColor("#40a3ff");
+		}else{
+			head.setBackgroundColor("transparent");
+		}
+	}));
+	main.add(head);
 	
 	main.addEventListener("hide",function(e){
 		cleanWindow(main);
@@ -40,8 +48,8 @@ function cleanWindow( winObj ) {
 }
 
 function header(win){
-	var h = Ti.UI.createView({top:15,height:40,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
+	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
+	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
 	h.add(left);
 	
 	
@@ -50,7 +58,7 @@ function header(win){
 	});
 	
 	
-	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
+	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
 	h.add(home);
 	
 	home.addEventListener("click",function(){

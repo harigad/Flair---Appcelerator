@@ -1,1 +1,0 @@
-/Users/harigadiraju/Documents/Flair_Workspace/Flair---Appcelerator/Resources/ui/common/signup/Signup2.js
