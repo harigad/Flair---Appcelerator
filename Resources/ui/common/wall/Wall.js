@@ -144,11 +144,9 @@ function header(){
 	var label = Ti.UI.createLabel({text:"find a business",color:"#999",left:30,width:205,height:30});
 	reload_btn.add(label);
 	
-	
 	var photo = login.getUser().getPhoto() || "images/profile/settings2.png";
 	
 	var cancel_btn;
-
 	
 	cancel_btn =  Titanium.UI.createView(
 		 {
@@ -166,20 +164,16 @@ function header(){
 	
 		reload_btn.add(cancel_btn);
 		cancel_btn.addEventListener("singletap",function(e){
-			//portal.toggleMenu();
-			login.init(function(){
+			portal.toggleMenu();
+			/*login.init(function(){
 				var user = login.getUser();
 				var win = require('ui/common/userProfile/UserProfile');
 				portal.open(win.init(user.getId(),user.getName(),user.getPhotoBig(),user.getPhoto()));
-			});
+			});*/
 		});
 	
 	reload_btn.addEventListener('singletap',function(e){
-				Search.open(function(_data){
-					label.setText(_data.title);
-					cancel_btn.setVisible(true);
-					onSearch(_data);
-				});
+				Search.open();
 	});
 	c.add(reload_btn);
 	return c;

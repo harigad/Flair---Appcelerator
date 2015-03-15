@@ -8,11 +8,8 @@ var activeThumb;
 var _callBack;
 var main;
 exports.init = function(callBack,person_name) {
-
 	init_process(callBack,person_name);
-	
-	
-}	
+};
 	
 function init_process(callBack,person_name){	
 Ti.API.debug("home init");
@@ -26,31 +23,30 @@ Ti.API.debug("home init");
     	barColor: '#fff',   	
 		navBarHidden: true,
     	borderWidth:0,
-    	backgroundImage:'images/trans.png',
-    	fullScreen: true,top:500
+    	backgroundColor:"#40a3ff",
+    	fullScreen: true
 	});	
 
 	var container = Titanium.UI.createView({
-		height: Ti.UI.FILL,
-		width:Ti.UI.FILL,
-		top:85,backgroundColor:'#fff',
+		height: Ti.UI.SIZE,
+		width:Ti.UI.SIZE
 	});
 
 	var homeMenu = Titanium.UI.createView(
 		 {
-		  	width: '290',left:17.5,
+		  	width: '290',height:Ti.UI.SIZE,
 		  	layout: 'horizontal'
 		 }
 	);
 
 	var header = Titanium.UI.createView({
-		top:0,	height: Ti.UI.SIZE,
+		height: Ti.UI.SIZE,
 		width:Ti.UI.FILL,layout:'vertical'
 	});
 	
 	var lbl = Ti.UI.createLabel({
-		color: '#666',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:0,
+		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:0,opacity:0.5,
 		 font: { fontSize:16 },
 		text: 'Pick a Flair for'
 	});
@@ -58,9 +54,9 @@ Ti.API.debug("home init");
 	header.add(lbl);		
 	
 	var lbl_name = Ti.UI.createLabel({
-		color: '#333',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-		width:Ti.UI.FILL,height: Ti.UI.SIZE,bottom:10,
-		font: { fontSize:36 },
+		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+		width:Ti.UI.FILL,height: Ti.UI.SIZE,bottom:10,opacity:0.5,
+		font: { fontSize:26 },
 		text: person_name
 	});
 	header.add(lbl_name);
@@ -115,8 +111,19 @@ Ti.API.debug("home init");
 	homeMenu.add(_createFlairThumb({"id":4,"photo":""},'#f1f1f1'));
 	homeMenu.add(_createFlairThumb({"id":5,"photo":""},'#fff'));
     homeMenu.add(_createFlairThumb({"id":6,"photo":""},'#f1f1f1'));
-
+var skip_lbl = Ti.UI.createLabel({
+		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:10,
+		font: { fontSize:26 },
+		text: "skip"
+	});
 	
+	skip_lbl.addEventListener("click",function(){
+		_callBack();
+		main.close();
+	});
+	
+	homeMenu.add(skip_lbl);
 	//home.add(homeMenu);	
 	container.add(homeMenu);
 	main.add(container);
@@ -212,7 +219,6 @@ function _createPlaceBg(bgColor){
 		 {
 		  	width: '85',
 		  	height: '85',
-		  	backgroundColor:bgColor,
 		  	borderRadius:4,
 		  	_bgColor:bgColor,bubbleParent:true
 		 }
@@ -237,7 +243,6 @@ function _createInnerBg(_data,bgColor){
 		 {
 		  	width: '85',
 		  	height: '85',
-		  	backgroundColor:bgColor,
 		  	borderRadius:4,
 		  	_bgColor:bgColor,
 		  	_inner:inner
@@ -262,8 +267,7 @@ function _createThumb(_data,bgColor){
 		  	top:-2.5,
 		  	bottom:-2.5,
 		  	left:-2.5,
-		  	right:-2.5,
-		  	backgroundImage:'images/feed/feed_flair_shadow.png',		  	
+		  	right:-2.5,	  	
 		  	borderRadius: 4,
 		   	_data: _data,
 		   	_bgColor:bgColor,
@@ -282,34 +286,9 @@ function _createFlairThumb(_data,bgColor){
 	
 	thumb.addEventListener('singletap',function(){
 		Ti.API.debug("Flair Icon Clicked " + _data.id);	
-		login.init(function(){
-
-		activeThumb = thumb;
-		
-		_callBack(_data,main);
-		thumb._inner_bg._inner.setBackgroundImage("");
-		var inner = Ti.UI.createLabel({
-			height:'auto',
-			width: 70,
-  			text:"saving...",
-  			color:"#666",
-  			textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  			font: {
-         		fontSize: 13
-    		}  				
-		});	
-		thumb._inner_bg._inner.add(inner);
-		//thumb._inner_bg._inner.animate({duration:500,opacity:0},function(){
-		// flairWin.init(_data,thumb);
-		// thumb.add(newBg);
-		// newBg.animate({duration:500,view:_createInnerBg(thumb._data,thumb._bgColor),transition:Ti.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT});
-		//});
-		},function(){
-			flairWin.close();
-		});
-		
-	});	
-	
+		_callBack(_data.id);
+		main.close();
+	});
 	return thumb;
 }
 	

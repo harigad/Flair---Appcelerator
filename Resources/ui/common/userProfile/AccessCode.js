@@ -100,7 +100,7 @@ function _build(_place){
   		right:10,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "I Belong Here",
+  		text: "I Work Here",
   			font: {
          		fontSize: 18
     		}
@@ -129,7 +129,7 @@ function _build(_place){
   		right:10,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "No! I dont.",
+  		text: "cancel",
   			font: {
          		fontSize: 18
     		}
@@ -138,7 +138,7 @@ function _build(_place){
 	_delete_btn.add(_delete_txt);
 	
 	_delete_btn.addEventListener('singletap',function(){
-		_del(user,searchPlaceNav,main);
+		_del(user,main);
 	});
 	
 	_save_btn.addEventListener('singletap',function(){
@@ -148,27 +148,8 @@ function _build(_place){
 	main.open();	
 }
 
-function _del(user,searchPlaceNav,main){
-	var dialog = Ti.UI.createAlertDialog({
-    	cancel: -1,
-    	buttonNames: ['Delete', 'Cancel'],
-    	message: 'Are you sure?'
-    });
-    
-    dialog.addEventListener('click', function(e){
-      	Ti.API.debug('edit share dialog button clicked with index ' + e.index);
-    	if (e.index === 0){
-    		_deleteCode(user.getPlace());
-			user.setPlace(null);
-			//searchPlaceNav.close(true,user);
-			main.close();    		
-    	}else{
-    		//do nothing
-    	}
-    	
-    });
-    
-    dialog.show();
+function _del(user,main){
+			main.close();
 }
 
 function _deleteCode(_data){

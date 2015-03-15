@@ -23,7 +23,7 @@ var _callBack;
 
 exports.close = function(){
 	_close();
-}
+};
 
 function _close(){
 	//_callBack();
@@ -54,7 +54,7 @@ exports.init = function(_data,_callback) {
 		_callBack();
 	},200);
 	return main;
-}
+};
 
 function printPlaces(_data){
 	//placesView = places.init(_startFlair);

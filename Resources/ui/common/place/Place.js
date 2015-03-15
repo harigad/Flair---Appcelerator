@@ -13,6 +13,7 @@ var _place;
 
 var user = login.getUser();
 exports.init = function(data){
+	debugger;
 	var main = Titanium.UI.createWindow({
     	backgroundColor: '#40a3ff',
     	navBarHidden:true ,barColor:'#40a3ff'	
@@ -141,11 +142,11 @@ var _feedView;
 
 function launchFlair(){
 	var win = require('ui/common/flair/Search');
-  			win.open(_place,function(flair){
+  			win.open(_place,function(flair,icon){
   					if(_feedView){
 						view.remove(_feedView);
 					}
-  					loadData(_place,flair);
+  					loadData(_place,flair,icon);
   			});
 }
 
@@ -263,7 +264,7 @@ function delete_cast(obj,data){
 }
 
 
-function loadData(data,flair){
+function loadData(data,flair,icon){
 
 	_wait();
 	if(loadTimeout){
@@ -285,6 +286,7 @@ function loadData(data,flair){
 		if(flair){
 			_dataStr.recipient_uid = flair.uid;
 			_dataStr.recipient_name = flair.name;
+			_dataStr.icon = icon;
 		}
 		
 		_dataStr.accessToken = login.getAccessToken();

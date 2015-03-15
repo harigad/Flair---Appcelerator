@@ -55,17 +55,22 @@ function _draw(){
 	outer.add(_tableView);
 	
 	_tableView.addEventListener("click",function(e){
+		var home = require('ui/common/home/Home');	
+		
+		home.init(function(icon){
 			login.init(function(){
 				Ti.API.info("->" + e.row._data.ignore);
 				if(e.row._data.ignore !== true){
 					Ti.API.info("1");
 					confirm.init(e.row._data.name,_place.name);
 					Ti.API.info("2");
-			  		_callBack(e.row._data);
+			  		_callBack(e.row._data,icon);
 			  		Ti.API.info("3");
 			  		main.close();
-			 	}
+			 }
 			});
+			},e.row._data.name);
+			
 	});
 	
 	main.add(outer);

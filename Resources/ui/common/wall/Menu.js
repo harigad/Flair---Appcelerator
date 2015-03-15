@@ -17,7 +17,7 @@ exports.init = function(){
 	
 	_main.add(_view);
 	_draw();
-	//_main.open();
+	_main.open();
 };
 
 function _draw(){
@@ -38,7 +38,7 @@ function _draw(){
 		},data:places[i]}));
 		_view.add(_hr());
 	}
-	_view.add(item({icon:"images/plus.png",title:"add my Business",callBack:function(){
+	_view.add(item({icon:"images/plus.png",title:"join a business",callBack:function(){
 		searchBus();
 	}}));
 }

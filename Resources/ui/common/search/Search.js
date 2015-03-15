@@ -54,8 +54,14 @@ function _draw(){
 	outer.add(_tableView);
 	
 	_tableView.addEventListener("click",function(e){
+		debugger;
+		if(_callBack){
+			_callBack(e.row.place);
+			_callBack = null;
+		}else{
 			  	var placeView = require('ui/common/place/Place');
 		      	Portal.open(placeView.init(e.row.place));
+		}
 		main.close();
 	});
 	

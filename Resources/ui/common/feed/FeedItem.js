@@ -103,6 +103,24 @@ function topRow(_data,_profileType,_profileId){
 	});
 	h.add(name_txt);h.add(place_txt);
 	
+	
+	var recp_layer = Ti.UI.createView({
+		layout:"horizontal",left:0,
+		height:Ti.UI.SIZE,
+		width:Ti.UI.SIZE
+	});
+	if(_data.icon && _data.icon !== 0 && _data.icon !== "0"){
+		var flair_icon =  Titanium.UI.createView(
+		 	{
+		 		left:0,
+		  		width: 25,borderRadius:12.5,right:5,
+		  		height: 25,backgroundColor:"#f1f1f1",
+		  		backgroundImage:"images/flairs/100/" + _data.icon + ".png"
+			 }
+		);	
+		recp_layer.add(flair_icon);
+	}
+	
 	var recp_name = Ti.UI.createLabel({
      		left:0,width:Ti.UI.SIZE,
 			height:Ti.UI.SIZE,
@@ -115,7 +133,7 @@ function topRow(_data,_profileType,_profileId){
          		fontSize: 24
     		}
 	});
-
+recp_layer.add(recp_name);
 	
 	var desc_txt = Ti.UI.createLabel({
 		height:20,width:Ti.UI.SIZE,
@@ -150,7 +168,7 @@ function topRow(_data,_profileType,_profileId){
 	
 	name_view.add(h);
 	//name_view.add(place_txt);
-	name_view.add(recp_name);
+	name_view.add(recp_layer);
 	name_view.add(desc_txt);
 	//name_view.add(city_txt);
 	
