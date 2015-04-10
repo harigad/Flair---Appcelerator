@@ -35,7 +35,7 @@ exports.init = function(_type){
 		 }
 	);	
 	
-	scroll = Ti.UI.createTableView({top:0,backgroundColor:"#f1f1f1",separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE});
+	scroll = Ti.UI.createTableView({top:0,backgroundColor:"#fff",separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE});
 	
 	container.add(_header);
 	
@@ -144,22 +144,21 @@ function header(){
 	var label = Ti.UI.createLabel({text:"find a business",color:"#999",left:30,width:205,height:30});
 	reload_btn.add(label);
 	
-	var photo = login.getUser().getPhoto() || "images/profile/settings2.png";
+	var photo = "images/menu_menu_icon.png";
 	
 	var cancel_btn;
 	
 	cancel_btn =  Titanium.UI.createView(
 		 {
 		 	right:0,
-		  	backgroundColor:'#ccc',borderRadius:20,
-		  	width:'40',height: '40',borderWidth:3,borderColor:"#eee",
+		  	width:'40',height: '40',
 		  	backgroundImage:photo,bubbleParent:false
 		 }
 	);	
 
 
 	Ti.App.addEventListener("userLoggedIn",function(){
-		cancel_btn.setBackgroundImage(login.getUser().getPhoto());
+		//cancel_btn.setBackgroundImage(login.getUser().getPhoto());
 	});
 	
 		reload_btn.add(cancel_btn);

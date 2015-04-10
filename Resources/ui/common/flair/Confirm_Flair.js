@@ -6,7 +6,7 @@ exports.init = function(name,placename){
 	
 	var main = Ti.UI.createWindow({
 		backgroundColor:"#40a3ff",
-		width:Ti.UI.FILL,
+		width:Ti.UI.FILL,backgroundImage:"images/blue.png",
 		height:Ti.UI.FILL
 	});
 	

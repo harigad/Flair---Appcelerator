@@ -26,12 +26,14 @@ User.prototype.load = function(_callBack){
 		
 	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"user",id:this.id,accessToken:login.getAccessToken()};
-		debugger;
+	
 	Ti.API.debug("User.load sending data -> " + this.id);
+	debugger;
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
- 	 debugger;
+ 		
  	 	Ti.API.debug("User.load recieved data " + this.responseText);
+ 	 	debugger;
  	 	 var response = JSON.parse(this.responseText);
          if(response){
  	 		that.setData(response);	

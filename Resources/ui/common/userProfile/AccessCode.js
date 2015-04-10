@@ -39,14 +39,14 @@ function _build(_place){
    var mapViewCont = Titanium.UI.createView(
 		 {
 		 	top:'0',
-		  	height: '300'
+		  	height: "50%"
 		 }
 	);	
 	
    var mapDesc = Titanium.UI.createView(
 		 {
 		 	top:'0',
-		  	height: '300',width:'320',bubbleParent:true,
+		  	height: Ti.UI.FILL,width:Ti.UI.FILL,bubbleParent:true,
 		  	backgroundImage:'images/map_shade.png',layout:'vertical'
 		 }
 	);	
@@ -82,22 +82,16 @@ function _build(_place){
 	
 	var _save_btn = Titanium.UI.createView(
 		 {
-		  	width: 300,
-		  	height: 60 ,
-		  	top:20,left:10,
-		  	layout: 'horizontal',
-		  	borderRadius:4,
+		  	width: Ti.UI.FILL,
+		  	height: "25%" ,
+		  	top:0,
 		  	backgroundColor:'#40a3ff'
 		 }
 	);
 	_view.add(_save_btn);
 	
 	var _save_txt = Ti.UI.createLabel({
-		top:15,
-		bottom:15,
-  		width:280,
-  		left:10,
-  		right:10,
+		width:280,height:Ti.UI.SIZE,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
   		text: "I Work Here",
@@ -110,26 +104,18 @@ function _build(_place){
 	
 	var _delete_btn = Titanium.UI.createView(
 		 {
-		  	width: 300,
-		  	height: 60,
-		  	top:10,
-		  	left:10,
-		  	layout: 'horizontal',
-		  	borderRadius:4,
+		  	width: Ti.UI.FILL,
+		  	height: "25%",
 		  	backgroundColor:'#770000'
 		 }
 	);
 	_view.add(_delete_btn);
 	
 	var _delete_txt = Ti.UI.createLabel({
-		top:15,
-		bottom:15,
-  		width:280,
-  		left:10,
-  		right:10,
+		width:280,height:Ti.UI.SIZE,
   		color: '#fff',
   		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "cancel",
+  		text: "I Don't Work Here",
   			font: {
          		fontSize: 18
     		}
@@ -142,7 +128,9 @@ function _build(_place){
 	});
 	
 	_save_btn.addEventListener('singletap',function(){
-		_loadCode(_place);
+		login.init(function(){
+			_loadCode(_place);
+		});
 	});
 
 	main.open();	
@@ -174,6 +162,7 @@ function _deleteCode(_data){
 
 
 function _loadCode(_data){
+	debugger;
 	var thisplace = user.getPlace();
 	if(thisplace){
 		if(thisplace.pid === _data.pid){
@@ -195,18 +184,17 @@ function _loadCode(_data){
 		
 	var url = "http://services.flair.me/search.php";	
 	var _data = {type:"role",pid:_data.pid,accessToken:login.getAccessToken()};
- 	 	
+ 	 	debugger;
  	var client = Ti.Network.createHTTPClient({ 		
  	 onload : function(e) {
+ 	 	debugger;
  	 	Ti.API.info("3");
  	 	Ti.API.info(this.responseText);
  	 	 var _response = JSON.parse(this.responseText);
  	 	 if(_response.status){
- 	 	 	 user.setPlace(_response.place);
- 	 	 	// searchPlaceNav.close(true,user);
+ 	 	 	 login.refresh();
 		     main.close();
  	 	 }else{
- 	 	 	// searchPlaceNav.close(true,user);
 		     main.close();
  	 	 }
  	 },

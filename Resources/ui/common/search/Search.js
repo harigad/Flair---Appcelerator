@@ -31,7 +31,9 @@ exports.open = function(callBack){
 	setTimeout(function(){
     	_textField.focus();
   },200);
-	
+	Portal.loadPlaces(function(places){
+		draw_update(places);
+	},"init");
 };
 
 function _draw(){
@@ -54,7 +56,7 @@ function _draw(){
 	outer.add(_tableView);
 	
 	_tableView.addEventListener("click",function(e){
-		debugger;
+	
 		if(_callBack){
 			_callBack(e.row.place);
 			_callBack = null;
@@ -66,9 +68,7 @@ function _draw(){
 	});
 	
 	main.add(outer);
-	Portal.loadPlaces(function(places){
-		draw_update(places);
-	},"cafe and bar");
+
 
 	
 }

@@ -1,6 +1,7 @@
 var main;
 var nav;
-var _location = {};
+//var _location = {latitude:"32.891591",logitude:"-96.959144"};
+var _location  = {};
 var _places = [];
 var login = require('ui/common/Login');
 var _db = require('ui/common/data/DB');
@@ -14,16 +15,16 @@ exports.loadPlaces = function(callBack,query){
 };
 
 function _loadPlaces(callBack,query) {
-	debugger;
 		var  url="http://services.flair.me/search.php";
 		var _dataStr = {};
 		query = query.trim();
 		if(query.length > 6){
 			//do nothing;
-			debugger;
-		}else{
-			debugger;
-			callBack([_places]);return;
+			
+		}else if(_places.length > 5){
+			callBack(_places);return;
+		}else if(query == "init"){
+			query = "cafe and retail";
 		}
 		
 		_dataStr.type = "search";
@@ -34,6 +35,7 @@ function _loadPlaces(callBack,query) {
 			_dataStr.search = query;
 		}
 		_dataStr.accessToken=login.getAccessToken();
+			Ti.API.error("places data sent ..." + _dataStr.lat + ":" + _dataStr.lng);
 		var client = Ti.Network.createHTTPClient({
      	onload : function(e) {
      	Ti.API.info("places loaded ..." + this.responseText);
@@ -55,18 +57,23 @@ function _loadPlaces(callBack,query) {
 };
 
 function initLocation(){
-	Titanium.Geolocation.purpose = "Find nearby Places";
+	//Titanium.Geolocation.purpose = "Find nearby Places";
 	Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
 	Titanium.Geolocation.distanceFilter = 10;
 	
 	var my_location = Titanium.Geolocation.getCurrentPosition(function(e) {
 	    if (e.error) {
-            Ti.API.log('error: ' + JSON.stringify(e.error) );
+            Ti.API.error('location error: ' + JSON.stringify(e.error) );
             return;
         } 
         
  		var portal = require('ui/common/Portal');
- 		_location = e.coords;
+ 		if(e.coords){
+ 			_location = e.coords;
+ 		}
+ 		_loadPlaces(function(places){
+ 			//do nothing
+ 		},"cafe and retail");
  		
 		/*var current_longitude = e.coords.longitude;
 		var current_latitude = e.coords.latitude;
@@ -79,7 +86,10 @@ function initLocation(){
 	});
 		
 	Ti.Geolocation.addEventListener("location", function(e){
-		_location = e.coords;
+		  Ti.API.error('found location: ' + JSON.stringify(e) );
+		 if(e.coords){
+			_location = e.coords;
+		}
 	});	
 		
 };
@@ -144,7 +154,7 @@ function draw(){
 	_wall = Wall.init("nearby");
 	
 	nav = Titanium.UI.iOS.createNavigationWindow({
-   		window: _wall,width:320
+   		window: _wall,width:Ti.Platform.displayCaps.platformWidth
 	});
 
 	nav.open();

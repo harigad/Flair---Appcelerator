@@ -46,6 +46,13 @@ exports.getAccessToken = function(){
 	return _getAccessToken();
 };
 
+exports.refresh = function(){
+	loadUser(function(){
+		
+	});
+};
+
+
 function loadUser(_callBack){
 	Ti.API.debug("login.loadUser");
 	var User = require('ui/common/data/User');

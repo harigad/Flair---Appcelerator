@@ -23,9 +23,15 @@ function _hr(){
 	);
 }
 
-exports.init = function(id,name,photo_big,photo,_callBack){
-	
-	photo = photo || "images/flairs/100/1.png";
+exports.init = function(id,name,photo_big,photo,icon,_callBack){
+
+	if(icon && icon !== 0 && icon !== "0"){
+		//icon =icon;
+	}else{
+		icon = "1";
+	}
+
+	photo = photo || "images/flairs/100/" + icon + ".png";
 	photo_big = photo_big || "images/blur_cafe.jpg";
 	
 	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'#f1f1f1'});	

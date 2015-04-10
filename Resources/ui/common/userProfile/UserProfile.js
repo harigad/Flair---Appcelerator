@@ -2,7 +2,7 @@
 var profileView = require('ui/common/userProfile/UserProfileView');
 var portal = require('ui/common/Portal');
 
-exports.init = function(id,name,photo_big,photo){
+exports.init = function(id,name,photo_big,photo,icon){
 
 	var main = Titanium.UI.createWindow({
     	backgroundColor: '#40a3ff',
@@ -14,7 +14,7 @@ exports.init = function(id,name,photo_big,photo){
 	});
 	
 	var head = header(main);
-	main.add(profileView.init(id,name,photo_big,photo,function(e){
+	main.add(profileView.init(id,name,photo_big,photo,icon,function(e){
 		if(e){
 			head.setBackgroundColor("#40a3ff");
 		}else{

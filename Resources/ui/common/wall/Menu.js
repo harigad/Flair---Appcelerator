@@ -18,13 +18,22 @@ exports.init = function(){
 	_main.add(_view);
 	_draw();
 	_main.open();
+	
+	
+	Ti.App.addEventListener("userLoggedIn",function(){
+		_view.removeAllChildren();
+		_draw();
+	});
+	
+	
 };
 
 function _draw(){
 	var user = login.getUser();
 	_view.add(Ti.UI.createView({height:62}));
-	_view.add(item({icon:"images/checkin/white_btn.png",title:"my flairs",callBack:function(){
+	_view.add(item({approved:-1,icon:"images/menu_me_icon.png",title:"My flairs",callBack:function(){
 		login.init(function(){
+			user = login.getUser();
 			var win = require('ui/common/userProfile/UserProfile');
 			portal.open(win.init(user.getId(),user.getName(),user.getPhotoBig(),user.getPhoto()));
 		});
@@ -32,15 +41,23 @@ function _draw(){
 	_view.add(_hr());
 	var places = user.getPlaces();
 	for(var i=0;i< places.length; i++){
-		_view.add(item({icon:"images/checkin/white_btn.png",title:places[i].placename,callBack:function(placedata){
+		_view.add(item({approved:places[i].approved,icon:"images/menu_place_icon.png",title:places[i].name,callBack:function(placedata){
 			var placeView = require('ui/common/place/Place');
 		    portal.open(placeView.init(placedata));
 		},data:places[i]}));
 		_view.add(_hr());
 	}
-	_view.add(item({icon:"images/plus.png",title:"join a business",callBack:function(){
+	_view.add(item({approved:-1,icon:"images/menu_place_icon.png",title:"Join a business",callBack:function(){
 		searchBus();
 	}}));
+	//_view.add(_hr());
+	//_view.add(item({icon:"images/menu_feedback_icon.png",title:"Help us do a better job!",callBack:function(){
+		//feedbck();
+	//}}));
+}
+
+function feedback(){
+	
 }
 
 function searchBus(){
@@ -59,18 +76,42 @@ function item(data){
 	var main = Ti.UI.createView({layout:"horizontal",height:Ti.UI.SIZE,left:10,right:10});
 	//if(data.icon){
 		var icon = Ti.UI.createImageView({
-			image:data.icon,width:50,height:50,
-			right:10,borderRadius:25,
+			image:data.icon,width:40,height:40,
+			right:10,
 			top:10,bottom:10
 		});
 		main.add(icon);
 	//}
 	
+	    
+	    var v = Ti.UI.createView({layout:"vertical",width:Ti.UI.SIZE,height:Ti.UI.SIZE});
+	    
 		var title = Ti.UI.createLabel({
-			text:data.title,height:Ti.UI.SIZE,
-			color:"#fff"
+			text:data.title,height:Ti.UI.SIZE,left:0,
+			color:"#fff",font:{
+				fontSize:12
+			}
 		});
-		main.add(title);
+		v.add(title);
+		
+		if(data.approved ==1 || data.approved == "1"){
+			approved_txt = "(verified)";
+		}else{
+			approved_txt = "(verification pending)";
+		}		
+		
+		if(data.approved !== -1){
+			var app = Ti.UI.createLabel({
+				text:approved_txt,height:Ti.UI.SIZE,left:0,
+				color:"#fff",font:{
+					fontSize:10
+				}
+			});
+			v.add(app);
+		}
+		
+		main.add(v);
+		
 	
     	main.addEventListener("click",function(){
     		portal.toggleMenu(function(){

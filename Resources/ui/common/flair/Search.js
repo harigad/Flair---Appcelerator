@@ -56,10 +56,15 @@ function _draw(){
 	
 	_tableView.addEventListener("click",function(e){
 		var home = require('ui/common/home/Home');	
+		debugger;
+		if(e.row._data.ignore == true){
+			return;	
+		}
 		
 		home.init(function(icon){
 			login.init(function(){
 				Ti.API.info("->" + e.row._data.ignore);
+				debugger;
 				if(e.row._data.ignore !== true){
 					Ti.API.info("1");
 					confirm.init(e.row._data.name,_place.name);
@@ -148,12 +153,22 @@ function _update(){
    	 //},300);
 }
 
-function draw_update(txt){	
+function draw_update(txt){
+	
+	var user = login.getUser();
 	var rs = [];
 	txt = txt.trim();
 	txt = txt.toLowerCase();
 	var found = false;
 	for (var i=0;i<_place.cast.length;i++){
+		
+		if(_place.cast[i].approved !==1 && _place.cast[i].approved !== "1"){
+		  if(user.id !== _place.cast[i].uid){
+		   	continue;
+		  }else{
+		  	_place.cast[i].ignore = true;
+		  }
+		}
 		
 		if(txt.length > 0){
 			var lower = _place.cast[i].name.toLowerCase();
@@ -167,7 +182,8 @@ function draw_update(txt){
   	}
   	
   	if(rs.length === 0){
-  		var ignore = (txt.length > 3) ? false:true; 
+  		var ignore;
+  		ignore = (txt.length > 3) ? false:true; 
   		var name = txt.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) || "ex:John Smith";
   		var photo = "images/flairs/100/1.png";
   		
@@ -183,7 +199,10 @@ function createRow(data){
 			height:Ti.UI.SIZE,
 			_data:data
 		});
-		var v = Ti.UI.createView({top:15,bottom:15,left:20,height:Ti.UI.SIZE,layout:"horizontal"});
+		
+	
+		
+		var h = Ti.UI.createView({top:15,bottom:15,left:20,height:Ti.UI.SIZE,layout:"horizontal"});
 		
 		var user_photo = Titanium.UI.createImageView(
 		 {
@@ -193,8 +212,9 @@ function createRow(data){
 		  	borderRadius: 25,
 		 }
 		);
-		v.add(user_photo);
+		h.add(user_photo);
 		
+		var v = Ti.UI.createView({height:Ti.UI.SIZE,layout:"vertical",width:220});
 		var title = Ti.UI.createLabel({
 			text:data.name,height:Ti.UI.SIZE,
 			left:20,
@@ -204,7 +224,39 @@ function createRow(data){
 			}
 		});
 		v.add(title);
-		row.add(v);	
+		
+		if(data.role_id){
+			var role = Ti.UI.createLabel({
+     			left:0,width:Ti.UI.SIZE,
+				height:Ti.UI.SIZE,
+				color:"#aaa",left:20,
+				shadowColor: '#fff',
+    			shadowOffset: {x:1, y:1},
+    			shadowRadius: 3,
+  				text:data.role_id,
+  				font: {
+         			fontSize: 14
+    			}
+			});
+			v.add(role);
+		}
+		
+		if(data.uid && data.approved !== 1 && data.approved !== "1"){
+			var pend = Ti.UI.createLabel({
+     			left:0,width:Ti.UI.SIZE,
+				height:Ti.UI.SIZE,
+				color:"#990000",left:20,
+				text:"Verification Pending",
+  				font: {
+         			fontSize: 14
+    			}
+			});
+			v.add(pend);
+		}
+		
+		
+		h.add(v);
+		row.add(h);	
 		return row; 
 }
 

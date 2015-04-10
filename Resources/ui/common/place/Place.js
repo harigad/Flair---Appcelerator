@@ -13,7 +13,7 @@ var _place;
 
 var user = login.getUser();
 exports.init = function(data){
-	debugger;
+	
 	var main = Titanium.UI.createWindow({
     	backgroundColor: '#40a3ff',
     	navBarHidden:true ,barColor:'#40a3ff'	
@@ -27,7 +27,7 @@ exports.init = function(data){
 	main.add(header(main));
 	scrollView = Ti.UI.createScrollView({
   		width: Ti.UI.FILL,
-  		top:55,backgroundColor:"#f1f1f1"
+  		top:55,backgroundColor:"#fff"
 	});
 
 	view = Titanium.UI.createView(
@@ -41,7 +41,7 @@ exports.init = function(data){
  	var titleV = Titanium.UI.createView(
 		 {
 		 	top:0,backgroundColor:"#40a3ff",
-		 	height:Ti.UI.SIZE,
+		 	height:Ti.UI.SIZE,backgroundImage:"images/blue.png",
 		  	layout: 'vertical'
 		 }
 	);	
@@ -81,7 +81,7 @@ exports.init = function(data){
   		goToMap();
   	});
   	
-  	var btn = Ti.UI.createView({bubbleParent:false,borderWidth:5,borderColor:"#5bb0ff",borderRadius:50,width:100,height:100,bottom:30});
+  	var btn = Ti.UI.createView({opacity:0.6,backgroundColor:"#40a3ff",bubbleParent:false,borderWidth:5,borderColor:"#5bb0ff",borderRadius:50,width:100,height:100,bottom:30});
   	btn.add(Ti.UI.createView({width:75,height:75,backgroundImage:"images/glasses_100_100_white.png"}));
   	btn.addEventListener("click",function(){
   		launchFlair();
@@ -111,7 +111,7 @@ exports.init = function(data){
     });
     
     
-    titleV.add(menu);
+   // titleV.add(menu);
     
     
     var sub_title = Ti.UI.createView({layout:"horizontal",backgroundColor:"#777",height:Ti.UI.SIZE});

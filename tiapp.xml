@@ -18,7 +18,7 @@
     <sdk-version>3.5.0.GA</sdk-version>
     <id>me.flair</id>
     <name>Flair</name>
-    <version>2.2</version>
+    <version>2.3.4</version>
     <publisher>HGadiraju</publisher>
     <url>http://flair.me</url>
     <description>not specified</description>
@@ -60,4 +60,16 @@
         <module platform="iphone">facebook</module>
         <module platform="iphone">ti.map</module>
     </modules>
+    <ios>
+        <plist>
+            <dict>
+                <key>NSLocationAlwaysUsageDescription</key>
+                <string>
+                    For Displaying Nearby Businesses
+                </string>
+                <key>NSLocationWhenInUseUsageDescription</key>
+                <string>Test NSLocationWhenInUseUsageDescription</string>
+            </dict>
+        </plist>
+    </ios>
 </ti:app>

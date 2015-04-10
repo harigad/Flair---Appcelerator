@@ -8,9 +8,9 @@ exports.feedItem = function(_data, detailed, _showHR,profileType,profileId,delet
 	_deleteFunc = deleteFunc;
 	var bgColor;
 	if(_showHR % 2){
-		bgColor = "#f4f4f4";
+		bgColor = "#fff";
 	}else{
-		bgColor = "#eeeeee";
+		bgColor = "#fff";
 	}	
 	
 	return addShareView(_data,detailed,_showHR,_profileType,_profileId);
@@ -32,7 +32,7 @@ function _createThumb(_data,index,_profileType,_profileId){
 		 {
 		 	left:0,
 		  	width: 25,borderRadius:12.5,right:5,
-		  	height: 25,backgroundColor:"#f1f1f1",
+		  	height: 25,backgroundColor:"#fff",
 		  	backgroundImage:photo,
 		  	_gotoRecipient:true 	
 		  
@@ -59,13 +59,13 @@ function topRow(_data,_profileType,_profileId){
 		  	left:0,backgroundColor:'#ccc',
 		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
 		  	image:_data.photo,
-		  	borderRadius: 25,_gotoRecipient:true
+		  	borderRadius: 25,_gotoUser:true
 		 }
 	);
 	
 	top_line.add(user_photo);	
 	
-	var h = Ti.UI.createView({left:0,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
+	var h = Ti.UI.createView({_gotoUser:true,left:0,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
 	
 	var name_txt = Ti.UI.createLabel({
 		height:Ti.UI.SIZE,
@@ -76,7 +76,7 @@ function topRow(_data,_profileType,_profileId){
   		font: {
          fontSize: 14
     },
-    _gotoRecipient:true
+    _gotoUser:true
 	});
 	
 	var d;
@@ -93,9 +93,7 @@ function topRow(_data,_profileType,_profileId){
      		left:0,width:Ti.UI.SIZE,
 			height:Ti.UI.SIZE,
 			color:"#aaa",
-			shadowColor: '#fff',
-    		shadowOffset: {x:1, y:1},
-    		shadowRadius: 3,
+			
   			text:"flaired " + d,
   			font: {
          		fontSize: 11
@@ -112,7 +110,7 @@ function topRow(_data,_profileType,_profileId){
 	if(_data.icon && _data.icon !== 0 && _data.icon !== "0"){
 		var flair_icon =  Titanium.UI.createView(
 		 	{
-		 		left:0,
+		 		left:0,_gotoRecipient:true,
 		  		width: 25,borderRadius:12.5,right:5,
 		  		height: 25,backgroundColor:"#f1f1f1",
 		  		backgroundImage:"images/flairs/100/" + _data.icon + ".png"
@@ -121,13 +119,23 @@ function topRow(_data,_profileType,_profileId){
 		recp_layer.add(flair_icon);
 	}
 	
+	
+	var placeColor;
+	var recpColor;
+	if(_profileType == "place" && _profileId == _data.pid){
+		placeColor = "aaa";
+		recpColor =  "40a3ff";
+	}else{
+		recpColor = "aaa";
+		placeColor =  "40a3ff";
+	}
+	
+	
 	var recp_name = Ti.UI.createLabel({
      		left:0,width:Ti.UI.SIZE,
 			height:Ti.UI.SIZE,
-			color:"#aaa",
-			shadowColor: '#fff',
-    		shadowOffset: {x:1, y:1},
-    		shadowRadius: 3,
+			color:"#" + recpColor,
+			_gotoRecipient:true,
   			text:_data.recipientname,
   			font: {
          		fontSize: 24
@@ -140,24 +148,13 @@ recp_layer.add(recp_name);
 		left:0,
   		text:"@ " + _data.placename + ", " + _data.city,
   		wordWrap:false,
-  		color:'#40a3ff',
+  		color:'#' + placeColor,
   		font: {
          fontSize: 11
         }
     });
     
-    var city_txt = Ti.UI.createLabel({
-     		left:0,width:Ti.UI.SIZE,
-			height:Ti.UI.SIZE,
-			color:"#aaa",
-			shadowColor: '#fff',
-    		shadowOffset: {x:1, y:1},
-    		shadowRadius: 3,
-  			text:"in " + _data.city +", a month ago",
-  			font: {
-         		fontSize: 11
-    		}
-	});
+
     
 	var name_view = Ti.UI.createView({
 		width:240,top:0,left:10,
@@ -204,7 +201,7 @@ function _hr(){
 
 function addShareView(_data,detailed,_showHR,_profileType,_profileId){
 	var user = login.getUser();
-	var row = Ti.UI.createTableViewRow({backgroundColor:'#f1f1f1'});
+	var row = Ti.UI.createTableViewRow({backgroundColor:'#fff'});
 	var cContainer = Titanium.UI.createView(
 		 {
 		  	height:Ti.UI.SIZE,
@@ -219,18 +216,20 @@ function addShareView(_data,detailed,_showHR,_profileType,_profileId){
 	if(true){
 		cContainer.addEventListener('singletap',function(e){
 			var win;
-		    if((_profileType !=="user" && _profileId !== _data.uid ) && (e.source._gotoRecipient === true || (_profileType == "place" && _profileId == _data.pid))){
+		    if(e.source._gotoUser === true && (_profileType !=="user" && _profileId !== _data.uid)){ 
 		    				win = require('ui/common/userProfile/UserProfile');
 							var photo_big;
 							if(_data.photo_big){
 								photo_big = _data.photo_big;
 							}else{
-								photo_big = "images/flairs/300/" + _data.flair + ".png";
+								photo_big = "images/flairs/100/" + _data.icon + ".png";
 							}
 							portal.open(win.init(_data.uid,_data.name,_data.photo_big,_data.photo));	
+			}else if(e.source._gotoRecipient === true && (_profileType == "place")){
+						    win = require('ui/common/userProfile/UserProfile');
+							portal.open(win.init(_data.recipient,_data.recipientname,_data.recipient_photo_big,_data.recipient_photo,_data.icon));	
 			}else{
-					    
-				  		  var placeView = require('ui/common/place/Place');
+					      var placeView = require('ui/common/place/Place');
 		                  portal.open(placeView.init({vicinity:_data.vicinity,lat:_data.lat,lng:_data.lng,pid:_data.pid,name:_data.placename,launchRecepient:_data.recipient,launchEName:_data.recepientname}));
 			}
 		});

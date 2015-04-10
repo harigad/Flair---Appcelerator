@@ -13,7 +13,7 @@ function FeedView(feed_data,_tableView,loadMoreCallBack,scroll,disableMoreBtn,_p
 		if(!_tableView){
 			_tableView = Titanium.UI.createTableView(
 				{
-		  			backgroundColor:'#f1f1f1',
+		  			backgroundColor:'#fff',
 		  			top:0,height:Ti.UI.SIZE,scrollable:false,
 		  			separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE
 		  			

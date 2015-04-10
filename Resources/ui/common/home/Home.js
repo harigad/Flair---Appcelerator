@@ -24,6 +24,7 @@ Ti.API.debug("home init");
 		navBarHidden: true,
     	borderWidth:0,
     	backgroundColor:"#40a3ff",
+    	backgroundImage:"images/blue.png",
     	fullScreen: true
 	});	
 
@@ -46,7 +47,7 @@ Ti.API.debug("home init");
 	
 	var lbl = Ti.UI.createLabel({
 		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:0,opacity:0.5,
+		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:0,opacity:0.6,
 		 font: { fontSize:16 },
 		text: 'Pick a Flair for'
 	});
@@ -55,8 +56,8 @@ Ti.API.debug("home init");
 	
 	var lbl_name = Ti.UI.createLabel({
 		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-		width:Ti.UI.FILL,height: Ti.UI.SIZE,bottom:10,opacity:0.5,
-		font: { fontSize:26 },
+		width:Ti.UI.FILL,height: Ti.UI.SIZE,bottom:10,opacity:0.6,
+		font: { fontSize:16 },
 		text: person_name
 	});
 	header.add(lbl_name);
@@ -114,7 +115,7 @@ Ti.API.debug("home init");
 var skip_lbl = Ti.UI.createLabel({
 		color: '#fff',textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
 		width:Ti.UI.FILL,height: Ti.UI.SIZE,top:10,
-		font: { fontSize:26 },
+		font: { fontSize:16 },
 		text: "skip"
 	});
 	
