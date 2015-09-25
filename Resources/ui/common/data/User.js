@@ -5,7 +5,7 @@ var login = require('ui/common/Login');
 function User(id,_callBack,_data){
 	Ti.API.debug("User.init " + id);
 	this.id = id;
-	
+	this._data = {};
 	if(_data){
 		var that = this;
 		this._data = _data;		
@@ -20,12 +20,16 @@ function User(id,_callBack,_data){
 	return this;
 }
 
+User.prototype.ambassador = function(){
+	return this._data.ambassador;
+};
+
 User.prototype.load = function(_callBack){
 	Ti.API.debug("User.load " + this.id);
 	var that = this;
 		
 	var url = "http://services.flair.me/search.php";	
-	var _data = {type:"user",id:this.id,accessToken:login.getAccessToken()};
+	var _data = {type:"user",id:this.id,accessToken:login.getAccessToken(),push_token:Ti.App.Properties.getString('push_token')};
 	
 	Ti.API.debug("User.load sending data -> " + this.id);
 	debugger;
@@ -96,6 +100,14 @@ User.prototype.getRole = function(){
 	}
 };
 
+User.prototype.getAbout = function(){
+	return this._data.about;
+};
+
+User.prototype.setAbout = function(about){
+	this._data.about = about;
+};
+
 
 User.prototype.setData = function(data){
 	this._data = data;
@@ -141,14 +153,19 @@ User.prototype.isAdmin = function(){
    }
 };
 
-User.prototype.loadFriends = function(){
+	User.prototype.loadFriends = function(callBack){
 	var that = this;
+	if(that.friends.length > 0){
+		callBack(that.friends);
+	}
+	
 	Ti.Facebook.requestWithGraphPath('me/friends', {fields: 'first_name,last_name,id,photo'}, 'GET', function(e) {
     	if(e.success){
     		Ti.API.debug('friends loaded');
         	var d = JSON.parse(e.result);
         	var rows = d.data;
         	that.friends = rows;
+        	callBack(rows);
     	}
 	});	
 	

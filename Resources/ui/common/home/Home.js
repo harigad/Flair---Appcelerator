@@ -2,7 +2,7 @@ var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
 var wall = require('ui/common/wall/Wall');
 var newHires = require('ui/common/wall/NewHires');
-var flairWin = require('ui/common/flair/Flair');
+
 var profile = require('ui/common/userProfile/UserProfile');
 var activeThumb;
 var _callBack;
@@ -71,34 +71,7 @@ Ti.API.debug("home init");
   	// = wall.init("nearby"); 
   	//var profileWin = 
   	
-	var nearby = _createThumb({"id":"nearby","photo":""},'#fff');
-		nearby.addEventListener('singletap',function(e){
-			if(!nearbyWin){
-				nearbyWin = newHires.init(); 
-			}
-			portal.open(nearbyWin);
-		});
-		
-	var friends = _createThumb({"id":"friends","photo":""},'#eee');
-		friends.addEventListener('singletap',function(e){
-			if(!friendsWin){
-				friendsWin = wall.init("nearby"); 
-			}
-			portal.open(friendsWin);
-		});
-		 			
-	var me = _createThumb({"id":"me","photo":""},'#fff');
-		me.addEventListener('singletap',function(e){
-			//if(!userWin){
-				userWin = profile.init(user.getId(),user.getName(),user.getPhotoBig());
-			//}
-			portal.open(userWin);
-		});
-		
-	//homeMenu.add(nearby);
-	//homeMenu.add(friends);
-	//homeMenu.add(me);
-
+	
 //Print Icons
 	
 	homeMenu.add(_createFlairThumb({"id":1,"photo":""},'#f1f1f1'));

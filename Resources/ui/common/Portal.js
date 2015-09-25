@@ -18,7 +18,7 @@ function _loadPlaces(callBack,query) {
 		var  url="http://services.flair.me/search.php";
 		var _dataStr = {};
 		query = query.trim();
-		if(query.length > 6){
+		if(query.length > 3){
 			//do nothing;
 			
 		}else if(_places.length > 5){
@@ -29,7 +29,7 @@ function _loadPlaces(callBack,query) {
 		
 		_dataStr.type = "search";
 		_dataStr.searchMode = "place";
-		_dataStr.lat = _location.latitude;
+		if(_location.latitude){		_dataStr.lat = _location.latitude; }
 		_dataStr.lng = _location.longitude;
 		if(query){
 			_dataStr.search = query;
@@ -73,7 +73,7 @@ function initLocation(){
  		}
  		_loadPlaces(function(places){
  			//do nothing
- 		},"cafe and retail");
+ 		},"cafe");
  		
 		/*var current_longitude = e.coords.longitude;
 		var current_latitude = e.coords.latitude;

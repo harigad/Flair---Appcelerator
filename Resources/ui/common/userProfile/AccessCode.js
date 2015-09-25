@@ -129,6 +129,8 @@ function _build(_place){
 	
 	_save_btn.addEventListener('singletap',function(){
 		login.init(function(){
+			_save_txt.setText("please wait...");
+			_delete_txt.setText("");
 			_loadCode(_place);
 		});
 	});

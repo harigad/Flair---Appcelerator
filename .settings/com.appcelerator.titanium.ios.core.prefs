@@ -1,8 +1,11 @@
 eclipse.preferences.version=1
 iosLaunchConfigurationAttributes/ATTR_MINIFY=true
 iosLaunchConfigurationAttributes/ATTR_PROJECT_NAME=Flair---Appcelerator
+iosLaunchConfigurationAttributes/ATTR_UPLOAD_DEBUG_SYMBOLS=false
 iosLaunchConfigurationAttributes/appid=me.flair
-iosLaunchConfigurationAttributes/certificate=Hari  Gadiraju (7KWCVMJ5X6)
-iosLaunchConfigurationAttributes/keychain=/Library/Keychains/System.keychain
-iosLaunchConfigurationAttributes/sdk_version=7.1
-iosLaunchConfigurationAttributes/uuid=100B166E-4FAC-4C2F-A4F3-3D2911BF4E6E
+iosLaunchConfigurationAttributes/certificate=Hari  Gadiraju (2V8VB59376)
+iosLaunchConfigurationAttributes/distribute_path=/Users/harigadiraju/Desktop
+iosLaunchConfigurationAttributes/keychain=/Users/harigadiraju/Library/Keychains/login.keychain
+iosLaunchConfigurationAttributes/output_format=ipa
+iosLaunchConfigurationAttributes/sdk_version=8.4
+iosLaunchConfigurationAttributes/uuid=d0281b34-62b7-470a-9b6d-1243fd52837e

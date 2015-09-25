@@ -15,10 +15,10 @@
         <target device="android">false</target>
         <target device="blackberry">false</target>
     </deployment-targets>
-    <sdk-version>3.5.0.GA</sdk-version>
+    <sdk-version>4.0.0.Beta2</sdk-version>
     <id>me.flair</id>
     <name>Flair</name>
-    <version>2.3.4</version>
+    <version>2.4.2</version>
     <publisher>HGadiraju</publisher>
     <url>http://flair.me</url>
     <description>not specified</description>
@@ -31,7 +31,7 @@
     <fullscreen>false</fullscreen>
     <navbar-hidden>false</navbar-hidden>
     <analytics>true</analytics>
-    <guid>25b8bd5f-fad5-4336-9119-e4bbf0ed080b</guid>
+    <guid>6bb00034-88bd-446b-9ddd-93f9a5400f28</guid>
     <property name="ti.ui.defaultunit">system</property>
     <iphone>
         <orientations device="iphone">
@@ -70,6 +70,28 @@
                 <key>NSLocationWhenInUseUsageDescription</key>
                 <string>Test NSLocationWhenInUseUsageDescription</string>
             </dict>
+            <dict>
+                <key>CFBundleURLTypes</key>
+                <array>
+                    <dict>
+                        <key>CFBundleURLName</key>
+                        <!-- Application ID same as the id value in the tiapp.xml file -->
+                        <string>me.flair</string>
+                        <key>CFBundleURLSchemes</key>
+                        <array>
+                            <!-- Prefix the Facebook App ID with 'fb' -->
+                            <string>fb201613399910723</string>
+                        </array>
+                    </dict>
+                </array>
+                <key>FacebookAppID</key>
+                <!-- Facebook App ID -->
+                <string>201613399910723</string>
+                <key>FacebookDisplayName</key>
+                <!-- Facebook App Name from developer.facebook.com -->
+                <string>Flair</string>
+            </dict>
         </plist>
     </ios>
+    <property name="appc-app-id" type="string">55cb85c0578c88713e784b9d</property>
 </ti:app>

@@ -22,7 +22,7 @@ function _hr(){
 		 }
 	);
 }
-
+var _aboutLabel;
 exports.init = function(id,name,photo_big,photo,icon,_callBack){
 
 	if(icon && icon !== 0 && icon !== "0"){
@@ -31,15 +31,16 @@ exports.init = function(id,name,photo_big,photo,icon,_callBack){
 		icon = "1";
 	}
 
+
 	photo = photo || "images/flairs/100/" + icon + ".png";
-	photo_big = photo_big || "images/blur_cafe.jpg";
 	
-	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'#f1f1f1'});	
+	
+	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'transparent'});	
 	main.userId = id;
 	main.userName = name;
 	
 	main.addEventListener("scroll",function(e){
-		if(e.contentOffset.y > _imageHeight){
+		if(e.contentOffset.y > (_imageHeight - 60)){
 		  _callBack(true);	
 		}else{
 		  _callBack(false);
@@ -67,7 +68,7 @@ exports.init = function(id,name,photo_big,photo,icon,_callBack){
 	upperView.add(photoViewOuter);
 	
 	var title = Ti.UI.createLabel({
-  		top:5,bottom:10,textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
+  		top:5,bottom:0,textAlign:Ti.UI.TEXT_ALIGNMENT_CENTER,
     	width:Ti.UI.SIZE,
   		height:Ti.UI.SIZE,
   		text: name,
@@ -77,10 +78,20 @@ exports.init = function(id,name,photo_big,photo,icon,_callBack){
     	color: '#fff'
   		});
   	upperView.add(title);
+  	
+  	
+	_aboutLabel = Ti.UI.createLabel({
+		height:Ti.UI.SIZE,left:20,right:20,text:"",
+		color:"#fff",textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
+				font:{
+				fontSize:14
+			}
+	});
+	upperView.add(_aboutLabel);
 	
 	
-	var rowOne = Ti.UI.createTableViewRow({backgroundColor:'#999',height:Ti.UI.SIZE});
-	var photo_big = Ti.UI.createImageView({opacity:0.25,image:photo_big,width:Ti.UI.FILL});
+	var rowOne = Ti.UI.createTableViewRow({height:Ti.UI.SIZE});
+	var photo_big = Ti.UI.createImageView({opacity:0,image:photo_big,width:Ti.UI.FILL});
 	
 	
 	var adjust_header_color = function(e){
@@ -159,7 +170,7 @@ function loadUser(id){
          		//do nothing
          	},response);
          	main.user = user;
-         	printDetails();
+         	printDetails(response);
  	 	 }	
  	 },
  	 onerror: function(e){
@@ -180,16 +191,63 @@ function clearView(){
 exports.refresh = function(_user){
 	Ti.API.debug("in refresh " + _user.getPlace());
 	user = _user;
-	printDetails(true);
+	printDetails();
 };
 
-function printDetails(){
+function printDetails(userData){
 	//return;
 	//clearView();
 	//view.remove(click_to_refresh);
+
+var aboutRow = Ti.UI.createTableViewRow({selectedBackgroundColor:"#333",height:Ti.UI.SIZE});
+var aboutRowInner = Ti.UI.createView({layout:"vertical",height:Ti.UI.SIZE});
+aboutRow.add(aboutRowInner);
+
+var about = userData.about;
+if(about){
+_aboutLabel.setText(about);
+}
+
+var places = userData.places || [];
+
+for(var i=0;i<places.length;i++){
+	if(places[i].approved){
+	var placesView = Ti.UI.createView({place:places[i],backgroundColor:"#333",top:0.5,layout:"horizontal",height:Ti.UI.SIZE,left:0,right:0});
+	var leftLabel = Ti.UI.createLabel({place:places[i],
+		text: places[i].role || "Teammate",top:10,bottom:10,left:20,right:5,
+		height:20,color:"#fff",
+		width:Ti.UI.SIZE,font:{
+			fontSize:14
+		}
+	});
+	var rightLabel = Ti.UI.createLabel({place:places[i],
+		text:"@" + places[i].name,top:10,bottom:10,left:0,
+		height:20,color:"#ff004e",
+		width:Ti.UI.SIZE,font:{
+			fontSize:14
+		}
+	});
+	placesView.add(leftLabel);placesView.add(rightLabel);
+	
+	placesView.addEventListener("click",function(e){
+		   var placeView = require('ui/common/place/Place');
+		   portal.open(placeView.init(e.source.place));
+	});
+	
+	aboutRowInner.add(placesView);
+	}
+}
+
+
+
+if(places.length > 0){
+	main.appendRow(aboutRow);
+}
+	
 	Ti.API.debug("UserProfile.printDetails");	
 	var FeedView = require('ui/common/feed/FeedView');
-	var feed = new FeedView(user.feed(),main,null,true,"user",user.getId());
+	var feed = new FeedView(user.feed(),main,{'uid':userData.id},"user",user.getId());
+
 }
 
 function userHasNotClaimed(){

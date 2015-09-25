@@ -1,115 +1,103 @@
 var portal = require('ui/common/Portal');
-var like_pofile = require('ui/common/feed/LikeProfile');
+var login = require('ui/common/Login');
+var win = require('ui/common/userProfile/UserProfile');
 
-function print_like(_data,c,_flair){
-	if(_data.type == 1){
-		c.add(print_individual_like(_data,1,_flair));
-	}if(_data.type == 2){
-		c.add(print_individual_like(_data,2,_flair));
-	}else if(_data.type == 3){
-		c.add(print_individual_like(_data,3,_flair));
-	}else if(_data.type == 4){
-		c.add(print_individual_like(_data,1,_flair));
-		c.add(print_individual_like(_data,2,_flair));
-	}else if(_data.type == 5){
-		c.add(print_individual_like(_data,1,_flair));
-		c.add(print_individual_like(_data,3,_flair));
-	}else if(_data.type == 6){
-		c.add(print_individual_like(_data,2,_flair));
-		c.add(print_individual_like(_data,3,_flair));
-	}else if(_data.type == 7){
-		c.add(print_individual_like(_data,1,_flair));
-		c.add(print_individual_like(_data,2,_flair));
-		c.add(print_individual_like(_data,3,_flair));
-	}
-	
-	return c;
-}
+exports.init = function(data,color){
+	return draw(data,color);
+};
 
-
-function print_individual_like(likeObj,_type,_flair){
-   	var photo = likeObj.photo;
-				
-				var like_container = Titanium.UI.createView({
-					width:35,
-					height:35,
-					backgroundImage:'images/feed/like_thumb_' + _type + '.png',
-					top:0,
-					bubbleParent: false				
-				});			
-				
-				var like_user = Ti.UI.createImageView({
-  					image: photo,
-  					width:23,
-  					height:23,borderRadius:2,
-  					top:6,bottom:6
-  				});
-  				
-  				like_container.add(like_user);
-  				
-  				like_container.addEventListener('singletap',function(e){
-  						var win = require('ui/common/feed/ShowLikes');
-			            portal.open(win.init(_flair));	
-  				});
-  				
-   				return like_container;
-}
-
-exports.init = function(_data){
-	var likeView = Titanium.UI.createView({
-		layout:'horizontal',
-		width:Ti.UI.FILL,
-		height:Ti.UI.SIZE,
-		left:0,
-		top:0
-	});
-	
-	_render(_data,likeView);
-	return likeView;
-}
-
-
-function clearView(thisView){
-	var len = thisView.children.length;
-	while(thisView.children.length>0){
-		thisView.remove(thisView.children[0]);
-	}
-}
-
-function _render(_data,likeView){	
-	clearView(likeView);
-	var likeImageStr;
-	
-	if(_data.isLiked && _data.isLiked !== 0 && _data.isLiked !== "0"){
-		likeImageStr = 'images/feed/liked.png';
+function draw(data,color,v){
+	data.likes = data.likes || [];
+	if(v){
+		v.removeAllChildren();
+		
 	}else{
-		likeImageStr = 'images/feed/like_blue.png';
+	 v = Ti.UI.createView({
+		layout:'horizontal',
+		height:Ti.UI.SIZE
+	});
+		
 	}
-	var like_btn = Ti.UI.createImageView({
-  			image: likeImageStr,
-  			left:0,right:0,top:5,bottom:5,
-   			width:35,bubbleParent:false
-	});
-	like_btn.addEventListener('singletap',function(){
-				like_pofile.init(_data,likeView,_render);
-	});
-	likeView.add(like_btn);	
-
-if(_data.likes){
-	if(_data.likes.length>0){
-		var like_len = 7;
-		if(_data.likes.length<7){
-			likes_len = _data.likes.length;
-		}
-		for(var j=0;j<likes_len;j++){
-			var likeObj = _data.likes[j];
-			if(likeObj && likeObj.type){
-				print_like(likeObj,likeView,_data);	
-  			}
-		}
-	}	
-}	
 	
-return likeView;
+	var like_photo = Titanium.UI.createImageView(
+		 {
+		  	width:'25',height: '25',backgroundColor:(data.isLiked ? color : "#999"),
+		  	image:"images/like_gray.png",right:5,opacity:0.3,bubbleParent:false
+		 }
+	);
+	like_photo.addEventListener("click",function(){
+		login.init(function(){
+			toggle(data,color,v);
+		});
+	});
+	
+	v.add(like_photo);
+
+	for(var i=0;i<data.likes.length;i++){
+		var p = Ti.UI.createImageView({
+			width:25,height:25,borderRadius:12.5,right:5,borderWidth:3,borderColor:"#eee",
+			image:data.likes[i].photo,
+			user:data.likes[i],
+			bubbleParent:false
+		});	
+		
+		p.addEventListener("click",function(e){
+			portal.open(win.init(e.source.user.uid,e.source.user.name,e.source.user.photo_big,e.source.user.photo));	
+		});
+		v.add(p);
+	}
+	
+	return v;
+};
+
+
+function toggle(data,color,v){
+	var user = login.getUser();
+	if(data.isLiked){
+		data.isLiked = false;
+		
+		for(var i=0;i<data.likes.length;i++){
+			if(data.likes[i].uid === user.getId()){
+				data.likes.splice(i, 1);
+			}
+		}
+		
+		
+		update(data);	
+	}else{
+		data.isLiked = true;
+		
+		data.likes.unshift({
+			uid:user.getId(),
+			name: user.getName(),
+			fid:data.fid,
+			photo:user.getPhoto(),
+			photo_big:user.getPhotoBig()
+		});
+		
+		update(data);
+	}
+	
+	draw(data,color,v);
 	
 }
+
+
+function update(data){
+var url = "http://services.flair.me/search.php";	
+	var _data = {type:"like_a_flair",fid:data.fid,accessToken:login.getAccessToken()};
+ 	 	
+ 	var client = Ti.Network.createHTTPClient({ 		
+ 	 onload : function(e) {
+ 	 	Ti.API.info(this.responseText);
+ 	 	//do nothing
+ 	 },
+ 	 onerror: function(e){
+ 		 	//do nothing
+ 	 }
+ 	});
+ 	// Prepare the connection.
+ 		client.open("POST", url);
+ 	// Send the request.
+ 		client.send(_data);
+}	

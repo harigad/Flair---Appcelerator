@@ -8,7 +8,14 @@ var _place;
 var _callBack;
 var _textField,_textFieldLabl;
 var _places;
-
+var _colors = [
+"ff004e",
+"008aff",
+"ff2a00",
+"33c500",
+"ff5a00",
+"ffb400"
+];
 var serverSearchTimout;
 var pleaseWaitTimeout;
 
@@ -23,7 +30,7 @@ exports.open = function(place,callBack){
 	
 	main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#eee',barColor:"#fff"
+    	backgroundColor:'#fff',barColor:"#fff"
 	});
 	
 	_draw();
@@ -34,6 +41,9 @@ exports.open = function(place,callBack){
   },200);
 	
 };
+
+var personName;
+var tabMenu;
 
 function _draw(){
 	var outer =  Titanium.UI.createView(
@@ -47,39 +57,108 @@ function _draw(){
 	);
 	
 	outer.add(_top());
+	 
+	tabMenu = Ti.UI.createView({
+		height:30, backgroundColor:"#fff"
+	});
+	var bb1 = Titanium.UI.iOS.createTabbedBar({
+    	labels:['Flair an Employee', 'Flair a Friend'],
+    	backgroundColor:'#aaa',borderColor:"#aaa",
+    	top:-3,borderWidth:0,left:-3,index:0,
+    	height:36,borderRadius:0.1,
+   	    width:Ti.Platform.displayCaps.platformWidth + 6
+	});
+
+	bb1.addEventListener('click',function(e){
+		if(index==0){
+			_textFieldLabl.setText("type employee's name");
+		}else{
+			_textFieldLabl.setText("type friend's name");
+		}
+	});
+
+
+	tabMenu.add(bb1);
+	//outer.add(tabMenu);
 	
 	_tableView = Ti.UI.createTableView({
   	 	    height:'auto',left:0,
-  	 		top:0,backgroundColor:'#eee'
+  	 		top:0,backgroundColor:'#fff'
 	});
 	outer.add(_tableView);
 	
 	_tableView.addEventListener("click",function(e){
-		var home = require('ui/common/home/Home');	
-		debugger;
 		if(e.row._data.ignore == true){
 			return;	
 		}
 		
-		home.init(function(icon){
-			login.init(function(){
-				Ti.API.info("->" + e.row._data.ignore);
-				debugger;
-				if(e.row._data.ignore !== true){
-					Ti.API.info("1");
-					confirm.init(e.row._data.name,_place.name);
-					Ti.API.info("2");
-			  		_callBack(e.row._data,icon);
+		if(personName){
+			if(validateEmail(e.row._data.name)){
+				
+				confirm.init(null,_place.name,function(h){
+					login.init(function(){
+						_callBack(e.row._data,h);
+			  			personName = null;
+			  			main.close();
+					});
+				});return;
+			}else{
+				//
+			}
+			
+		}else if(e.row._data.ignore !== true){
+		 personName = e.row._data;
+		_textField.setText("");
+		_textField.setValue("");
+
+			if(e.row._data.uid || e.row._data.id){
+			confirm.init(personName.name,_place.name,function(h){
+				
+				login.init(function(){
+					_callBack(personName,h);
 			  		Ti.API.info("3");
+			  		personName = null;
 			  		main.close();
-			 }
-			});
-			},e.row._data.name);
+				});
+				
+			});return;
+			}
+
+
+		_textFieldLabl.setValue("ex: john@johnscafe.com");
+		_update();
+		if(_textField.getValue() !==""){
+			_textFieldLabl.hide();
+		}else{
+			_textFieldLabl.show();
+		}
+		
+		
+		var anim = Titanium.UI.createAnimation();
+		anim.height = 0;
+		anim.duration = 3000;
+   	 		tabMenu.animate(anim);
+		
+		
+		
+		}
 			
 	});
 	
 	main.add(outer);
-	draw_update("");
+	if(_place.cast.length>0){
+		draw_update("");
+	}else{
+		personName = "add new";
+		draw_hashtags("");
+	}
+	
+	
+}
+
+function validateEmail(email) {
+    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+    return re.test(email);
 }
 
 function _top(){	
@@ -89,7 +168,7 @@ function _top(){
 		  	top:0,
 		  	width:Ti.UI.FILL,
 		  	height:Ti.UI.SIZE,
-		  	layout: 'vertical',backgroundColor:'#40a3ff'
+		  	layout: 'vertical',backgroundColor:'#ccc'
 		 }
 	);	
 		
@@ -105,7 +184,9 @@ function _top(){
 	var _header = header();
 	
 	_textField.addEventListener("change",function(e){
+		
 		   _update();
+		
 		if(e.value !==""){
 			_textFieldLabl.hide();
 		}else{
@@ -149,7 +230,13 @@ function _update(){
 	var txt = _textField.getValue();
 	
    	 //pleaseWaitTimeout = setTimeout(function(){
-   	 	draw_update(txt);
+   	 	
+   	 	if(personName){
+   	 	
+		    draw_hashtags(txt);
+		}else{
+   	 		draw_update(txt);
+   	 	}
    	 //},300);
 }
 
@@ -178,51 +265,73 @@ function draw_update(txt){
 		}
 		
 		
-		rs.push(createRow(_place.cast[i]));
+		rs.push(createRow(_place.cast[i],_colors[i%6]));
   	}
   	
-  	if(rs.length === 0){
+  	if(!_place.hasAdmin || _place.admin){
   		var ignore;
   		ignore = (txt.length > 3) ? false:true; 
   		var name = txt.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) || "ex:John Smith";
-  		var photo = "images/flairs/100/1.png";
+  		var photo = "images/plus.png";
   		
-  		rs.push(createRow({name:name,photo:photo,ignore:ignore}));
+  		rs.push(createRow({name:"add new",photo:photo,ignore:false},_colors[rs.length%6]));
   	}
   	
 	_updateTable(rs);
 
 }
 
-function createRow(data){
+function draw_hashtags(txt){
+	var rs = [];
+	txt = txt.trim();
+	
+	if(!txt){
+		rs.push(createRow({name:"type in employee's email address'",photo:"",ignore:true,skip:true},"999"));
+	}else{
+		rs.push(createRow({name:txt,photo:"",ignore:false},"333"));
+	}
+	
+	_updateTable(rs);
+}
+
+function createRow(data,color){
 	 var row = Ti.UI.createTableViewRow({
 			height:Ti.UI.SIZE,
 			_data:data
 		});
 		
-	
-		
 		var h = Ti.UI.createView({top:15,bottom:15,left:20,height:Ti.UI.SIZE,layout:"horizontal"});
+		if(!personName){
+			var user_photo = Titanium.UI.createImageView(
+		 	{
+		  		left:0,backgroundColor:'#ccc',
+		  		width:'50',height: '50',borderWidth:3,borderColor:"#eee",
+		  		image:data.photo || "images/flairs/100/1.png",
+		  		borderRadius: 25,
+		 	}
+			);
+			h.add(user_photo);
+		}
 		
-		var user_photo = Titanium.UI.createImageView(
-		 {
-		  	left:0,backgroundColor:'#ccc',
-		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  	image:data.photo || "images/flairs/100/1.png",
-		  	borderRadius: 25,
-		 }
-		);
-		h.add(user_photo);
+		var w = 220;
+		if(personName){
+			w = 280;
+		}
 		
-		var v = Ti.UI.createView({height:Ti.UI.SIZE,layout:"vertical",width:220});
+		var v = Ti.UI.createView({height:Ti.UI.SIZE,layout:"vertical",width:w});
 		var title = Ti.UI.createLabel({
 			text:data.name,height:Ti.UI.SIZE,
 			left:20,
-			color:"#40a3ff",
+			color:"#" + color,
 			font:{
 				fontSize:24
 			}
 		});
+		
+		if(color){
+			title.setColor("#" + color);
+		}
+		
 		v.add(title);
 		
 		if(data.role_id){
@@ -246,7 +355,7 @@ function createRow(data){
      			left:0,width:Ti.UI.SIZE,
 				height:Ti.UI.SIZE,
 				color:"#990000",left:20,
-				text:"Verification Pending",
+				text:"Approval Pending",
   				font: {
          			fontSize: 14
     			}
@@ -284,7 +393,7 @@ function clear(_view){
 			_view.remove(c);
 	}
 }
-
+var cancel_lbl;
 function header(){	
 	var reload_btn = Ti.UI.createView({left:20,right:20,borderRadius:4,height:40,top:15,bottom:10});
 	_textFieldLabl = Ti.UI.createTextField({opacity:0.6,value:"type employee's name",color:"#fff",left:20,width:200,height:30});
@@ -293,14 +402,15 @@ function header(){
 	reload_btn.add(_textFieldLabl);
 	reload_btn.add(_textField);
 	var cancel_btn = Ti.UI.createView({right:0,visible:true,bubbleParent:false,height:30,width:50});
-	var cancel_lbl = Ti.UI.createLabel({text:"cancel",color:"#fff",font: {
+	cancel_lbl = Ti.UI.createLabel({text:"cancel",color:"#fff",font: {
          fontSize: 14
     	},});
 	cancel_btn.add(cancel_lbl);
 	reload_btn.add(cancel_btn);
 	
 	cancel_btn.addEventListener("singletap",function(e){
-		main.close();
+			personName = null;
+			main.close();
 	});
 	
 	return reload_btn;

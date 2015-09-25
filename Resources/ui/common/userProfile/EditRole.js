@@ -1,194 +1,177 @@
 var login = require('ui/common/Login');
 var user = login.getUser();
-var selectedRoleView;
-exports.init = function(){
-	var main = Titanium.UI.createWindow({
-    	title: "Role",    	
-    	barColor:'#333',
-    	backgroundColor: '#eee'	
-	});
-	
-	main.addEventListener('close',function(e){
-		Ti.API.debug("Window Closed");
-	});
-	
-	var scrollView = Ti.UI.createScrollView({
-  		contentWidth: 'auto',
-  		contentHeight: 'auto',
-  		showVerticalScrollIndicator: false,
-  		showHorizontalScrollIndicator: false,
-  		width: 320,
-  		top:0
-	});
-	
-	var roles_view = Titanium.UI.createView(
-		 {
-		  	width: '100%',
-		  	height: 'auto',
-		  	top:5,
-		  	layout: 'vertical'
-		});	
-	
-	roles_view.add(_createRole({_role_title:"Super Hero",_role_id:"Super Hero"},true));
-	roles_view.add(_createRole({_role_title:"Villain",_role_id:"Villain"},true));
-	roles_view.add(_createRole({_role_title:"Comedian",_role_id:"Comedian"},true));
-	roles_view.add(_createRole({_role_title:"Director",_role_id:"Director/CEO"},false));
-	roles_view.add(_createRole({_role_title:"Producer",_role_id:"Producer"},false));
-	roles_view.add(_createRole({_role_title:"Advisory Board",_role_id:"Advisory Board"},false));
-	
-	var delete_btn = Titanium.UI.createView(
-		 {
-		  	width: 'auto',
-		  	height: 'auto',
-		  	top:5,bottom:10,
-		  	layout: 'horizontal',
-		  	borderRadius:4,
-		  	backgroundColor:'#770000'
-		 }
-	);
-	
-	var delete_txt = Ti.UI.createLabel({
-		top:15,
-		bottom:15,
-  		width:280,
-  		left:10,
-  		right:10,
-  		color: '#fff',
-  		textAlign: Ti.UI.TEXT_ALIGNMENT_CENTER,
-  		text: "Quit " + user.getPlace().name,
-  			font: {
-         		fontSize: 18
-    		}
-  	});
-  	
-  	delete_btn.add(delete_txt);
-  	roles_view.add(delete_btn);	
-	
-	scrollView.add(roles_view);
-	main.add(scrollView);
-	return main;
-}
+var _textField;
+var main;
+var _rid;
 
-function _createRole(_data,_showHR){
-	var _role_title = Ti.UI.createLabel({
-  		left:0,
-  		width:'auto',
-  		color: '#40a3ff',
-  		shadowColor: '#aaa',
-  		shadowOffset: {x:1, y:1},
-  		text: _data._role_title,
-  			font: {
-         		fontSize: 25
-    		}
-  	}); 
-  	
-  	var role_view = Titanium.UI.createView(
+var _callBack;
+
+exports.init = function(rid,titleTxt,callBack) {	
+	_rid = rid,_callBack = callBack;
+	
+	main = Ti.UI.createWindow({			
+    	navBarHidden:true,
+    	backgroundColor:'#eee',barColor:"#fff"
+	});
+	
+	_draw(titleTxt);
+	main.open();
+	
+	setTimeout(function(){
+    	_textField.focus();
+  	},200);
+};
+
+function _top(titleTxt){	
+	var cRight = Titanium.UI.createView(
 		 {
-		  	width: '100%',
-		  	height: 'auto',
+		  	left:0,
 		  	top:0,
-		  	layout: 'horizontal',
-		  	_role_title: _role_title,
-		  	_data:_data
+		  	width:Ti.UI.FILL,
+		  	height:Ti.UI.SIZE,
+		  	layout: 'vertical',backgroundColor:'#fff'
+		 }
+	);	
+		
+	var flair_details = Titanium.UI.createView(
+		 {
+		 	left:0,
+		 	width:Ti.UI.FILL,
+		 	height:Ti.UI.SIZE,
+		 	top:10
+		 }
+	);	
+		
+	var _header = header(titleTxt);
+	
+	_textField.addEventListener("change",function(e){
+		if(e.value !==""){
+			_textFieldLabl.hide();
+		}else{
+			_textFieldLabl.show();
+		}
+	});
+
+
+		if(_textField.value !==""){
+			_textFieldLabl.hide();
+		}else{
+			_textFieldLabl.show();
+		}
+
+
+	flair_details.add(_header);
+	cRight.add(flair_details);
+	
+	//--------------------------------------------------------------------------------------------------------------------
+	
+	var cContainer = Titanium.UI.createView(
+		 {
+		  	backgroundColor: '#fff',
+		  	left:0,
+		  	right:0,
+		  	bottom:0,
+		  	height:Ti.UI.SIZE,
+		  	layout: 'horizontal'
 		 }
 	);
 	
-	role_view.add(_createThumb(_data));	
-	role_view.add(_role_title);	
+	var submit = Ti.UI.createView({
+		top:20,
+		left:20,right:20,
+		borderRadius:4,height:Ti.UI.SIZE,
+		backgroundColor:"#ff004e"
+	});
+	var label = Ti.UI.createLabel({
+		width:Ti.UI.SIZE,
+		height:Ti.UI.SIZE,
+		top:15,bottom:15,color:"#fff",
+		text:"Update Title"
+	});
 	
-	if(_showHR){
-		role_view.add(_hr());
-	}
+	submit.add(label);
+	cRight.add(submit);
 	
-		role_view.addEventListener('singletap',function(e){
-			this._cancelClick = true;
-			
-			if(selectedRoleView && selectedRoleView == this){
-				return;
-			}
-			
-			this.setBackgroundColor('#40a3ff');
-			this._role_title.setColor("#fff");
-			if(selectedRoleView){
-				selectedRoleView.setBackgroundColor('#fff');
-				selectedRoleView._role_title.setColor('#40a3ff');
-			}
-			selectedRoleView = this;
-			user.getPlace().role = this._data._role_title;
-		});
+	cContainer.add(cRight);	
 	
-		role_view.addEventListener('touchstart',function(e){
-			Ti.API.debug("sournce = " + e.source);
-			this._cancelClick = false;
-			var that = this;	
-				setTimeout(function(){
-					if(that._cancelClick !== true){
-						that.setBackgroundColor('#40a3ff');
-						that._role_title.setColor("#fff");
-					}
-				}, 300 );
-			
-		});
-		
-		role_view.addEventListener('touchend',function(e){
-			//this.setBackgroundColor('#fff');
-			//this._role_title.setColor("#40a3ff");
-		});
-		
-		role_view.addEventListener('touchmove',function(e){
-			this._cancelClick = true;
-			if(selectedRoleView && selectedRoleView !== this){
-				this.setBackgroundColor('#fff');
-				this._role_title.setColor("#40a3ff");
-			}
-		});
-		
-		
-		if(user.getPlace().role == _data._role_title){
-			selectedRoleView = role_view;
-			role_view.setBackgroundColor('#40a3ff');
-			_role_title.setColor("#fff");
+	submit.addEventListener("click",function(){
+		var role = _textField.getValue();
+		if(role !=="" ){
+			 label.setText("saving...");
+			 _callBack(role);
+			 _updateRole(role);
+			 main.close();
 		}
+	});
 	
-	return role_view;
+	return cContainer;	
 }
 
 
-function _createThumb(_data){
+function _updateRole(title){
+	var url = "http://services.flair.me/search.php";	
+	var _data = {type:"jobtitle",rid:_rid,title:title,accessToken:login.getAccessToken()};
+
+ 	var client = Ti.Network.createHTTPClient({ 		
+ 	 onload : function(e) {
+ 	 	Ti.API.error(this.responseText);
+ 	 },
+ 	 onerror: function(e){
+ 	 
+ 	 }
+ 	});
+ 	// Prepare the connection.
+ 		client.open("POST", url);
+ 	// Send the request.
+ 		client.send(_data);
+	
+}
+
+
+
+
+function _draw(titleTxt){
 	var outer =  Titanium.UI.createView(
 		 {
-		  	width: 100,
-		  	height: 100,
-		  	top:5,
-		  	bottom:5,
-		  	left:10,
-		  	right:10,
-		  	backgroundColor:'#f1f1f1',
-		  	borderRadius: 4,
-		   	_data: _data
+		  	width: Ti.UI.FILL,
+		  	height: Ti.UI.FILL,
+		  	top:0,
+		  	left:0,
+		  	layout:'vertical',backgroundColor:'#fff'
 		 }
 	);
 	
-	var inner =  Titanium.UI.createView(
-		 {
-		  	width: 80,
-		  	height: 80,
-		  	backgroundImage:'images/roles/100/' + _data._role_id + '.png'
-		 }
-	);
-	
-	outer.add(inner);
-	return outer;
+	outer.add(_top(titleTxt));
+	main.add(outer);
 }
 
-function _hr(){
-	return  Titanium.UI.createView(
-		 {
-		  	backgroundImage: 'images/feed/hr.png',
-		  	backgroundRepeat: true,
-		  	height:2,
-		  	top:0,bottom:0,
-		  	width:'100%'
-		 }
-	);
+function header(titleTxt){	
+	var reload_btn = Ti.UI.createView({left:20,right:20,borderRadius:4,height:40,top:15,bottom:10});
+	
+	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:14,width:21,backgroundImage:"images/email_40_30.png"});
+	
+	reload_btn.add(search_btn);
+	_textFieldLabl = Ti.UI.createTextField({value:"enter a job tile",color:"#cecece",left:30,width:200,height:30});
+	_textField = Ti.UI.createTextField({value:titleTxt || "",color:"#666",left:30,width:200,height:30});
+	reload_btn.add(_textFieldLabl);
+	reload_btn.add(_textField);
+	var cancel_btn = Ti.UI.createView({right:0,visible:true,bubbleParent:false,height:30,width:50});
+	var cancel_lbl = Ti.UI.createLabel({text:"cancel",color:"#aaa",font: {
+         fontSize: 14
+    	},});
+	cancel_btn.add(cancel_lbl);
+	reload_btn.add(cancel_btn);
+	
+	cancel_btn.addEventListener("singletap",function(e){
+		main.close();
+	});
+	
+	return reload_btn;
+}
+
+function clear(_view){
+	for(var i=0;i<_view.children.length;i++){
+			var c = _view.children[i];
+			_view.remove(c);
+	}
 }

@@ -57,13 +57,10 @@ exports.init = function(_data,_callback) {
 };
 
 function printPlaces(_data){
-	//placesView = places.init(_startFlair);
-	//main.add(placesView);
 	var slide_it_top = Titanium.UI.createAnimation();
     slide_it_top.opacity = 1; // to put it back to the left side of the window
     slide_it_top.duration = 300;
-	main.open();//slide_it_top);
-	
+	main.open();
 }
 
 function _startFlair(place,adj){
@@ -234,8 +231,8 @@ function send_to_server(_flair,_flairWin){
 	
  	var client = Ti.Network.createHTTPClient({
      onload : function(e) {
-     	Ti.API.info("------->" + this.responseText);
-     	 
+     		Ti.API.error("------->" + login.getAccessToken());
+
      	 if(this.responseText === -1 || this.responseText === "-1"){
      	 		login.logout();
      	 		login.init(function(){

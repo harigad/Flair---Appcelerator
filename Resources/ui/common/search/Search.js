@@ -9,12 +9,22 @@ var _places;
 var serverSearchTimout;
 var pleaseWaitTimeout;
 
+var _colors = [
+"ff004e",
+"008aff",
+"ff2a00",
+"33c500",
+"ff5a00",
+"ffb400"
+];
+
+
 exports.init = function() {	
 	_places = [];
 	serverSearchTimout = null;
 	main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#eee',barColor:"#fff"
+    	backgroundColor:'#eee',barColor:"#eee"
 	});
 	
 	_draw();
@@ -51,7 +61,7 @@ function _draw(){
 	
 	_tableView = Ti.UI.createTableView({
   	 	    height:'auto',
-  	 		top:0,backgroundColor:'#f1f1f1'
+  	 		top:0,backgroundColor:'#fff'
 	});
 	outer.add(_tableView);
 	
@@ -155,8 +165,8 @@ function draw_update(places){
 		
 		var title = Ti.UI.createLabel({
 			text:places[i].placename,
-			left:10,top:10,
-			color:"#40a3ff",
+			left:50,top:10,
+			color:"#" + _colors[i%6],
 			font:{
 				fontSize:18
 			}
@@ -167,7 +177,7 @@ function draw_update(places){
 		}
 		var sub = Ti.UI.createLabel({
 			text:splitVic,
-			left:10,bottom:10,
+			left:50,bottom:10,
 			color:"#aaa",
 			font:{
 				fontSize:14
@@ -189,7 +199,7 @@ function draw_update(places){
 
 function showPleaseWait(txt){
 	var rs = [];
-	rs.push({"_type":"searching..",color:"#999",leftImage:"",_word:"searching..","title":"searching.."});
+	rs.push({"_type":"      searching..",color:"#999",leftImage:"",_word:"searching..","title":"searching.."});
 	_updateTable(rs);
 	 serverSearchTimout = setTimeout(function(){
    	 	loadPlacesFromServer(txt);

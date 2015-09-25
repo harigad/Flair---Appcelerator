@@ -1,8 +1,10 @@
 var portal = require('ui/common/Portal');
 var login = require('ui/common/Login');
+var likes = require('ui/common/feed/Likes');
+
 var _profileType,_profileId;
 var _deleteFunc;
-exports.feedItem = function(_data, detailed, _showHR,profileType,profileId,deleteFunc){
+exports.feedItem = function(_data, detailed, _showHR,profileType,profileId,deleteFunc,_color){
 	_profileType = profileType;
 	_profileId = profileId;
 	_deleteFunc = deleteFunc;
@@ -13,7 +15,7 @@ exports.feedItem = function(_data, detailed, _showHR,profileType,profileId,delet
 		bgColor = "#fff";
 	}	
 	
-	return addShareView(_data,detailed,_showHR,_profileType,_profileId);
+	return addShareView(_data,detailed,_showHR,_profileType,_profileId,_color);
 };
 
 function _createThumb(_data,index,_profileType,_profileId){
@@ -44,7 +46,7 @@ function _createThumb(_data,index,_profileType,_profileId){
 }
 
 
-function topRow(_data,_profileType,_profileId){
+function topRow(_data,_profileType,_profileId,_color){
 	var top_line = Titanium.UI.createView(
 		 {
 		  	left:20,right:0,
@@ -54,34 +56,46 @@ function topRow(_data,_profileType,_profileId){
 		 }
 	);
 	
+	var leftView = Ti.UI.createView({
+		layout:"vertical",
+		height:Ti.UI.SIZE,top:0,
+		width:Ti.UI.SIZE
+	});
+	
+	
 	var user_photo = Titanium.UI.createImageView(
 		 {
 		  	left:0,backgroundColor:'#ccc',
 		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  	image:_data.photo,
+		  	image:_data.photo,top:0,
 		  	borderRadius: 25,_gotoUser:true
 		 }
 	);
 	
-	top_line.add(user_photo);	
+	var share = Ti.UI.createImageView({
+		width:50,height:Ti.UI.SIZE,
+		photo:"images/share_50.png"
+			});
 	
-	var h = Ti.UI.createView({_gotoUser:true,left:0,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
+	leftView.add(user_photo);
+	leftView.add(share);
 	
-	var name_txt = Ti.UI.createLabel({
-		height:Ti.UI.SIZE,
-		left:0,right:3,width:Ti.UI.SIZE,
-  		text:_data.name.split(" ")[0],
-  		wordWrap:false,
-  		color:'#40a3ff',
-  		font: {
-         fontSize: 14
-    },
-    _gotoUser:true
-	});
+	top_line.add(leftView);	
+
+	//###############################
+	
+	var name_view = Ti.UI.createView({
+		width:240,top:0,left:10,
+		layout:"vertical",
+		height:Ti.UI.SIZE
+	});	top_line.add(name_view);
+	
+	
+	//###############################
 	
 	var d;
 	if(_data.days == 0){
-		d = "today";
+		d = "earlier today";
 	}else if(_data.days == 1){
 		d = "yesterday";
 	}else{
@@ -89,101 +103,119 @@ function topRow(_data,_profileType,_profileId){
 	}
 	
 	
- 	var place_txt = Ti.UI.createLabel({
-     		left:0,width:Ti.UI.SIZE,
-			height:Ti.UI.SIZE,
-			color:"#aaa",
-			
-  			text:"flaired " + d,
-  			font: {
-         		fontSize: 11
-    		}
-	});
-	h.add(name_txt);h.add(place_txt);
 	
+	var name_txt = Ti.UI.createLabel({
+		height:Ti.UI.SIZE,
+		left:0,right:0,width:Ti.UI.SIZE,
+  		text:_data.name.split(" ")[0] + " flaired " + d,
+  		wordWrap:false,
+  		color:'#aaa',
+  		font: {
+         fontSize: 14
+    }
+	});
+	name_view.add(name_txt);
+	//###############################
 	
 	var recp_layer = Ti.UI.createView({
 		layout:"horizontal",left:0,
 		height:Ti.UI.SIZE,
 		width:Ti.UI.SIZE
 	});
-	if(_data.icon && _data.icon !== 0 && _data.icon !== "0"){
-		var flair_icon =  Titanium.UI.createView(
-		 	{
-		 		left:0,_gotoRecipient:true,
-		  		width: 25,borderRadius:12.5,right:5,
-		  		height: 25,backgroundColor:"#f1f1f1",
-		  		backgroundImage:"images/flairs/100/" + _data.icon + ".png"
-			 }
-		);	
-		recp_layer.add(flair_icon);
+	
+	if(_data.recipient_photo){
+		var recp_photo = Titanium.UI.createImageView(
+		 {
+		  	left:0,backgroundColor:'#ccc',right:3,top:0,
+		  	width:'40',height: '40',borderWidth:3,borderColor:"#eee",
+		  	image:_data.recipient_photo,
+		  	borderRadius: 20,_gotoRecipient:true
+		 }
+		);
+		recp_layer.add(recp_photo);
 	}
-	
-	
-	var placeColor;
-	var recpColor;
-	if(_profileType == "place" && _profileId == _data.pid){
-		placeColor = "aaa";
-		recpColor =  "40a3ff";
-	}else{
-		recpColor = "aaa";
-		placeColor =  "40a3ff";
-	}
-	
-	
 	var recp_name = Ti.UI.createLabel({
      		left:0,width:Ti.UI.SIZE,
 			height:Ti.UI.SIZE,
-			color:"#" + recpColor,
+			color:"#" + _color,
 			_gotoRecipient:true,
   			text:_data.recipientname,
   			font: {
-         		fontSize: 24
+         		fontSize: 32
     		}
 	});
-recp_layer.add(recp_name);
-	
-	var desc_txt = Ti.UI.createLabel({
-		height:20,width:Ti.UI.SIZE,
-		left:0,
-  		text:"@ " + _data.placename + ", " + _data.city,
-  		wordWrap:false,
-  		color:'#' + placeColor,
-  		font: {
-         fontSize: 11
-        }
-    });
-    
-
-    
-	var name_view = Ti.UI.createView({
-		width:240,top:0,left:10,
-		layout:"vertical",
-		height:Ti.UI.SIZE
-	});
-	
-	
-	name_view.add(h);
-	//name_view.add(place_txt);
+	recp_layer.add(recp_name);
 	name_view.add(recp_layer);
-	name_view.add(desc_txt);
-	//name_view.add(city_txt);
+	//####################################
 	
+	var city = Ti.UI.createLabel({
+     			left:0,right:5,
+				height:Ti.UI.SIZE,
+				color:"#" + _color,
+  				text:"@ " + _data.placename + ", " + _data.city,
+  				font: {
+         			fontSize: 14
+    			}
+	});
+	name_view.add(city);
 	
-	if(_data.approved == "0" || _data.approved == 0){
-		var approved = Ti.UI.createLabel({
-			left:3,
-			height:Ti.UI.SIZE,
-			color:"#990000",
-  			text:"(submitted for approval)",
-  			font: {
-         		fontSize: 14
-    		}
-		});
-		name_view.add(approved);
+	//####################################
+	
+	if(_data.hash){
+			var hash = Ti.UI.createLabel({
+     			left:0,right:5,
+				height:Ti.UI.SIZE,
+				color:"#333",
+  				text:'"' + _data.hash + '"',
+  				font: {
+         			fontSize: 14
+    			}
+			});
+			name_view.add(hash);
 	}
 	
-	top_line.add(name_view);
+	//####################################
+	if(_data.approved){
+	var likeView = Ti.UI.createView({left:0,width:Ti.UI.SIZE,height:Ti.UI.SIZE,layout:"horizontal"});
+	var likebtn = Ti.UI.createLabel({
+		text:"like",
+		font:{
+			fontSize:14
+		},
+		height:Ti.UI.SIZE,width:Ti.UI.SIZE,
+		left:0,right:20,
+		color:"#" + _color
+	});
+	var commentbtn = Ti.UI.createLabel({
+		text:"comment",
+		font:{
+			fontSize:11
+		},
+		height:Ti.UI.SIZE,width:Ti.UI.SIZE,
+		left:0,right:20,
+		color:"#" + _color
+	});
+	
+	likeView.add(likebtn);
+	likeView.add(commentbtn);
+	
+	var likesV = likes.init(_data,"#" + _color); 
+	name_view.add(likesV);
+	}
+	//####################################
+	
+	if(!_data.approved){
+		var pending = Ti.UI.createLabel({
+			text:"Flair sent..waiting for approval",
+			color:"#990000",
+			left:0,top:3,
+			font:{
+				fontSize:11
+			}
+		});
+		name_view.add(pending);
+	}
+	
 	return top_line;
 }
 
@@ -199,9 +231,9 @@ function _hr(){
 	);
 }
 
-function addShareView(_data,detailed,_showHR,_profileType,_profileId){
+function addShareView(_data,detailed,_showHR,_profileType,_profileId,_color){
 	var user = login.getUser();
-	var row = Ti.UI.createTableViewRow({backgroundColor:'#fff'});
+	var row = Ti.UI.createTableViewRow({backgroundColor:'#fff',selectedBackgroundColor:"#fff"});
 	var cContainer = Titanium.UI.createView(
 		 {
 		  	height:Ti.UI.SIZE,
@@ -210,60 +242,48 @@ function addShareView(_data,detailed,_showHR,_profileType,_profileId){
 		  	_title: 'container'
 	});
 	
-    cContainer.add(topRow(_data,_profileType,_profileId));
+    cContainer.add(topRow(_data,_profileType,_profileId,_color));
 
 	
 	if(true){
 		cContainer.addEventListener('singletap',function(e){
 			var win;
-		    if(e.source._gotoUser === true && (_profileType !=="user" && _profileId !== _data.uid)){ 
+		    if(e.source._gotoUser === true && !(_profileType =="user" && _profileId == _data.uid)){ 
 		    				win = require('ui/common/userProfile/UserProfile');
 							var photo_big;
-							if(_data.photo_big){
-								photo_big = _data.photo_big;
-							}else{
-								photo_big = "images/flairs/100/" + _data.icon + ".png";
-							}
+								if(_data.photo_big){
+									photo_big = _data.photo_big;
+								}else{
+									photo_big = "images/flairs/100/" + _data.icon + ".png";
+								}
 							portal.open(win.init(_data.uid,_data.name,_data.photo_big,_data.photo));	
-			}else if(e.source._gotoRecipient === true && (_profileType == "place")){
-						    win = require('ui/common/userProfile/UserProfile');
+			}else if(e.source._gotoRecipient === true && !(_profileType =="user" && _profileId == _data.recipient)){
+						  win = require('ui/common/userProfile/UserProfile');
 							portal.open(win.init(_data.recipient,_data.recipientname,_data.recipient_photo_big,_data.recipient_photo,_data.icon));	
-			}else{
-					      var placeView = require('ui/common/place/Place');
+			
+			}else if(_profileType !=="place" && _profileId !== _data.pid){
+					        var placeView = require('ui/common/place/Place');
 		                  portal.open(placeView.init({vicinity:_data.vicinity,lat:_data.lat,lng:_data.lng,pid:_data.pid,name:_data.placename,launchRecepient:_data.recipient,launchEName:_data.recepientname}));
+						
+						   
 			}
 		});
 	}
 	
 	if(user){
-		if(_data.uid === user.getId()){
-			cContainer.addEventListener('longpress',function(e){	
-		  		deleteFlair(row,_data);
+		
+		
+			cContainer.addEventListener('longpress',function(e){
+				Ti.API.error("-" + _profileId + ":" + user.getId());
+				if(_data.uid === user.getId() && _profileId){	
+		  			deleteFlair(row,_data);
+		  		}
 			});
-		}
+		
 	}
 	
 	//cContainer.add(thumb);
 	//cContainer.add(cRight);
-	
-/*	if(_data.approved !== "1" && _data.approved !== 1){
-		var appr = Ti.UI.createView({
-		height:Ti.UI.SIZE,bottom:10,
-		backgroundColor:'#ddd',width:Ti.UI.FILL
-		});
-		
-		var appr_lbl = Ti.UI.createLabel({
-			text: "waiting for approval",left:10,
-			color: "#fff",top:5,bottom:5,height:Ti.UI.SIZE,width:Ti.UI.SIZE,
-			font: {
-				fontSize:11	
-			}
-		});
-			
-		appr.add(appr_lbl);		
-		cContainer.add(appr);
-
-	}*/
 	
 	cContainer.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
 		  	height:2,opacity:0.6}));
@@ -290,7 +310,7 @@ function deleteFlair(row,data){
     				    _deleteFunc(row);
     			}else{
     		//do nothing
-    		row.setBackgroundColor("#f1f1f1");
+    		row.setBackgroundColor("#fff");
     			}
    			 });
    			 

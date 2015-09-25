@@ -44,4 +44,4 @@ exports.init = function(scroll,_callBack,_top){
           		_footer._status = false;	
 	});
 	
-}
+};

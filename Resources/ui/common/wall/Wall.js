@@ -36,7 +36,7 @@ exports.init = function(_type){
 	);	
 	
 	scroll = Ti.UI.createTableView({top:0,backgroundColor:"#fff",separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE});
-	
+
 	container.add(_header);
 	
 	 var menu = Ti.UI.createView({height:50,backgroundColor:"#40a3ff"});
@@ -46,19 +46,89 @@ exports.init = function(_type){
      	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));   
    // menu.add(menu_a);  menu.add(menu_b); 
 
-	container.add(menu);
+	//container.add(menu);
 	container.add(scroll);
 	main.add(container);
 	loadData(_type);
 	
+	Ti.App.addEventListener("notificationRecieved",function(){
+		loadNotificationCountFromServer();
+	});
+	
 	return main;
 };
 
+
+function loadNotificationCountFromServer(){
+		var url = "http://services.flair.me/search.php";
+		var dataStr = {};
+		dataStr.type = "notifications";
+		dataStr.accessToken = login.getAccessToken();
+
+ 	 var client = Ti.Network.createHTTPClient({
+     onload : function(e) {
+     	 data = JSON.parse(this.responseText);
+     	 if(data){
+     	 	buildnotification(data.length);
+     	 }
+     },
+     onerror : function(e) {
+         Ti.API.error(e.error);
+     },
+     timeout : 5000  // in milliseconds
+		});
+ 
+ 	// Prepare the connection.
+ 		client.open("POST", url);
+ 	// Send the request.
+ 		client.send(dataStr);
+}
+
+
+var notif;
+
+function buildnotification(count){
+	var notif_lbl;
+	var insidenofif;
+	
+	if(notif){
+		scroll.deleteRow(notif);
+		notif = null;	
+	}
+	
+	if(count > 0){
+	
+	notif = Ti.UI.createTableViewRow({
+		height:Ti.UI.SIZE
+	});
+	
+	insidenofif = Ti.UI.createView({
+		height:Ti.UI.SIZE,
+		backgroundColor:"#ff004e"
+	});
+	
+	notif_lbl = Ti.UI.createLabel({
+		text:"you have " + count + " notifications",
+		height:Ti.UI.SIZE,color:"#fff",top:10,bottom:10
+	});
+	
+	insidenofif.add(notif_lbl);
+	notif.add(insidenofif);
+	
+	notif.addEventListener("click",function(e){
+		var notifWindow = require('ui/common/notifications/notifications');
+		notifWindow.init(function(c){
+			buildnotification(c);
+		});
+	});
+	
+		scroll.insertRowBefore(0,notif);
+	}
+}
+
 function print(_feed,_container){
 	var FeedView = require('ui/common/feed/FeedView');
-	feed = new FeedView(_feed.feed,scroll,function(_date){
-		loadData('nearby',feed,_date);
-	},scroll);
+	feed = new FeedView(_feed.feed,scroll,{});
 }
 
 function loadData(_type,_container,_date,_searchType,_searchWord){
@@ -116,8 +186,9 @@ if(!_container){
      	 		 clearTimeout(loadTimeout);
      	 		 loadTimeout = null;
      	 }
-     	 
-     	 print(_feed,_container);   	 
+     
+     	 print(_feed,_container); 
+     	 	 buildnotification(_feed.notificationsCount);	 
      },
      onerror : function(e) {
      	 Ti.API.error('error loading data for Wall -> ' + _type);
