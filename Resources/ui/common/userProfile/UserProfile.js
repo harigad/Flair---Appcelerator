@@ -18,7 +18,7 @@ exports.init = function(id,name,photo_big,photo,icon){
 	
 	if(!photo){
 		icon =  Math.round(Math.random()*8);
-		photo_big = "images/flairs/100/" + icon + ".png";
+		photo_big = "/images/flairs/100/" + icon + ".png";
 	}
 	
 	var photoV = Ti.UI.createImageView({opacity:0.25,image:photo_big,width:Ti.UI.FILL});
@@ -27,12 +27,12 @@ exports.init = function(id,name,photo_big,photo,icon){
 	main.add(profileView.init(id,name,photo_big,photo,icon,function(e){
 		if(e){
 			head.setBackgroundColor("#fff");
-			head.left_btn.setBackgroundImage("images/left_btn_dark.png");
-			head.right_btn.setBackgroundImage("images/home_icon_dark.png");
+			head.left_btn.setBackgroundImage("/images/left_btn_dark.png");
+			head.right_btn.setBackgroundImage("/images/home_icon_dark.png");
 		}else{
 			head.setBackgroundColor("transparent");
-			head.left_btn.setBackgroundImage("images/left_btn.png");
-			head.right_btn.setBackgroundImage("images/home_icon.png");
+			head.left_btn.setBackgroundImage("/images/left_btn.png");
+			head.right_btn.setBackgroundImage("/images/home_icon.png");
 		}
 	}));
 	main.add(head);
@@ -63,7 +63,7 @@ function cleanWindow( winObj ) {
 
 function header(win){
 	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"images/left_btn.png"});
+	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"/images/left_btn.png"});
 	h.add(left);
 	h.left_btn = left;
 	
@@ -72,7 +72,7 @@ function header(win){
 	});
 	
 	
-	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"images/home_icon.png"});
+	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"/images/home_icon.png"});
 	h.add(home);
 	h.right_btn = home;
 	home.addEventListener("click",function(){

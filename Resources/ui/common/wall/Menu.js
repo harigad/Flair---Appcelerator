@@ -68,7 +68,7 @@ function _draw() {
 	_view.add(item({
 		closeMenu : true,
 		approved : -1,
-		icon : "images/menu_me_icon.png",
+		icon : "/images/menu_me_icon.png",
 		title : "My flairs",
 		callBack : function() {
 			login.init(function() {
@@ -84,7 +84,7 @@ function _draw() {
 		_view.add(item({
 			closeMenu : false,
 			approved : -1,
-			icon : "images/menu_about_me_icon.png",
+			icon : "/images/menu_about_me_icon.png",
 			title : "About Me",
 			callBack : function(label) {
 
@@ -101,7 +101,7 @@ function _draw() {
 	if (false) {
 		_view.add(item({
 			approved : -1,
-			icon : "images/menu_invite_icon.png",
+			icon : "/images/menu_invite_icon.png",
 			title : "Invite",
 			callBack : function() {
 				var placeView = require('ui/common/menu/menu_invite');
@@ -117,7 +117,7 @@ function _draw() {
 	for (var i = 0; i < places.length; i++) {
 		_view.add(item({
 			approved : places[i].approved,
-			icon : "images/menu_place_icon.png",
+			icon : "/images/menu_place_icon.png",
 			title : places[i].name,
 			callBack : function(placedata) {
 				if (placedata.approved) {
@@ -132,7 +132,7 @@ function _draw() {
 		_view.add(_hr());
 	}
 
-	/*_view.add(item({approved:-1,icon:"images/menu_join_a_business_icon.png",title:"Join a Business",callBack:function(){
+	/*_view.add(item({approved:-1,icon:"/images/menu_join_a_business_icon.png",title:"Join a Business",callBack:function(){
 	 searchBus();
 	 }}));
 	 */
@@ -256,7 +256,7 @@ exports.refresh = function() {
 
 function _hr() {
 	return Titanium.UI.createView({
-		backgroundImage : 'images/feed/like_hr.png',
+		backgroundImage : '/images/feed/like_hr.png',
 		height : 2,
 		opacity : 0.6,
 		bottom : 0,

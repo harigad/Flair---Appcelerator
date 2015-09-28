@@ -60,7 +60,7 @@ exports.init = function(_data){
    });
    
    var phone = Ti.UI.createImageView({
-   	image:"images/phone.png",top:10,bottom:10,
+   	image:"/images/phone.png",top:10,bottom:10,
    	width:50,height:50,left:20
    });
    
@@ -111,7 +111,7 @@ exports.init = function(_data){
 
 function header(win){
 	var h = Ti.UI.createView({top:15,height:40,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({left:20,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({left:20,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	
 	
@@ -119,7 +119,7 @@ function header(win){
 		portal.close(win);
 	});
 	
-	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"images/home_icon_dark.png"});
+	var home = Ti.UI.createView({right:20,width:36,height:30,backgroundImage:"/images/home_icon_dark.png"});
 	home.addEventListener("click",function(){
 		Ti.App.fireEvent("close_all");
 	});

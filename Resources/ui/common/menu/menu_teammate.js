@@ -34,7 +34,7 @@ function _draw(data){
 		}}));
 	_view.add(_hr());
 	
-	_view.add(item({closeMenu:false,approved:-1,icon:"images/menu_job_title_icon.png",title:(data.role_id? data.role_id + " (edit)" : "Add a Job Title"),callBack:function(dataObj,label){
+	_view.add(item({closeMenu:false,approved:-1,icon:"/images/menu_job_title_icon.png",title:(data.role_id? data.role_id + " (edit)" : "Add a Job Title"),callBack:function(dataObj,label){
 				if(_place.admin > 0){
 					var win = require('ui/common/userProfile/EditRole');
 						win.init(data.rid,data.role_id,function(title){
@@ -48,7 +48,7 @@ function _draw(data){
 		}}));
 	_view.add(_hr());
 	
-	_view.add(item({approved:-1,icon:"images/menu_delete_icon.png",title:"Remove Teammate",callBack:function(){
+	_view.add(item({approved:-1,icon:"/images/menu_delete_icon.png",title:"Remove Teammate",callBack:function(){
 		if(_place.admin > 0){
 			var rem = require('ui/common/place/deleteTeammate');
 			rem.init(data,_place,function(){
@@ -147,7 +147,7 @@ function item(data){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
+		  	backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6,
 		  	bottom:0,top:0,
 		  	width:Ti.UI.FILL
@@ -160,7 +160,7 @@ function _hr(){
 
 function header(win,data){
 	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	
 	var title = Ti.UI.createLabel({

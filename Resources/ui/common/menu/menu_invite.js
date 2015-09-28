@@ -33,7 +33,7 @@ function _draw(place){
 	var places = user.getPlaces();
 	for(var i=0;i< places.length; i++){
 		if(places[i].approved){
-			_view.add(item({approved:places[i].approved,icon:"images/menu_invite_icon.png",title:places[i].name,callBack:function(placedata){
+			_view.add(item({approved:places[i].approved,icon:"/images/menu_invite_icon.png",title:places[i].name,callBack:function(placedata){
 				addBusAlert(placedata);
 			},data:places[i]}));
 		_view.add(_hr());
@@ -41,7 +41,7 @@ function _draw(place){
 	}
 	
 	
-		_view.add(item({icon:"images/menu_invite_icon.png",title:"Invite a Business",callBack:function(){
+		_view.add(item({icon:"/images/menu_invite_icon.png",title:"Invite a Business",callBack:function(){
 			searchBus(false);
 		},data:places[i]}));
 	  
@@ -128,7 +128,7 @@ function item(data){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
+		  	backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6,
 		  	bottom:0,top:0,
 		  	width:Ti.UI.FILL
@@ -141,7 +141,7 @@ function _hr(){
 
 function header(win){
 	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	
 	var title = Ti.UI.createLabel({

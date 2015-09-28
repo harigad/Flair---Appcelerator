@@ -239,7 +239,7 @@ function clear(_view){
 function header(){	
 	var reload_btn = Ti.UI.createView({left:20,right:20,borderRadius:4,height:40,top:15,bottom:10});
 	
-	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"images/search.png"});
+	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"/images/search.png"});
 	
 	reload_btn.add(search_btn);
 	_textFieldLabl = Ti.UI.createTextField({value:"type name of business",color:"#cecece",left:30,width:200,height:30});

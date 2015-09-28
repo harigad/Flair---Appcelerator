@@ -24,7 +24,7 @@ Ti.API.debug("home init");
 		navBarHidden: true,
     	borderWidth:0,
     	backgroundColor:"#40a3ff",
-    	backgroundImage:"images/blue.png",
+    	backgroundImage:"/images/blue.png",
     	fullScreen: true
 	});	
 
@@ -115,7 +115,7 @@ function _tabBar(wall,home,profile){
 		 {
 		  	height: 'auto',
 		  	width: '100%',
-		  	backgroundImage: 'images/headerBg.jpg',
+		  	backgroundImage: '/images/headerBg.jpg',
 		  	backgroundRepeat: true,
 		  	bottom:0,
 		  	layout:'horizontal'
@@ -131,11 +131,11 @@ function _tabBar(wall,home,profile){
         top:10,
         bottom:10,
         left:50,     
-        leftTrackImage:'images/home/logo_small.png',
-        rightTrackImage:'images/home/home_me_btn.png',
-        thumbImage:'images/home/home_checkin_btn.png',
-        highlightedThumbImage: 'images/home/logo_small.png',
-        highlightedThumbImage: 'images/home/logo_small.png',
+        leftTrackImage:'/images/home/logo_small.png',
+        rightTrackImage:'/images/home/home_me_btn.png',
+        thumbImage:'/images/home/home_checkin_btn.png',
+        highlightedThumbImage: '/images/home/logo_small.png',
+        highlightedThumbImage: '/images/home/logo_small.png',
         _currentValue: 2,
         _currentWindow:home
     });
@@ -209,7 +209,7 @@ function _createInnerBg(_data,bgColor){
 		 {
 		  	width: 70,
 		  	height: 70,
-		  	backgroundImage:'images/flairs/100/' + _data.id + '.png'
+		  	backgroundImage:'/images/flairs/100/' + _data.id + '.png'
 		 }
 	);
 	

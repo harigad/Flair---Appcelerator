@@ -23,7 +23,7 @@ function _draw(_place,_main){
 	
 	
 	var rest = Ti.UI.createImageView({
-		image:"images/restricted.jpg",
+		image:"/images/restricted.jpg",
 		bottom:10
 	});
 	

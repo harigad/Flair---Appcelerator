@@ -15,7 +15,7 @@ var _imageHeight = 200;
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
+		  	backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,
 		  	bottom:0,
 		  	width:'320'
@@ -32,7 +32,7 @@ exports.init = function(id,name,photo_big,photo,icon,_callBack){
 	}
 
 
-	photo = photo || "images/flairs/100/" + icon + ".png";
+	photo = photo || "/images/flairs/100/" + icon + ".png";
 	
 	
 	main = Titanium.UI.createTableView({top:0,separatorStyle:Titanium.UI.iPhone.TableViewSeparatorStyle.NONE,backgroundColor:'transparent'});	
@@ -278,7 +278,7 @@ function _noData(){
          		fontSize: 20
     		}}));
     
-    h.add(Ti.UI.createView({left:-5,right:5,width:25,height:25,backgroundImage:"images/glasses_blue_40_40.png"}));
+    h.add(Ti.UI.createView({left:-5,right:5,width:25,height:25,backgroundImage:"/images/glasses_blue_40_40.png"}));
     		
 	h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
 			text:"Flairs to show",

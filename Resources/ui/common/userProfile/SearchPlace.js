@@ -298,7 +298,7 @@ function _isValidPostalCode(postalCode, countryCode) {
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/hr.png',		  
+		  	backgroundImage: '/images/feed/hr.png',		  
 		  	height:2,
 		  	top:5,bottom:5,
 		  	width:'100%'

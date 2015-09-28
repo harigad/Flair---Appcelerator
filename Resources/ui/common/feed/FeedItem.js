@@ -27,7 +27,7 @@ function _createThumb(_data,index,_profileType,_profileId){
 	if(_data.recipient_photo && _data.recipient !== user.getId() && !(_profileType == "user" && _profileId == _data.recipient)){
 		photo = _data.recipient_photo;
 	}else{
-		photo = "images/flairs/100/" + _data.flair + ".png";
+		photo = "/images/flairs/100/" + _data.flair + ".png";
 	}
 	
 	var inner =  Titanium.UI.createView(
@@ -74,7 +74,7 @@ function topRow(_data,_profileType,_profileId,_color){
 	
 	var share = Ti.UI.createImageView({
 		width:50,height:Ti.UI.SIZE,
-		photo:"images/share_50.png"
+		photo:"/images/share_50.png"
 			});
 	
 	leftView.add(user_photo);
@@ -254,7 +254,7 @@ function addShareView(_data,detailed,_showHR,_profileType,_profileId,_color){
 								if(_data.photo_big){
 									photo_big = _data.photo_big;
 								}else{
-									photo_big = "images/flairs/100/" + _data.icon + ".png";
+									photo_big = "/images/flairs/100/" + _data.icon + ".png";
 								}
 							portal.open(win.init(_data.uid,_data.name,_data.photo_big,_data.photo));	
 			}else if(e.source._gotoRecipient === true && !(_profileType =="user" && _profileId == _data.recipient)){
@@ -285,7 +285,7 @@ function addShareView(_data,detailed,_showHR,_profileType,_profileId,_color){
 	//cContainer.add(thumb);
 	//cContainer.add(cRight);
 	
-	cContainer.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
+	cContainer.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6}));
 	row.add(cContainer);
 	

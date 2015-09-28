@@ -41,9 +41,9 @@ exports.init = function(_type){
 	
 	 var menu = Ti.UI.createView({height:50,backgroundColor:"#40a3ff"});
     var menu_a = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.5,left:0,height:50,width:"50%"});
-    	menu_a.add( Ti.UI.createLabel({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));
+    	menu_a.add( Ti.UI.createLabel({borderRadius:4,height:50,width:100,backgroundImage:"/images/home/home_checkin_btn.png"}));
      var menu_b = Ti.UI.createView({backgroundColor:"#66b5ff",opacity:0.85,right:0,height:50,width:"50%"});
-     	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"images/home/home_checkin_btn.png"}));   
+     	menu_b.add( Ti.UI.createView({borderRadius:4,height:50,width:100,backgroundImage:"/images/home/home_checkin_btn.png"}));   
    // menu.add(menu_a);  menu.add(menu_b); 
 
 	//container.add(menu);
@@ -208,14 +208,14 @@ function header(){
 	var c = Ti.UI.createView({top:0,left:0,backgroundColor:"#fff",height:Ti.UI.SIZE});
 	var reload_btn = Ti.UI.createView({top:25,bottom:10,left:20,right:20,height:40});
 	
-	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"images/search.png"});
+	var search_btn = Ti.UI.createView({opacity:0.5,left:0,height:20,width:20,backgroundImage:"/images/search.png"});
 	
 	reload_btn.add(search_btn);
 	
 	var label = Ti.UI.createLabel({text:"find a business",color:"#999",left:30,width:205,height:30});
 	reload_btn.add(label);
 	
-	var photo = "images/menu_menu_icon.png";
+	var photo = "/images/menu_menu_icon.png";
 	
 	var cancel_btn;
 	

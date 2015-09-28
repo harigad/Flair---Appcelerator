@@ -119,7 +119,7 @@ function _top(){
 
 function header(){	
 	var reload_btn = Ti.UI.createView({top:10,bottom:15,layout:'horizontal',width:300,borderRadius:4,height:Ti.UI.SIZE,top:15});
-	var search_btn = Ti.UI.createView({opacity:0.4,left:0,height:30,width:30,backgroundImage:"images/email_49_49.png"});
+	var search_btn = Ti.UI.createView({opacity:0.4,left:0,height:30,width:30,backgroundImage:"/images/email_49_49.png"});
 	
 	reload_btn.add(search_btn);
 	

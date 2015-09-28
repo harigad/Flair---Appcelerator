@@ -14,7 +14,7 @@ exports.init = function(person,placename,callback){
 	});
 	
 	var logo = Ti.UI.createImageView({
-		image:"images/flair_app_icon_with_background_371_371.png",
+		image:"/images/flair_app_icon_with_background_371_371.png",
 		height:150,width:150,bottom:10
 	});
 	v.add(logo);
@@ -89,7 +89,7 @@ exports.init = function(person,placename,callback){
 		layout:"horizontal"
 	});
 	var img = Ti.UI.createImageView({
-		image:"images/glasses_45_white.png",
+		image:"/images/glasses_45_white.png",
 		height:20,right:5
 	});
 	var labelt = Ti.UI.createLabel({

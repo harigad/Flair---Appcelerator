@@ -146,7 +146,7 @@ function build(){
 	
 	var cancel_bg = Ti.UI.createView({
 		width:100,height:50,borderRadius:4,bottom:-25,
-		backgroundImage:"images/trans.png",opacity:0.9
+		backgroundImage:"/images/trans.png",opacity:0.9
 	});
 	
 	
@@ -168,7 +168,7 @@ function build(){
 	cancel_bg.add(lbl);
 	
 	var bg = Ti.UI.createImageView({
-		image:"images/signup/bg1.png",
+		image:"/images/signup/bg1.png",
 		width:204,height:222
 	});
 	main.add(base);

@@ -47,7 +47,7 @@ function _build(_place){
 		 {
 		 	top:'0',
 		  	height: Ti.UI.FILL,width:Ti.UI.FILL,bubbleParent:true,
-		  	backgroundImage:'images/map_shade.png',layout:'vertical'
+		  	backgroundImage:'/images/map_shade.png',layout:'vertical'
 		 }
 	);	
 	var nameLabel = Ti.UI.createLabel({

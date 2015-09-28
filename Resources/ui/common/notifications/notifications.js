@@ -333,7 +333,7 @@ function report(obj){
 
 function header(win,callBack){
 	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	h.left_btn = left;
 	
@@ -343,7 +343,7 @@ function header(win,callBack){
 	});
 	
 	
-	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"images/home_icon_dark.png"});
+	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"/images/home_icon_dark.png"});
 	h.add(home);
 	h.right_btn = home;
 	home.addEventListener("click",function(){

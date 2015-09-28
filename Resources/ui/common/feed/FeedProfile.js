@@ -11,7 +11,7 @@ exports.init = function(_data) {
 		backgroundColor: '#fff',
     	title: "details",    	
     	barColor:'#aaa',
-    	barImage: 'images/headerBg.jpg'
+    	barImage: '/images/headerBg.jpg'
 	});
 
 	var scrollView = Ti.UI.createScrollView({
@@ -143,7 +143,7 @@ function _commentsField(fid){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/hr.png',
+		  	backgroundImage: '/images/feed/hr.png',
 		  	backgroundRepeat: true,
 		  	height:2,
 		  	width:'100%'
@@ -208,7 +208,7 @@ function _create(_data,_showHR){
 	);	
 	
 	var like_btn = Ti.UI.createImageView({
-  			image: 'images/feed/like_blue.png',
+  			image: '/images/feed/like_blue.png',
   			left:0,right:10,
   			top:0,
   			height:15,
@@ -217,10 +217,10 @@ function _create(_data,_showHR){
 	
 	like_btn.addEventListener('singletap',function(){
 		if(!_data.liked){
-			this.setImage('images/feed/liked.png');
+			this.setImage('/images/feed/liked.png');
 			_data.liked = true;
 		}else{
-			this.setImage('images/feed/like_blue.png');
+			this.setImage('/images/feed/like_blue.png');
 			_data.liked = false;	
 		}
 	});
@@ -343,7 +343,7 @@ function loadAndPrint(fid) {
 
 		_clearView();
 		var loading = Ti.UI.createImageView({
-  			image: 'images/loading_white.gif',
+  			image: '/images/loading_white.gif',
   			width: '150',
   			top: 0	
 		});	

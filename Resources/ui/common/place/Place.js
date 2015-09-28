@@ -98,7 +98,7 @@ exports.init = function(data){
   	});
   	
   	var btn = Ti.UI.createView({opacity:0.7,backgroundColor:"#ff004e",bubbleParent:false,borderWidth:5,borderColor:"#fff",borderRadius:50,width:100,height:100,bottom:30});
-  	btn.add(Ti.UI.createView({width:75,height:75,backgroundImage:"images/glasses_100_100_white.png"}));
+  	btn.add(Ti.UI.createView({width:75,height:75,backgroundImage:"/images/glasses_100_100_white.png"}));
   	btn.addEventListener("click",function(){
   		launchFlair();
   	});
@@ -107,21 +107,21 @@ exports.init = function(data){
    
     var menu = Ti.UI.createView({height:Ti.UI.SIZE});
     var menu_a = Ti.UI.createView({bubbleParent:false,opacity:1,backgroundColor:"#333",left:0,height:50,width:"50%"});
-    	menu_a.add( Ti.UI.createView({height:20,width:20,backgroundImage:"images/glasses_45_white.png"}));
+    	menu_a.add( Ti.UI.createView({height:20,width:20,backgroundImage:"/images/glasses_45_white.png"}));
      var menu_b = Ti.UI.createView({opacity:0.7,bubbleParent:false,backgroundColor:"#333",right:0,height:50,width:"50%"});
-     	menu_b.add( Ti.UI.createView({height:30,width:30,backgroundImage:"images/team_45_white.png"}));
+     	menu_b.add( Ti.UI.createView({height:30,width:30,backgroundImage:"/images/team_45_white.png"}));
     menu.add(menu_a);  menu.add(menu_b); 
     
     menu_a.addEventListener("click",function(){
     	menu_a.setOpacity(1);menu_b.setOpacity(.7);
-    	sub_title_icon.setBackgroundImage("images/glasses_45_white.png");
+    	sub_title_icon.setBackgroundImage("/images/glasses_45_white.png");
     	sub_title_text.setText("flairs");
     	printFeed();
     });
     
     menu_b.addEventListener("click",function(){
     	menu_a.setOpacity(.7);menu_b.setOpacity(1);
-    	sub_title_icon.setBackgroundImage("images/team_45_white.png");
+    	sub_title_icon.setBackgroundImage("/images/team_45_white.png");
     	sub_title_text.setText("teammates");
     	printCast();
     });
@@ -132,7 +132,7 @@ exports.init = function(data){
     
     var sub_title = Ti.UI.createView({layout:"horizontal",backgroundColor:"#777",height:Ti.UI.SIZE});
     
-    var sub_title_icon = Ti.UI.createView({left:20,height:20,width:20,backgroundImage:"images/glasses_45_white.png"});
+    var sub_title_icon = Ti.UI.createView({left:20,height:20,width:20,backgroundImage:"/images/glasses_45_white.png"});
     sub_title.add(sub_title_icon);
     
     var sub_title_text = Ti.UI.createLabel({
@@ -247,7 +247,7 @@ function printCast(){
    
     for(var i=0;i<_place.cast.length;i++){	
     	_feedView.add(getCastRow(_place,_place.cast[i],_colors[i%6]));
-    	_feedView.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
+    	_feedView.add(Ti.UI.createView({top:0,bottom:0,backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6}));
   	
   }
@@ -274,7 +274,7 @@ function getCastRow(place,data,color){
 		 {
 		  	left:0,backgroundColor:'#ccc',
 		  	width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  	image:data.photo || "images/flairs/100/1.png",
+		  	image:data.photo || "/images/flairs/100/1.png",
 		  	borderRadius: 25,
 		 }
 	);
@@ -418,7 +418,7 @@ function _noData(){
          		fontSize: 20
     		}}));
     
-    h.add(Ti.UI.createView({left:5,right:5,width:25,height:25,backgroundImage:"images/glasses_blue_40_40.png"}));
+    h.add(Ti.UI.createView({left:5,right:5,width:25,height:25,backgroundImage:"/images/glasses_blue_40_40.png"}));
     		
 	h.add(Ti.UI.createLabel({width:Ti.UI.SIZE,height:Ti.UI.SIZE,
 			text:"Flair",
@@ -457,13 +457,13 @@ function _retry(data){
 
 
 function _hr(){
-	return  Ti.UI.createView({top:0,bottom:0,backgroundImage: 'images/feed/like_hr.png',
+	return  Ti.UI.createView({top:0,bottom:0,backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6});
 }
 
 function header(win){
 	var h = Ti.UI.createView({top:0,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({top:20,left:20,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	
 	
@@ -473,7 +473,7 @@ function header(win){
 	
 	
 	
-	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"images/home_icon_dark.png"});
+	var home = Ti.UI.createView({top:20,right:20,width:36,height:30,backgroundImage:"/images/home_icon_dark.png"});
 	home.addEventListener("click",function(){
 		Ti.App.fireEvent("close_all");
 	});

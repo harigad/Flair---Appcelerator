@@ -449,7 +449,7 @@ function show_error(str){
   	});
   	
 	var error_view = Ti.UI.createView({
-		width:300,height:150,top:2,bottom:15,backgroundImage:"images/bubble.png"
+		width:300,height:150,top:2,bottom:15,backgroundImage:"/images/bubble.png"
 	});
 	
 	var _lbl = Ti.UI.createLabel({
@@ -599,7 +599,7 @@ function _createThumb(_data){
 		 {
 		  	width: 55,
 		  	height: 55,
-		  	backgroundImage:'images/flairs/100/' + _data.id + '.png'
+		  	backgroundImage:'/images/flairs/100/' + _data.id + '.png'
 		 }
 	);
 	
@@ -617,7 +617,7 @@ function clear(_view){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/hr.png',
+		  	backgroundImage: '/images/feed/hr.png',
 		  	backgroundRepeat: true,
 		  	height:2,
 		  	top:0,bottom:0,

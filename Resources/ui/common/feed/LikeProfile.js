@@ -90,13 +90,13 @@ function _create(main,_data,_type,_name,_bgColor,_color,_showHr,_isLiked){
 
 	if(_type && thisIsLiked){
 		outer._isLiked = true;
-		likedImage = 'images/feed/like_' + _type + '_100.png';
+		likedImage = '/images/feed/like_' + _type + '_100.png';
 	}else if(_type){
 		outer._isLiked = false;
-		likedImage = 'images/feed/like_gray_100.png';
+		likedImage = '/images/feed/like_gray_100.png';
 	}else{
 		outer._isLiked = false;
-	    likedImage = "images/feed/like_cancel_100.png";	
+	    likedImage = "/images/feed/like_cancel_100.png";	
 	}	
 		
 	var inner =  Titanium.UI.createView(
@@ -182,10 +182,10 @@ function likeClicked(_likeObj){
   if(_likeObj._type){
 	if(_likeObj._isLiked){
 		_likeObj._isLiked = false;
-		_likeObj._image.setBackgroundImage("images/feed/like_gray_100.png");
+		_likeObj._image.setBackgroundImage("/images/feed/like_gray_100.png");
 	}else{
 		_likeObj._isLiked = true;
-		_likeObj._image.setBackgroundImage("images/feed/like_" + _likeObj._type + "_100.png");
+		_likeObj._image.setBackgroundImage("/images/feed/like_" + _likeObj._type + "_100.png");
 	}
   }
 }
@@ -239,7 +239,7 @@ function processLike(_data,main){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
+		  	backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,
 		  	bottom:0,
 		  	width:'320'

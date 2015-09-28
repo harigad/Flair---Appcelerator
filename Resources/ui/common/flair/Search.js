@@ -272,7 +272,7 @@ function draw_update(txt){
   		var ignore;
   		ignore = (txt.length > 3) ? false:true; 
   		var name = txt.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();}) || "ex:John Smith";
-  		var photo = "images/plus.png";
+  		var photo = "/images/plus.png";
   		
   		rs.push(createRow({name:"add new",photo:photo,ignore:false},_colors[rs.length%6]));
   	}
@@ -306,7 +306,7 @@ function createRow(data,color){
 		 	{
 		  		left:0,backgroundColor:'#ccc',
 		  		width:'50',height: '50',borderWidth:3,borderColor:"#eee",
-		  		image:data.photo || "images/flairs/100/1.png",
+		  		image:data.photo || "/images/flairs/100/1.png",
 		  		borderRadius: 25,
 		 	}
 			);

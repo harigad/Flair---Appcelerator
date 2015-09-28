@@ -34,7 +34,7 @@ var _menusView;
 function _draw(place){
 	
 	
-	_menusView.add(item({approved:-1,icon:"images/menu_place_icon.png",title:"View Profile",callBack:function(){
+	_menusView.add(item({approved:-1,icon:"/images/menu_place_icon.png",title:"View Profile",callBack:function(){
 			portal.toggleMenu(function(){
 			 var placeView = require('ui/common/place/Place');
 		      portal.open(placeView.init({vicinity:place.city,lat:place.lat,lng:place.lng,pid:place.id,name:place.name}));
@@ -43,7 +43,7 @@ function _draw(place){
 		}}));
 	
 	_menusView.add(_hr());
-	_menusView.add(item({icon:"images/menu_invite_icon.png",title:"Invite Customers",callBack:function(c){
+	_menusView.add(item({icon:"/images/menu_invite_icon.png",title:"Invite Customers",callBack:function(c){
 		addBus(place);
 	}}));
 	
@@ -142,7 +142,7 @@ function item(data){
 function _hr(){
 	return  Titanium.UI.createView(
 		 {
-		  	backgroundImage: 'images/feed/like_hr.png',
+		  	backgroundImage: '/images/feed/like_hr.png',
 		  	height:2,opacity:0.6,
 		  	bottom:0,top:0,
 		  	width:Ti.UI.FILL
@@ -212,7 +212,7 @@ function loadData(pid){
 
 function header(win,place){
 	var h = Ti.UI.createView({top:10,height:60,width:Ti.UI.FILL});
-	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"images/left_btn_dark.png"});
+	var left = Ti.UI.createView({top:20,left:10,width:22,height:30,backgroundImage:"/images/left_btn_dark.png"});
 	h.add(left);
 	
 	var title = Ti.UI.createLabel({

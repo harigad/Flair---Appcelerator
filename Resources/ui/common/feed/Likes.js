@@ -22,7 +22,7 @@ function draw(data,color,v){
 	var like_photo = Titanium.UI.createImageView(
 		 {
 		  	width:'25',height: '25',backgroundColor:(data.isLiked ? color : "#999"),
-		  	image:"images/like_gray.png",right:5,opacity:0.3,bubbleParent:false
+		  	image:"/images/like_gray.png",right:5,opacity:0.3,bubbleParent:false
 		 }
 	);
 	like_photo.addEventListener("click",function(){
