@@ -1,97 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ti:app xmlns:ti="http://ti.appcelerator.org">
-    <property name="acs-oauth-secret-development" type="string">I35zE886z7j41lZnk8Y1jjMi7EN0NB4r</property>
-    <property name="acs-oauth-key-development" type="string">NoOvhxdG6DHMIZMixiFxNigzAJvEhPkS</property>
-    <property name="acs-api-key-development" type="string">PXoSQeWvDkJ0gUArBIhcXMggvmWwnOyL</property>
-    <property name="acs-oauth-secret-production" type="string">KeULCsUmhv6TIwghPeXFFademJ0sPoIY</property>
-    <property name="acs-oauth-key-production" type="string">53CTV3WmOh0HUlNW6B0M4XgYJblsVuHa</property>
-    <property name="acs-api-key-production" type="string">fZuIdM1Un78R1BORAdrfGTNbkdh1Udwb</property>
-    <property name="ti.facebook.appid" type="string">201613399910723</property>
-    <deployment-targets>
-        <target device="tizen">false</target>
-        <target device="mobileweb">false</target>
-        <target device="iphone">true</target>
-        <target device="ipad">false</target>
-        <target device="android">false</target>
-        <target device="blackberry">false</target>
-    </deployment-targets>
-    <sdk-version>4.0.0.Beta2</sdk-version>
-    <id>me.flair</id>
-    <name>Flair</name>
-    <version>2.4.2</version>
-    <publisher>HGadiraju</publisher>
-    <url>http://flair.me</url>
-    <description>not specified</description>
-    <copyright>2012 by ivc1215adm</copyright>
-    <icon>appicon.png</icon>
-    <persistent-wifi>false</persistent-wifi>
-    <prerendered-icon>true</prerendered-icon>
-    <statusbar-style>default</statusbar-style>
-    <statusbar-hidden>false</statusbar-hidden>
-    <fullscreen>false</fullscreen>
-    <navbar-hidden>false</navbar-hidden>
-    <analytics>true</analytics>
-    <guid>6bb00034-88bd-446b-9ddd-93f9a5400f28</guid>
-    <property name="ti.ui.defaultunit">system</property>
-    <iphone>
-        <orientations device="iphone">
-            <orientation>Ti.UI.PORTRAIT</orientation>
-        </orientations>
-        <orientations device="ipad">
-            <orientation>Ti.UI.PORTRAIT</orientation>
-            <orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
-            <orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
-            <orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
-        </orientations>
-    </iphone>
-    <android xmlns:android="http://schemas.android.com/apk/res/android"/>
-    <mobileweb>
-        <precache/>
-        <splash>
-            <enabled>true</enabled>
-            <inline-css-images>true</inline-css-images>
-        </splash>
-        <theme>default</theme>
-        <map>
-            <apikey>AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU</apikey>
-        </map>
-    </mobileweb>
-    <modules>
-        <module platform="iphone">facebook</module>
-        <module platform="iphone">ti.map</module>
-    </modules>
-    <ios>
-        <plist>
-            <dict>
-                <key>NSLocationAlwaysUsageDescription</key>
-                <string>
-                    For Displaying Nearby Businesses
-                </string>
-                <key>NSLocationWhenInUseUsageDescription</key>
-                <string>Test NSLocationWhenInUseUsageDescription</string>
-            </dict>
-            <dict>
-                <key>CFBundleURLTypes</key>
-                <array>
-                    <dict>
-                        <key>CFBundleURLName</key>
-                        <!-- Application ID same as the id value in the tiapp.xml file -->
-                        <string>me.flair</string>
-                        <key>CFBundleURLSchemes</key>
-                        <array>
-                            <!-- Prefix the Facebook App ID with 'fb' -->
-                            <string>fb201613399910723</string>
-                        </array>
-                    </dict>
-                </array>
-                <key>FacebookAppID</key>
-                <!-- Facebook App ID -->
-                <string>201613399910723</string>
-                <key>FacebookDisplayName</key>
-                <!-- Facebook App Name from developer.facebook.com -->
-                <string>Flair</string>
-            </dict>
-        </plist>
-    </ios>
-    <property name="appc-app-id" type="string">55cb85c0578c88713e784b9d</property>
+	<property name="acs-oauth-secret-development" type="string">I35zE886z7j41lZnk8Y1jjMi7EN0NB4r</property>
+	<property name="acs-oauth-key-development" type="string">NoOvhxdG6DHMIZMixiFxNigzAJvEhPkS</property>
+	<property name="acs-api-key-development" type="string">PXoSQeWvDkJ0gUArBIhcXMggvmWwnOyL</property>
+	<property name="acs-oauth-secret-production" type="string">KeULCsUmhv6TIwghPeXFFademJ0sPoIY</property>
+	<property name="acs-oauth-key-production" type="string">53CTV3WmOh0HUlNW6B0M4XgYJblsVuHa</property>
+	<property name="acs-api-key-production" type="string">fZuIdM1Un78R1BORAdrfGTNbkdh1Udwb</property>
+	<property name="ti.facebook.appid" type="string">201613399910723</property>
+	<deployment-targets>
+		<target device="tizen">false</target>
+		<target device="mobileweb">false</target>
+		<target device="iphone">true</target>
+		<target device="ipad">false</target>
+		<target device="android">true</target>
+		<target device="blackberry">false</target>
+	</deployment-targets>
+	<sdk-version>5.0.1.GA</sdk-version>
+	<id>me.flair</id>
+	<name>Flair</name>
+	<version>2.4.2</version>
+	<publisher>HGadiraju</publisher>
+	<url>http://flair.me</url>
+	<description>not specified</description>
+	<copyright>2012 by ivc1215adm</copyright>
+	<icon>appicon.png</icon>
+	<persistent-wifi>false</persistent-wifi>
+	<prerendered-icon>true</prerendered-icon>
+	<statusbar-style>default</statusbar-style>
+	<statusbar-hidden>false</statusbar-hidden>
+	<fullscreen>false</fullscreen>
+	<navbar-hidden>false</navbar-hidden>
+	<analytics>true</analytics>
+	<guid>8989936a-240a-4d00-9fff-330878f26a0b</guid>
+	<property name="ti.ui.defaultunit">dp</property>
+	<iphone>
+		<orientations device="iphone">
+			<orientation>Ti.UI.PORTRAIT</orientation>
+		</orientations>
+		<orientations device="ipad">
+			<orientation>Ti.UI.PORTRAIT</orientation>
+			<orientation>Ti.UI.UPSIDE_PORTRAIT</orientation>
+			<orientation>Ti.UI.LANDSCAPE_LEFT</orientation>
+			<orientation>Ti.UI.LANDSCAPE_RIGHT</orientation>
+		</orientations>
+	</iphone>
+	<android xmlns:android="http://schemas.android.com/apk/res/android"/>
+	<mobileweb>
+		<precache/>
+		<splash>
+			<enabled>true</enabled>
+			<inline-css-images>true</inline-css-images>
+		</splash>
+		<theme>default</theme>
+		<map>
+			<apikey>AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU</apikey>
+		</map>
+	</mobileweb>
+	<modules>
+		<module platform="android">facebook</module>
+		<module platform="iphone">facebook</module>
+		<module platform="iphone">ti.map</module>
+		<module platform="android">ti.map</module>
+	</modules>
+	<ios>
+		<plist>
+			<dict>
+				<key>NSLocationAlwaysUsageDescription</key>
+				<string>For Displaying Nearby Businesses</string>
+				<key>NSLocationWhenInUseUsageDescription</key>
+				<string>Test NSLocationWhenInUseUsageDescription</string>
+			</dict>
+			<dict>
+				<key>CFBundleURLTypes</key>
+				<array>
+					<dict>
+						<key>CFBundleURLName</key>
+						<!-- Application ID same as the id value in the tiapp.xml file -->
+						<string>me.flair</string>
+						<key>CFBundleURLSchemes</key>
+						<array>
+							<!-- Prefix the Facebook App ID with 'fb' -->
+							<string>fb201613399910723</string>
+						</array>
+					</dict>
+				</array>
+				<key>FacebookAppID</key>
+				<!-- Facebook App ID -->
+				<string>201613399910723</string>
+				<key>FacebookDisplayName</key>
+				<!-- Facebook App Name from developer.facebook.com -->
+				<string>Flair</string>
+			</dict>
+		</plist>
+	</ios>
+	<property name="appc-app-id" type="string">55cb85c0578c88713e784b9d</property>
 </ti:app>

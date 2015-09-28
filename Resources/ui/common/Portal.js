@@ -153,11 +153,17 @@ function draw(){
 	
 	_wall = Wall.init("nearby");
 	
-	nav = Titanium.UI.iOS.createNavigationWindow({
-   		window: _wall,width:Ti.Platform.displayCaps.platformWidth
-	});
+	if (Ti.App.isIos) {
+		nav = Titanium.UI.iOS.createNavigationWindow({
+			window : _wall,
+			width : Ti.Platform.displayCaps.platformWidth
+		});
+		nav.open();
+	} else {
+		
+		_wall.open();
 
-	nav.open();
+	}
 }
 
 
