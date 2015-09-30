@@ -41,7 +41,8 @@ exports.init = function(_data,_callback) {
 	
 	main = Ti.UI.createWindow({			
     	hideNavBar:false,
-    	backgroundColor:'#eee'
+    	backgroundColor:'#eee',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	_startFlair(_data);

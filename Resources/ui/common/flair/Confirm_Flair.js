@@ -5,7 +5,8 @@ exports.init = function(person,placename,callback){
 	var main = Ti.UI.createWindow({
 		backgroundColor:"#fff",
 		width:Ti.UI.FILL,
-		height:Ti.UI.FILL
+		height:Ti.UI.FILL,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	var v = Ti.UI.createView({

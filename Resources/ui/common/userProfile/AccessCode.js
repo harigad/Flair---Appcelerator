@@ -221,7 +221,8 @@ function _init(_data){
 	main = Titanium.UI.createWindow({
     	title: 'New Access Code',    	
     	barColor:'#333',
-    	backgroundColor: '#eee'    	
+    	backgroundColor: '#eee',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"    	
 	});
 		
 	 _view = Titanium.UI.createView(

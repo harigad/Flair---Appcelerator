@@ -7,7 +7,8 @@ var _closeWinFunc;
 exports.init = function(closeWinFunc){
 	_closeWinFunc = closeWinFunc;
 	_main = Ti.UI.createWindow({
-		backgroundColor:"#eee",navBarHidden:true
+		backgroundColor:"#eee",navBarHidden:true,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});	
 	
 	_view = Ti.UI.createView({

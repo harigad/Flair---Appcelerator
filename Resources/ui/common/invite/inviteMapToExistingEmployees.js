@@ -11,7 +11,8 @@ var _colors = [
 ];
 
 	var win = Ti.UI.createWindow({
-		backgroundColor:"#fff"
+		backgroundColor:"#fff",
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	var scroll = Ti.UI.createScrollView({

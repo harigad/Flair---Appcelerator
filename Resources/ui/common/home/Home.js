@@ -25,7 +25,8 @@ Ti.API.debug("home init");
     	borderWidth:0,
     	backgroundColor:"#40a3ff",
     	backgroundImage:"/images/blue.png",
-    	fullScreen: true
+    	fullScreen: true,
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});	
 
 	var container = Titanium.UI.createView({

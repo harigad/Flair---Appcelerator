@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NoActionBar" parent="@style/Theme.AppCompat">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <!-- <item name="android:textColorHint">#6F6F6F</item> 
+        <item name="android:statusBarColor">#CB1D5B</item> -->  
+    </style>
+    <style name="Theme.NoActionBar.Translucent" parent="@style/Theme.AppCompat.Translucent">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <!-- <item name="android:textColorHint">#6F6F6F</item>
+        <item name="android:statusBarColor">#CB1D5B</item> -->
+    </style>
+</resources> 

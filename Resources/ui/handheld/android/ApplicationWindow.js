@@ -7,7 +7,8 @@ function ApplicationWindow() {
 	var self = Ti.UI.createWindow({
 		backgroundColor:'#ffffff',
 		navBarHidden:true,
-		exitOnClose:true
+		exitOnClose:true,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 		
 	//construct UI

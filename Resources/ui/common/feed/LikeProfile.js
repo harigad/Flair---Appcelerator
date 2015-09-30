@@ -10,7 +10,8 @@ exports.init = function(_data,_cont,_call) {
 
 	var main = Ti.UI.createWindow({			
     	hideNavBar:true,modal:true,
-    	backgroundColor:'#fff'
+    	backgroundColor:'#fff',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 
 	var outer =  Titanium.UI.createView(

@@ -120,12 +120,25 @@ exports.toggleMenu = function(callBack){
 function _resetMenu(callBack){
 	var slide_it_right = Titanium.UI.createAnimation();
     	slide_it_right.left = 0; // to put it back to the left side of the window
-    	slide_it_right.duration = 300;	
-		nav.animate(slide_it_right,function(){
+    	slide_it_right.duration = 300;
+    	
+    	if (Ti.App.isIos)
+    	{
+    		nav.animate(slide_it_right,function(){
 			if(callBack){
 		  		callBack();
 			}
 		});
+    	}
+    	else
+    	{
+    		_wall.animate(slide_it_right,function(){
+			if(callBack){
+		  		callBack();
+			}
+		});
+    	}	
+		
 		_wallTempView.removeEventListener("click",_resetMenu);
 		_wall.remove(_wallTempView);
 }
@@ -140,7 +153,11 @@ function _openMenu(){
 		var slide_it_right = Titanium.UI.createAnimation();
     	slide_it_right.left = -250; // to put it back to the left side of the window
     	slide_it_right.duration = 300;
+    	if (Ti.App.isIos)
     	nav.animate(slide_it_right);
+    	else
+    	_wall.animate(slide_it_right);
+    	
 };
 
 var _menu;
@@ -168,26 +185,61 @@ function draw(){
 
 
 exports.open = function(win,animated){
-	if(animated !== false){
+	
+	if (Ti.App.isIos)
+	{
+		if(animated !== false){
 		nav.openWindow(win,{animated:true});
-	}else{
+		}else{
 		nav.openWindow(win,{animated:false});
+		}
 	}
+	else
+	{
+		if(animated !== false){
+		win.open({animated:true});
+		}else{
+		win.open({animated:false});
+		}
+	}
+
 };
 
 exports.close = function(win,animated){
-	if(animated !== false){
+	
+	if (Ti.App.isIos)
+	{
+		if(animated !== false){
 		nav.closeWindow(win,{animated:true});
-	}else{
+		}else{
 		nav.closeWindow(win,{animated:false});
+		}
 	}
+	else
+	{
+		if(animated !== false){
+		win.close({animated:true});
+		}else{
+		win.close({animated:false});
+		}
+	}
+	
 	win = null;
 };
 
 exports.close_all = function(){
 	//var x = nav.getChildren();
-	while(nav.getChildren().length > 1){
-		nav.closeWindow(nav.getChildren()[nav.getChildren().length-1]);
+	
+	if (Ti.App.isIos){
+		
+		while(nav.getChildren().length > 1){
+			nav.closeWindow(nav.getChildren()[nav.getChildren().length-1]);
+		}
+	}
+	else
+	{
+		
+		//need to write some code for android
 	}
 	
 };

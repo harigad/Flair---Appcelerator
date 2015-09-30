@@ -5,7 +5,8 @@ exports.init = function(callback,name) {
 	serverSearchTimout = null;
 	var main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#fff',barColor:"#fff"
+    	backgroundColor:'#fff',barColor:"#fff",
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	main.add(header(main,callback,name));

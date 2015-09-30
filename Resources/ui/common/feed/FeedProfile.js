@@ -11,7 +11,8 @@ exports.init = function(_data) {
 		backgroundColor: '#fff',
     	title: "details",    	
     	barColor:'#aaa',
-    	barImage: '/images/headerBg.jpg'
+    	barImage: '/images/headerBg.jpg',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 
 	var scrollView = Ti.UI.createScrollView({

@@ -4,7 +4,8 @@ var login = require('ui/common/Login');
 exports.init = function(place){
 	var _main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#fff',barColor:"#fff"
+    	backgroundColor:'#fff',barColor:"#fff",
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	_draw(place,_main);

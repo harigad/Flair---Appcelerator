@@ -4,7 +4,8 @@ var map = require('ti.map');
 exports.init = function(_data){
 	var main = Ti.UI.createWindow({	
 	   	backgroundColor: '#fff',
-	   	navBarHidden:true,barColor:'#fff'
+	   	navBarHidden:true,barColor:'#fff',
+	   	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 
 	Ti.App.addEventListener("close_all",function(){

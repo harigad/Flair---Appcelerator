@@ -8,7 +8,8 @@ var _place;
 exports.init = function(place,closeWinFunc){
 	_closeWinFunc = closeWinFunc;_place = place;
 	_main = Ti.UI.createWindow({
-		backgroundColor:"#eee",navBarHidden:true
+		backgroundColor:"#eee",navBarHidden:true,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});	
 	
 	_view = Ti.UI.createView({

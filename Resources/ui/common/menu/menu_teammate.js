@@ -9,7 +9,8 @@ var _placeRefresh;
 exports.init = function(data,place,closeWinFunc,placeRefresh){
 	_closeWinFunc = closeWinFunc;_place = place;_placeRefresh = placeRefresh;
 	_main = Ti.UI.createWindow({
-		backgroundColor:"#eee",navBarHidden:true
+		backgroundColor:"#eee",navBarHidden:true,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});	
 	
 	_view = Ti.UI.createView({

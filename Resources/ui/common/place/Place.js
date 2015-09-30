@@ -29,7 +29,8 @@ exports.init = function(data){
 	
 	var main = Titanium.UI.createWindow({
     	backgroundColor: '#fff',
-    	navBarHidden:true ,barColor:'#fff'	
+    	navBarHidden:true ,barColor:'#fff',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"	
 	});
 	
 	Ti.App.addEventListener("close_all",function(){

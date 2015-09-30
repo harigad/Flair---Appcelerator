@@ -9,6 +9,7 @@ exports.init = function() {
 		backgroundColor : "#eee",
 		navBarHidden : true,
 		top : 0,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 
 	var scroll = Ti.UI.createScrollView({});
@@ -32,7 +33,7 @@ exports.init = function() {
 		});
 		nav.open();
 	} else {
-		
+
 		_main.open();
 
 	}
@@ -45,21 +46,45 @@ exports.init = function() {
 };
 
 exports.openSub = function(win) {
-	nav.openWindow(win, {
-		animated : true
-	});
+
+	if (Ti.App.isIos) {
+		nav.openWindow(win, {
+			animated : true
+		});
+
+	} else {
+		win.open({
+			animated : true
+		});
+	}
+
 };
 
 function open(win) {
-	nav.openWindow(win, {
-		animated : true
-	});
+
+	if (Ti.App.isIos) {
+		nav.openWindow(win, {
+			animated : true
+		});
+
+	} else {
+		win.open({
+			animated : true
+		});
+	}
 }
 
 function close(win) {
-	nav.closeWindow(win, {
-		animated : true
-	});
+	if (Ti.App.isIos) {
+		nav.closeWindow(win, {
+			animated : true
+		});
+
+	} else {
+		win.close({
+			animated : true
+		});
+	}
 	win = null;
 }
 

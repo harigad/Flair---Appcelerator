@@ -24,7 +24,8 @@ exports.init = function() {
 	serverSearchTimout = null;
 	main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#eee',barColor:"#eee"
+    	backgroundColor:'#eee',barColor:"#eee",
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	_draw();

@@ -27,7 +27,8 @@ exports.close = function(_refresh,_user){
 function init(){
 	main = Titanium.UI.createWindow({
     	backgroundColor: '#eee',
-    	hideNavBar: true 	
+    	hideNavBar: true ,
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"	
 	});
 	
 	main.addEventListener("focus",function(e){

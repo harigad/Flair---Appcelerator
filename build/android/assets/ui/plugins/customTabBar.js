@@ -1,1 +1,0 @@
-/Volumes/WORK/CurrentProjects/Flair-App/Source Code/Flair---Appcelerator/Resources/ui/plugins/customTabBar.js

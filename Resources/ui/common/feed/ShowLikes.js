@@ -6,7 +6,8 @@ exports.init = function(_data){
 	var main = Titanium.UI.createWindow({
     	title: "Likes",
     	backgroundColor: '#fff',
-    	navBarHidden:false,barColor:'#fff'
+    	navBarHidden:false,barColor:'#fff',
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 
 	var scroll = Ti.UI.createScrollView({contentOffset:{X:80,Y:80}});

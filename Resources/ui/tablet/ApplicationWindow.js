@@ -5,7 +5,8 @@ function ApplicationWindow() {
 		
 	//create component instance
 	var self = Ti.UI.createWindow({
-		backgroundColor:'#ffffff'
+		backgroundColor:'#ffffff',
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 		
 	//construct UI

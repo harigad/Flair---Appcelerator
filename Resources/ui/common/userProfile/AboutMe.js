@@ -6,7 +6,8 @@ var main;
 exports.init = function(aboutme,callback) {	
 	main = Ti.UI.createWindow({			
     	navBarHidden:true,
-    	backgroundColor:'#eee',barColor:"#fff"
+    	backgroundColor:'#eee',barColor:"#fff",
+    	theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	_draw(aboutme,callback);

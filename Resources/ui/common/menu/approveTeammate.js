@@ -6,7 +6,8 @@ var login = require('ui/common/Login');
 exports.init = function(data,place,callBack){
 	
 	var w = Ti.UI.createWindow({
-		backgroundColor:"#333"
+		backgroundColor:"#333",
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	

@@ -137,7 +137,8 @@ function build(){
 	
 	main = Ti.UI.createWindow({
 		backgroundColor:"#40a3ff",
-		top:600
+		top:600,
+		theme : "Theme.AppCompat.Translucent.NoTitleBar"
 	});
 	
 	var base = Ti.UI.createView({
